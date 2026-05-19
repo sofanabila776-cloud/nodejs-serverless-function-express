@@ -1,0 +1,67 @@
+export const ORDER_STATUS = {
+  WAITING: "waiting",
+
+  REJECTED_BY_ARTIST: "rejected_by_artist",
+  CANCELLED_BY_BUYER: "cancelled_by_buyer",
+
+  ACCEPTED: "accepted",
+  BUYER_CONFIRMED_PAYMENT: "buyer_confirmed_payment",
+  PAID_CONFIRMED: "paid_confirmed",
+
+  RESULT_UPLOADED: "result_uploaded",
+  REVISION_REQUESTED: "revision_requested",
+  REVISION_UPLOADED: "revision_uploaded",
+  APPROVED_BY_BUYER: "approved_by_buyer",
+
+  COMPLETED: "completed",
+}
+
+export const BUYER_STATUS_GROUPS = {
+  waiting: [ORDER_STATUS.WAITING],
+
+  unpaid: [
+    ORDER_STATUS.ACCEPTED,
+    ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
+  ],
+
+  process: [
+    ORDER_STATUS.PAID_CONFIRMED,
+    ORDER_STATUS.RESULT_UPLOADED,
+    ORDER_STATUS.APPROVED_BY_BUYER,
+  ],
+
+  revision: [
+    ORDER_STATUS.REVISION_REQUESTED,
+    ORDER_STATUS.REVISION_UPLOADED,
+  ],
+
+  completed: [ORDER_STATUS.COMPLETED],
+
+  cancelled: [
+    ORDER_STATUS.REJECTED_BY_ARTIST,
+    ORDER_STATUS.CANCELLED_BY_BUYER,
+  ],
+}
+
+export const ARTIST_STATUS_GROUPS = {
+  artist_incoming: [
+    ORDER_STATUS.WAITING,
+    ORDER_STATUS.ACCEPTED,
+    ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
+  ],
+
+  artist_process: [
+    ORDER_STATUS.PAID_CONFIRMED,
+    ORDER_STATUS.RESULT_UPLOADED,
+    ORDER_STATUS.REVISION_REQUESTED,
+    ORDER_STATUS.REVISION_UPLOADED,
+    ORDER_STATUS.APPROVED_BY_BUYER,
+  ],
+
+  artist_completed: [ORDER_STATUS.COMPLETED],
+
+  artist_cancelled: [
+    ORDER_STATUS.REJECTED_BY_ARTIST,
+    ORDER_STATUS.CANCELLED_BY_BUYER,
+  ],
+}
