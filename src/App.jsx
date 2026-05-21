@@ -434,6 +434,7 @@ const handleDeleteAccount = async () => {
           setShowDeletePopup={setShowDeletePopup}
           setIsLoggedIn={setIsLoggedIn}
           setCurrentPage={setCurrentPage}
+          onLogout={handleLogout}
           onDeleteAccount={handleDeleteAccount}
           phone={phone}
           setPhone={setPhone}

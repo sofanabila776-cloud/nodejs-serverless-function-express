@@ -1,6 +1,8 @@
+import { useState } from "react"
+
 import {
   FiUser,
-  FiTrash2,
+  FiMoreVertical,
   FiEdit2,
   FiMessageCircle,
 } from "react-icons/fi"
@@ -27,9 +29,9 @@ function ProfilePage({
   setActiveOrderStatus = () => {},
   showDeletePopup = false,
   setShowDeletePopup = () => {},
-  setIsLoggedIn = () => {},
   setCurrentPage = () => {},
   onDeleteAccount = () => {},
+  onLogout = () => {},
   phone = "",
   setPhone = () => {},
   gender = "",
@@ -44,6 +46,10 @@ function ProfilePage({
   uploadResultByArtist = () => {},
   setSelectedOrder = () => {},
 }) {
+
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false)
+
   const statusGroups =
     role === "artist"
       ? ARTIST_STATUS_GROUPS
@@ -131,6 +137,37 @@ function ProfilePage({
           </div>
         </>
       )}
+
+      {showLogoutPopup && (
+  <>
+    <div className="fixed inset-0 bg-black/40 z-40" />
+
+    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F5F5F5] rounded-[18px] p-8 z-50 shadow-lg">
+      <p className="text-[20px] text-center">
+        Apakah Anda yakin ingin Log out dari akun ini?
+      </p>
+
+      <div className="flex justify-center gap-4 mt-6">
+        <button
+          onClick={() => setShowLogoutPopup(false)}
+          className="w-[100px] h-[42px] border border-black rounded-[10px] text-[20px]"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            setShowLogoutPopup(false)
+            onLogout()
+          }}
+          className="w-[100px] h-[42px] bg-black text-white rounded-[10px] text-[20px]"
+        >
+          Log out
+        </button>
+      </div>
+    </div>
+  </>
+)}
 
       <div className="flex px-[40px] pt-[140px] gap-[40px]">
         <div className="w-[240px]">
@@ -339,14 +376,44 @@ function ProfilePage({
           {activeSidebar === "account" && (
             <>
               <div className="flex justify-between items-center">
-                <p className="text-[28px]">
-                  Profil Akun
-                </p>
+  <p className="text-[28px]">
+    Profil Akun
+  </p>
 
-                <button onClick={() => setShowDeletePopup(true)}>
-                  <FiTrash2 className="text-[24px]" />
-                </button>
-              </div>
+  <div className="relative">
+    <button
+      onClick={() => setShowAccountMenu((prev) => !prev)}
+      className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-black/5"
+      aria-label="Menu akun"
+    >
+      <FiMoreVertical className="text-[24px]" />
+    </button>
+
+    {showAccountMenu && (
+      <div className="absolute right-0 top-[42px] w-[170px] bg-white border border-[#D9D9D9] rounded-[12px] shadow-md overflow-hidden z-20">
+        <button
+          onClick={() => {
+            setShowAccountMenu(false)
+            setShowLogoutPopup(true)
+          }}
+          className="w-full px-4 py-3 text-left text-[18px] hover:bg-[#F5F5F5]"
+        >
+          Log out
+        </button>
+
+        <button
+          onClick={() => {
+            setShowAccountMenu(false)
+            setShowDeletePopup(true)
+          }}
+          className="w-full px-4 py-3 text-left text-[18px] text-red-600 hover:bg-[#F5F5F5]"
+        >
+          Hapus Akun
+        </button>
+      </div>
+    )}
+  </div>
+</div>
 
               <div className="flex gap-[40px] mt-10">
                 <div className="flex flex-col items-center">

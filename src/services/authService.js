@@ -32,7 +32,25 @@ const getStoredUsers = () => {
     return defaultUsers;
   }
 
-  return JSON.parse(storedUsers);
+  const parsedUsers = JSON.parse(storedUsers);
+
+  const mergedUsers = [...parsedUsers];
+
+  defaultUsers.forEach((defaultUser) => {
+    const alreadyExists = mergedUsers.some(
+      (user) =>
+        normalizeEmail(user.email) === normalizeEmail(defaultUser.email) ||
+        normalizeUsername(user.username) === normalizeUsername(defaultUser.username)
+    );
+
+    if (!alreadyExists) {
+      mergedUsers.push(defaultUser);
+    }
+  });
+
+  localStorage.setItem(USERS_KEY, JSON.stringify(mergedUsers));
+
+  return mergedUsers;
 };
 
 const saveUsers = (users) => {
