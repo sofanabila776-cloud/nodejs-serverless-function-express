@@ -5,76 +5,112 @@ import {
   FiUser,
 } from "react-icons/fi"
 
+const AUTH_PAGES = [
+  "login",
+  "signupAccount",
+  "signupRole",
+  "signupBuyerUsername",
+  "signupArtistLevel",
+  "signupArtistUsername",
+]
+
 function Header({
   currentPage,
   setCurrentPage,
   isLoggedIn,
-  setIsLoggedIn,
   role = "buyer",
-  toggleRole = () => {},
+  setActiveSidebar = () => {},
+  setActiveOrderStatus = () => {},
 }) {
-  return (
-    <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 px-[40px] py-[20px] flex items-center justify-between">
+  const isAuthPage = AUTH_PAGES.includes(currentPage)
 
-      {/* LOGO */}
+  const roleLabel =
+    role === "artist" ? "Artist" : "Buyer"
+
+  const handleLogoClick = () => {
+    if (isLoggedIn && role === "artist") {
+      setCurrentPage("profile")
+      setActiveSidebar("account")
+      setActiveOrderStatus("artist_incoming")
+      return
+    }
+
+    setCurrentPage("home")
+  }
+
+  const openProfile = () => {
+    setCurrentPage("profile")
+    setActiveSidebar("account")
+
+    if (role === "artist") {
+      setActiveOrderStatus("artist_incoming")
+    }
+  }
+
+  return (
+    <header className="fixed top-0 left-0 w-full h-[100px] bg-white z-30 flex items-center justify-between px-[40px] shadow-md">
       <button
-        onClick={() => setCurrentPage("home")}
-        className="text-[36px]"
+        onClick={handleLogoClick}
+        className="flex items-center gap-3"
       >
-        PICKARYA
+        <span className="text-[36px] text-black leading-none">
+          PICKARYA
+        </span>
+
+        {isLoggedIn && (
+          <>
+            <span className="text-[24px] text-[#8A8A8A] leading-none">
+              ·
+            </span>
+
+            <span className="text-[20px] text-[#8A8A8A] leading-none mt-[2px]">
+              {roleLabel}
+            </span>
+          </>
+        )}
       </button>
 
-      {/* SEARCH */}
-      {
-        currentPage === "home" && (
-          <div className="absolute left-1/2 -translate-x-1/2 w-[420px] h-[60px] border-[3px] border-black rounded-full flex items-center px-5 gap-4">
+      {currentPage === "home" && role === "buyer" && (
+        <div className="w-[420px] h-[45px] border-[3px] border-black rounded-full flex items-center px-4">
+          <FiSearch className="text-[22px]" />
 
-            <input
-              type="text"
-              placeholder="Cari karya atau artist"
-              className="w-full outline-none text-[20px]"
-            />
+          <input
+            type="text"
+            placeholder="Search"
+            className="ml-3 flex-1 outline-none text-[18px]"
+          />
+        </div>
+      )}
 
-            <FiSearch className="text-[28px]" />
+      <div className="flex items-center gap-5">
+        {!isLoggedIn && !isAuthPage && (
+          <button
+            onClick={() => setCurrentPage("login")}
+            className="text-[20px] whitespace-nowrap"
+          >
+            LOG IN
+          </button>
+        )}
 
-          </div>
-        )
-      }
-
-      {/* RIGHT MENU */}
-      <div className="flex items-center gap-5 ml-auto">
-        <button
-          onClick={toggleRole}
-          className="text-[20px] border-[2px] border-black px-4 py-2 rounded-[12px] whitespace-nowrap"
-        >
-          {role === "buyer" ? "POV Buyer" : "POV Artist"}
-        </button>
-
-        {
-          !isLoggedIn ? (
-            <button
-              onClick={() => setIsLoggedIn(true)}
-              className="text-[20px] whitespace-nowrap"
-            >
-              LOG IN
+        {isLoggedIn && (
+          <>
+            <button>
+              <FiBell className="text-[28px]" />
             </button>
-          ) : (
-            <>
-              <FiBell className="text-[24px]" />
 
-              <FiHeart className="text-[24px]" />
-
-              <button
-                onClick={() => setCurrentPage("profile")}
-              >
-                <FiUser className="text-[24px]" />
+            {role === "buyer" && (
+              <button>
+                <FiHeart className="text-[28px]" />
               </button>
-            </>
-          )
-        }
-      </div>
+            )}
 
-    </div>
+            <button onClick={openProfile}>
+              <FiUser className="text-[28px]" />
+            </button>
+          </>
+        )}
+      </div>
+    </header>
   )
 }
 

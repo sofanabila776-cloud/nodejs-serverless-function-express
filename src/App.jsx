@@ -11,6 +11,18 @@ import ProfilePage from "./pages/ProfilePage"
 import { artists } from "./data/artists"
 import { ORDER_STATUS } from "./constants/orderStatus"
 
+import LoginPage from "./pages/LoginPage"
+import SignupAccountPage from "./pages/SignupAccountPage"
+import SignupRolePage from "./pages/SignupRolePage"
+import SignupBuyerUsernamePage from "./pages/SignupBuyerUsernamePage"
+import SignupArtistLevelPage from "./pages/SignupArtistLevelPage"
+import SignupArtistUsernamePage from "./pages/SignupArtistUsernamePage"
+import {
+  getCurrentUser,
+  logoutUser,
+  deleteCurrentUserAccount,
+} from "./services/authService"
+
 const CURRENT_BUYER = {
   name: "unainaina",
 }
@@ -21,9 +33,49 @@ const CURRENT_ARTIST = {
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const handleLoginSuccess = (user) => {
+  setCurrentUser(user)
+  setIsLoggedIn(true)
+  setRole(user.role)
+
+  if (user.role === "artist") {
+    setCurrentPage("profile")
+    setActiveSidebar("account")
+    setActiveOrderStatus("artist_incoming")
+  } else {
+    setCurrentPage("home")
+  }
+}
+
+const handleLogout = () => {
+  logoutUser()
+  setCurrentUser(null)
+  setIsLoggedIn(false)
+  setRole("buyer")
+  setCurrentPage("home")
+}
+
+const handleDeleteAccount = async () => {
+  try {
+    await deleteCurrentUserAccount()
+
+    setCurrentUser(null)
+    setIsLoggedIn(false)
+    setRole("buyer")
+    setShowDeletePopup(false)
+    setCurrentPage("home")
+
+    showToast("Akun berhasil dihapus")
+  } catch (error) {
+    showToast(error.message || "Gagal menghapus akun")
+  }
+}
+
+  const [currentUser, setCurrentUser] = useState(getCurrentUser())
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(currentUser))
   const [currentPage, setCurrentPage] = useState("home")
-  const [role, setRole] = useState("buyer")
+  const [role, setRole] = useState(currentUser?.role || "buyer")
+  const [signupData, setSignupData] = useState({})
 
   const [toastMessage, setToastMessage] = useState("")
 
@@ -48,22 +100,6 @@ function App() {
   const [phone, setPhone] = useState("")
   const [gender, setGender] = useState("")
   const [showDeletePopup, setShowDeletePopup] = useState(false)
-
-  const toggleRole = () => {
-    setRole((prevRole) => {
-      const nextRole = prevRole === "buyer" ? "artist" : "buyer"
-
-      setCurrentPage("profile")
-      setActiveSidebar("orders")
-      setActiveOrderStatus(
-        nextRole === "artist"
-          ? "artist_incoming"
-          : "waiting"
-      )
-
-      return nextRole
-    })
-  }
 
   const showToast = (msg, duration = 3000) => {
     setToastMessage(msg)
@@ -398,6 +434,7 @@ function App() {
           setShowDeletePopup={setShowDeletePopup}
           setIsLoggedIn={setIsLoggedIn}
           setCurrentPage={setCurrentPage}
+          onDeleteAccount={handleDeleteAccount}
           phone={phone}
           setPhone={setPhone}
           gender={gender}
@@ -410,6 +447,8 @@ function App() {
           confirmPaymentByBuyer={confirmPaymentByBuyer}
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
+          currentUser={currentUser}
+          setIsLoggedIn={handleLogout}
         />
       )
       break
@@ -430,6 +469,7 @@ function App() {
           setShowDeletePopup={setShowDeletePopup}
           setIsLoggedIn={setIsLoggedIn}
           setCurrentPage={setCurrentPage}
+          onDeleteAccount={handleDeleteAccount}
           phone={phone}
           setPhone={setPhone}
           gender={gender}
@@ -442,9 +482,72 @@ function App() {
           confirmPaymentByBuyer={confirmPaymentByBuyer}
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
+          currentUser={currentUser}
+          setIsLoggedIn={handleLogout}
         />
       )
       break
+
+    case "login":
+  page = (
+    <LoginPage
+      setCurrentPage={setCurrentPage}
+      onLoginSuccess={handleLoginSuccess}
+    />
+  )
+  break
+
+case "signupAccount":
+  page = (
+    <SignupAccountPage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+    />
+  )
+  break
+
+case "signupRole":
+  page = (
+    <SignupRolePage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+    />
+  )
+  break
+
+case "signupBuyerUsername":
+  page = (
+    <SignupBuyerUsernamePage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+      onLoginSuccess={handleLoginSuccess}
+    />
+  )
+  break
+
+case "signupArtistLevel":
+  page = (
+    <SignupArtistLevelPage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+    />
+  )
+  break
+
+case "signupArtistUsername":
+  page = (
+    <SignupArtistUsernamePage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+      onLoginSuccess={handleLoginSuccess}
+    />
+  )
+  break
 
     default:
       page = <div>Page not found</div>
@@ -458,7 +561,8 @@ function App() {
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
         role={role}
-        toggleRole={toggleRole}
+        setActiveSidebar={setActiveSidebar}
+        setActiveOrderStatus={setActiveOrderStatus}
       />
 
       <Toast message={toastMessage} />

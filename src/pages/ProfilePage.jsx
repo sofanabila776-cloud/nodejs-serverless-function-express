@@ -17,6 +17,7 @@ import {
 
 function ProfilePage({
   role = "buyer",
+  currentUser = null,
   currentArtist = null,
   currentPage = "profile",
   selectedOrder = null,
@@ -28,6 +29,7 @@ function ProfilePage({
   setShowDeletePopup = () => {},
   setIsLoggedIn = () => {},
   setCurrentPage = () => {},
+  onDeleteAccount = () => {},
   phone = "",
   setPhone = () => {},
   gender = "",
@@ -82,7 +84,23 @@ function ProfilePage({
     artist_process: "Tidak ada pesanan yang sedang diproses",
     artist_completed: "Tidak ada pesanan yang selesai",
     artist_cancelled: "Tidak ada pesanan yang batal",
-  }[activeOrderStatus] || "Tidak ada pesanan"
+  }
+
+  const currentEmptyOrderText =
+    emptyOrderText[activeOrderStatus] || "Tidak ada pesanan"
+
+  const profileUsername =
+    currentUser?.username || currentUser?.name || "unainaina"
+
+  const profileEmail =
+    currentUser?.email || "Email"
+
+  const artistLevelLabel =
+    {
+      beginner: "Beginner",
+      intermediate: "Intermediate",
+      professional: "Professional",
+    }[currentUser?.artistLevel] || currentUser?.artistLevel
 
   return (
     <>
@@ -104,10 +122,7 @@ function ProfilePage({
               </button>
 
               <button
-                onClick={() => {
-                  setIsLoggedIn(false)
-                  setCurrentPage("home")
-                }}
+                onClick={onDeleteAccount}
                 className="w-[100px] h-[42px] bg-black text-white rounded-[10px] text-[20px]"
               >
                 Hapus
@@ -342,8 +357,14 @@ function ProfilePage({
                   </div>
 
                   <p className="text-[24px] mt-4">
-                    unainaina
+                    {profileUsername}
                   </p>
+
+                  {role === "artist" && artistLevelLabel && (
+                    <p className="text-[18px] mt-1 text-[#666666]">
+                      Level: {artistLevelLabel}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex-1">
@@ -352,7 +373,7 @@ function ProfilePage({
                   </p>
 
                   <input
-                    value="u****a@gmail.com"
+                    value={profileEmail}
                     readOnly
                     className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2"
                   />
@@ -423,7 +444,7 @@ function ProfilePage({
               <div className="space-y-5">
                 {filteredOrders.length === 0 ? (
                   <div className="border-[3px] border-[#D9D9D9] h-[160px] flex items-center justify-center text-[20px]">
-                    {emptyOrderText}
+                    {currentEmptyOrderText}
                   </div>
                 ) : (
                   filteredOrders.map((order) => (
