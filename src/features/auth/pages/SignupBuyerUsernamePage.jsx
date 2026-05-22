@@ -1,7 +1,11 @@
+// Page khusus signup Buyer
+// Semua input (nama, email, password) akan disimpan di authService.js
+// tanpa mengubah akun default artist yang sudah ada
+
 import { useState } from "react";
 import { registerUser } from "../services/authService";
 
-function SignupArtistUsernamePage({ setCurrentPage, signupData, setSignupData, onLoginSuccess }) {
+function SignupBuyerUsernamePage({ setCurrentPage, signupData, setSignupData, onLoginSuccess }) {
   const [username, setUsername] = useState(signupData.username || "");
   const [error, setError] = useState("");
 
@@ -14,7 +18,7 @@ function SignupArtistUsernamePage({ setCurrentPage, signupData, setSignupData, o
     }
 
     try {
-      const payload = { ...signupData, role: "artist", username };
+      const payload = { ...signupData, role: "buyer", username };
       const session = await registerUser(payload);
       setSignupData({});
       onLoginSuccess(session.user);
@@ -32,11 +36,11 @@ function SignupArtistUsernamePage({ setCurrentPage, signupData, setSignupData, o
         </h1>
 
         <form className="mt-[34px] w-[533px]" onSubmit={handleSubmit}>
-          <label htmlFor="artist-username" className="sr-only">Buat username</label>
+          <label htmlFor="buyer-username" className="sr-only">Buat username</label>
 
           <div className="relative w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
             <input
-              id="artist-username"
+              id="buyer-username"
               name="username"
               type="text"
               value={username}
@@ -61,4 +65,4 @@ function SignupArtistUsernamePage({ setCurrentPage, signupData, setSignupData, o
   );
 }
 
-export default SignupArtistUsernamePage;
+export default SignupBuyerUsernamePage;

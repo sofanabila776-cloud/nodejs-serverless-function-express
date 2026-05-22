@@ -1,36 +1,44 @@
 import { useState } from "react"
+import Header from "./shared/components/Header"
+import Toast from "./shared/components/Toast"
 
-import Header from "./components/Header"
-import Toast from "./components/Toast"
+import BuyerHomePage from "./features/marketplace/pages/BuyerHomePage"
+import ArtistDetailPage from "./features/marketplace/pages/ArtistDetailPage"
+import BriefPage from "./features/marketplace/pages/BriefPage"
+import ProfilePage from "./features/profile/pages/ProfilePage"
 
-import HomePage from "./pages/HomePage"
-import DetailPage from "./pages/DetailPage"
-import BriefPage from "./pages/BriefPage"
-import ProfilePage from "./pages/ProfilePage"
+import { artists } from "./features/marketplace/data/artists"
+import { ORDER_STATUS } from "./features/orders/constants/orderStatus"
 
-import { artists } from "./data/artists"
-import { ORDER_STATUS } from "./constants/orderStatus"
+import {
+  createOrder,
+  updateOrderById,
+  updateSelectedOrderById,
+} from "./features/orders/utils/orderHelpers"
 
-import LoginPage from "./pages/LoginPage"
-import SignupAccountPage from "./pages/SignupAccountPage"
-import SignupRolePage from "./pages/SignupRolePage"
-import SignupBuyerUsernamePage from "./pages/SignupBuyerUsernamePage"
-import SignupArtistLevelPage from "./pages/SignupArtistLevelPage"
-import SignupArtistUsernamePage from "./pages/SignupArtistUsernamePage"
+import LoginPage from "./features/auth/pages/LoginPage"
+import SignupAccountPage from "./features/auth/pages/SignupAccountPage"
+import SignupRolePage from "./features/auth/pages/SignupRolePage"
+import SignupBuyerUsernamePage from "./features/auth/pages/SignupBuyerUsernamePage"
+import SignupArtistLevelPage from "./features/auth/pages/SignupArtistLevelPage"
+import SignupArtistUsernamePage from "./features/auth/pages/SignupArtistUsernamePage"
+
 import {
   getCurrentUser,
   logoutUser,
   deleteCurrentUserAccount,
-} from "./services/authService"
+} from "./features/auth/services/authService"
 
-const CURRENT_BUYER = {
-  name: "unainaina",
-}
+import {
+  DEFAULT_BUYER,
+  DEFAULT_ARTIST,
+  MARKETPLACE_CATEGORIES,
+} from "./shared/constants/appDefaults"
 
-const CURRENT_ARTIST = {
-  id: 1,
-  name: "azazarine",
-}
+import {
+  getCurrentBuyerName,
+  getCurrentArtistInfo,
+} from "./shared/utils/userHelpers"
 
 function App() {
   const handleLoginSuccess = (user) => {
@@ -106,7 +114,7 @@ const handleDeleteAccount = async () => {
     setTimeout(() => setToastMessage(""), duration)
   }
 
-  const categories = ["Poster", "Ppt", "Animation", "Ilustrasi"]
+  const categories = MARKETPLACE_CATEGORIES
 
   const toggleCategory = (cat) => {
     if (selectedCategories.includes(cat)) {
@@ -127,6 +135,15 @@ const handleDeleteAccount = async () => {
           a.tags.some((t) => selectedCategories.includes(t))
         )
 
+  const currentBuyerName = getCurrentBuyerName(currentUser, DEFAULT_BUYER)
+
+  const currentArtist = getCurrentArtistInfo({
+    role,
+    currentUser,
+    artists,
+    defaultArtist: DEFAULT_ARTIST,
+  })
+
   const openDetail = (artist) => {
     setSelectedArtist(artist)
     setPortfolioIndex(0)
@@ -139,39 +156,14 @@ const handleDeleteAccount = async () => {
       return
     }
 
-    const newOrder = {
-      id: Date.now(),
-
-      artistId: selectedArtist?.id,
-      artist: selectedArtist?.name,
-      buyer: CURRENT_BUYER.name,
-
-      product: selectedProduct.tag,
-      priceRange: selectedProduct.price,
-      totalPrice: null,
-
-      quantity,
-      description,
-
-      status: ORDER_STATUS.WAITING,
-
-      createdAt: "04-04-2026 09:45",
-      rejectedAt: null,
-      cancelledAt: null,
-      acceptedAt: null,
-      paymentConfirmedAt: null,
-      processedAt: null,
-      resultUploadedAt: null,
-      revisionRequestedAt: null,
-      revisionUploadedAt: null,
-      approvedAt: null,
-      completedAt: null,
-
-      resultLink: "",
-      revisionNote: "",
-      revisionLink: "",
-      finalLink: "",
-    }
+    const newOrder = createOrder({
+     selectedArtist,
+     selectedProduct,
+     quantity,
+     description,
+     currentBuyerName,
+     currentUser,
+   })
 
     setOrders([newOrder, ...orders].filter(Boolean))
     setCurrentPage("home")
@@ -185,191 +177,102 @@ const handleDeleteAccount = async () => {
   }
 
   const cancelOrder = (id) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.CANCELLED_BY_BUYER,
-              cancelledAt: "04-04-2026 11:00",
-              cancelReason: "Anda membatalkan pesanan",
-            }
-          : order
-      )
-    )
+    const changes = {
+      status: ORDER_STATUS.CANCELLED_BY_BUYER,
+      cancelledAt: "04-04-2026 11:00",
+      cancelReason: "Anda membatalkan pesanan",
+    }
 
+    setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
     setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.CANCELLED_BY_BUYER,
-            cancelledAt: "04-04-2026 11:00",
-            cancelReason: "Anda membatalkan pesanan",
-          }
-        : prevOrder
+      updateSelectedOrderById(prevOrder, id, changes)
     )
 
     showToast("Pesanan dibatalkan", 5000)
   }
 
   const rejectOrderByArtist = (id) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.REJECTED_BY_ARTIST,
-              rejectedAt: "04-04-2026 10:30",
-              cancelledAt: "04-04-2026 10:30",
-            }
-          : order
-      )
-    )
-
-    setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.REJECTED_BY_ARTIST,
-            rejectedAt: "04-04-2026 10:30",
-            cancelledAt: "04-04-2026 10:30",
-          }
-        : prevOrder
-    )
-
-    showToast("Pesanan ditolak artist", 5000)
+  const changes = {
+    status: ORDER_STATUS.REJECTED_BY_ARTIST,
+    rejectedAt: "04-04-2026 10:30",
+    cancelledAt: "04-04-2026 10:30",
   }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  showToast("Pesanan ditolak artist", 5000)
+}
 
   const acceptOrderByArtist = (id, totalPrice) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.ACCEPTED,
-              totalPrice,
-              acceptedAt: "04-04-2026 12:45",
-            }
-          : order
-      )
-    )
-
-    setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.ACCEPTED,
-            totalPrice,
-            acceptedAt: "04-04-2026 12:45",
-          }
-        : prevOrder
-    )
-
-    showToast("Harga berhasil diajukan", 5000)
+  const changes = {
+    status: ORDER_STATUS.ACCEPTED,
+    totalPrice,
+    acceptedAt: "04-04-2026 12:45",
   }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  showToast("Harga berhasil diajukan", 5000)
+}
 
   const confirmPaymentByBuyer = (id) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
-              paymentConfirmedAt: "05-04-2026 07:15",
-            }
-          : order
-      )
-    )
-
-    setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
-            paymentConfirmedAt: "05-04-2026 07:15",
-          }
-        : prevOrder
-    )
-
-    showToast("Konfirmasi pembayaran berhasil dikirim", 5000)
+  const changes = {
+    status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
+    paymentConfirmedAt: "05-04-2026 07:15",
   }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  showToast("Konfirmasi pembayaran berhasil dikirim", 5000)
+}
 
   const confirmPaymentByArtist = (id) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.PAID_CONFIRMED,
-              processedAt: "05-04-2026 07:15",
-            }
-          : order
-      )
-    )
-
-    setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.PAID_CONFIRMED,
-            processedAt: "05-04-2026 07:15",
-          }
-        : prevOrder
-    )
-
-    setCurrentPage("profile")
-    setActiveSidebar("orders")
-    setActiveOrderStatus("artist_process")
-
-    showToast("Pembayaran berhasil dikonfirmasi", 5000)
+  const changes = {
+    status: ORDER_STATUS.PAID_CONFIRMED,
+    processedAt: "05-04-2026 07:15",
   }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  setCurrentPage("profile")
+  setActiveSidebar("orders")
+  setActiveOrderStatus("artist_process")
+  showToast("Pembayaran berhasil dikonfirmasi", 5000)
+}
 
   const uploadResultByArtist = (id, resultLink) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id
-          ? {
-              ...order,
-              status: ORDER_STATUS.RESULT_UPLOADED,
-              resultLink,
-              resultUploadedAt: "05-04-2026 08:00",
-            }
-          : order
-      )
-    )
-
-    setSelectedOrder((prevOrder) =>
-      prevOrder?.id === id
-        ? {
-            ...prevOrder,
-            status: ORDER_STATUS.RESULT_UPLOADED,
-            resultLink,
-            resultUploadedAt: "05-04-2026 08:00",
-          }
-        : prevOrder
-    )
-
-    showToast("Hasil karya berhasil dikirim", 5000)
+  const changes = {
+    status: ORDER_STATUS.RESULT_UPLOADED,
+    resultLink,
+    resultUploadedAt: "05-04-2026 08:00",
   }
 
-  if (currentPage === "detail" && !selectedArtist) {
-    return <div className="p-10">Loading artist...</div>
-  }
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
 
-  if (currentPage === "brief" && !selectedArtist) {
-    return <div className="p-10">Loading...</div>
-  }
-
-  if (currentPage === "orderDetail" && !selectedOrder) {
-    return <div className="p-10">Loading order...</div>
-  }
+  showToast("Hasil karya berhasil dikirim", 5000)
+}
 
   let page
 
   switch (currentPage) {
     case "home":
       page = (
-        <HomePage
+        <BuyerHomePage
           showFilter={showFilter}
           setShowFilter={setShowFilter}
           categories={categories}
@@ -384,7 +287,7 @@ const handleDeleteAccount = async () => {
 
     case "detail":
       page = (
-        <DetailPage
+        <ArtistDetailPage
           selectedArtist={selectedArtist}
           portfolioIndex={portfolioIndex}
           setPortfolioIndex={setPortfolioIndex}
@@ -422,7 +325,7 @@ const handleDeleteAccount = async () => {
       page = (
         <ProfilePage
           role={role}
-          currentArtist={CURRENT_ARTIST}
+          currentArtist={currentArtist}
           currentPage={currentPage}
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
@@ -432,7 +335,6 @@ const handleDeleteAccount = async () => {
           setActiveOrderStatus={setActiveOrderStatus}
           showDeletePopup={showDeletePopup}
           setShowDeletePopup={setShowDeletePopup}
-          setIsLoggedIn={setIsLoggedIn}
           setCurrentPage={setCurrentPage}
           onLogout={handleLogout}
           onDeleteAccount={handleDeleteAccount}
@@ -449,7 +351,6 @@ const handleDeleteAccount = async () => {
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
           currentUser={currentUser}
-          setIsLoggedIn={handleLogout}
         />
       )
       break
@@ -458,7 +359,7 @@ const handleDeleteAccount = async () => {
       page = (
         <ProfilePage
           role={role}
-          currentArtist={CURRENT_ARTIST}
+          currentArtist={currentArtist}
           currentPage={currentPage}
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
@@ -468,7 +369,6 @@ const handleDeleteAccount = async () => {
           setActiveOrderStatus={setActiveOrderStatus}
           showDeletePopup={showDeletePopup}
           setShowDeletePopup={setShowDeletePopup}
-          setIsLoggedIn={setIsLoggedIn}
           setCurrentPage={setCurrentPage}
           onDeleteAccount={handleDeleteAccount}
           phone={phone}
@@ -484,7 +384,6 @@ const handleDeleteAccount = async () => {
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
           currentUser={currentUser}
-          setIsLoggedIn={handleLogout}
         />
       )
       break

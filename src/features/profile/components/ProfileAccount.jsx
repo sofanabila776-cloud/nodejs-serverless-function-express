@@ -1,0 +1,134 @@
+import { useState } from "react"
+import { FiMoreVertical, FiEdit2 } from "react-icons/fi"
+
+function ProfileAccount({
+  role = "buyer",
+  currentUser = null,
+  phone = "",
+  setPhone = () => {},
+  gender = "",
+  setGender = () => {},
+  showToast = () => {},
+  setShowDeletePopup = () => {},
+  setShowLogoutPopup = () => {},
+}) {
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
+
+  const profileUsername =
+    currentUser?.username || currentUser?.name || "unainaina"
+
+  const profileEmail = currentUser?.email || "Email"
+
+  const artistLevelLabel =
+    {
+      beginner: "Beginner",
+      intermediate: "Intermediate",
+      professional: "Professional",
+    }[currentUser?.artistLevel] || currentUser?.artistLevel
+
+  return (
+    <>
+      <div className="flex justify-between items-center">
+        <p className="text-[28px]">Profil Akun</p>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowAccountMenu((prev) => !prev)}
+            className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-black/5"
+            aria-label="Menu akun"
+          >
+            <FiMoreVertical className="text-[24px]" />
+          </button>
+
+          {showAccountMenu && (
+            <div className="absolute right-0 top-[42px] w-[170px] bg-white border border-[#D9D9D9] rounded-[12px] shadow-md overflow-hidden z-20">
+              <button
+                onClick={() => {
+                  setShowAccountMenu(false)
+                  setShowLogoutPopup(true)
+                }}
+                className="w-full px-4 py-3 text-left text-[18px] hover:bg-[#F5F5F5]"
+              >
+                Log out
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowAccountMenu(false)
+                  setShowDeletePopup(true)
+                }}
+                className="w-full px-4 py-3 text-left text-[18px] text-red-600 hover:bg-[#F5F5F5]"
+              >
+                Hapus Akun
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex gap-[40px] mt-10">
+        <div className="flex flex-col items-center">
+          <div className="relative w-[140px] h-[140px] rounded-full bg-[#D9D9D9]">
+            <button className="absolute bottom-0 right-0 w-[38px] h-[38px] rounded-full bg-black flex items-center justify-center">
+              <FiEdit2 className="text-white text-[18px]" />
+            </button>
+          </div>
+
+          <p className="text-[24px] mt-4">{profileUsername}</p>
+
+          {role === "artist" && artistLevelLabel && (
+            <p className="text-[18px] mt-1 text-[#666666]">
+              Level: {artistLevelLabel}
+            </p>
+          )}
+        </div>
+
+        <div className="flex-1">
+          <p className="text-[20px]">Email</p>
+
+          <input
+            value={profileEmail}
+            readOnly
+            className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2"
+          />
+
+          <p className="text-[20px] mt-5">Nomor Telepon</p>
+
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Masukkan nomor telepon"
+            className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2 placeholder:text-[#8E8E8E]"
+          />
+
+          <p className="text-[20px] mt-5">Jenis Kelamin</p>
+
+          <div className="flex gap-8 mt-3 text-[20px]">
+            {["Perempuan", "Laki-laki", "Rahasia"].map((item) => (
+              <label key={item} className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={gender === item}
+                  onChange={() => setGender(item)}
+                />
+
+                {item}
+              </label>
+            ))}
+          </div>
+
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => showToast("Profil berhasil disimpan")}
+              className="w-[140px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
+            >
+              Simpan
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default ProfileAccount

@@ -1,10 +1,12 @@
+// Halaman utama untuk Buyer, menampilkan list artist
+
 import {
   HiOutlineAdjustmentsHorizontal,
 } from "react-icons/hi2"
 
 import ArtistCard from "../components/ArtistCard"
 
-function HomePage({
+function BuyerHomePage({
   showFilter,
   setShowFilter,
   categories,
@@ -141,4 +143,4 @@ function HomePage({
   )
 }
 
-export default HomePage
+export default BuyerHomePage

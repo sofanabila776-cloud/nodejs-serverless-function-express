@@ -1,3 +1,5 @@
+// Halaman detail artist/potofolio yang diclick dari HomePage
+
 import {
   FiStar,
   FiClock,
@@ -9,7 +11,7 @@ import {
   IoChevronForward,
 } from "react-icons/io5"
 
-function DetailPage({
+function ArtistDetailPage({
   selectedArtist,
   portfolioIndex,
   setPortfolioIndex,
@@ -218,4 +220,4 @@ if (!selectedArtist) {
   )
 }
 
-export default DetailPage
+export default ArtistDetailPage
