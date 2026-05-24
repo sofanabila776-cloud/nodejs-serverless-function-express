@@ -13,3 +13,18 @@ export const MARKETPLACE_CATEGORIES = [
   "Animation",
   "Ilustrasi",
 ]
+
+export const ARTIST_LEVELS = [
+  {
+    label: "Beginner",
+    value: "beginner",
+  },
+  {
+    label: "Intermediate",
+    value: "intermediate",
+  },
+  {
+    label: "Professional",
+    value: "professional",
+  },
+]

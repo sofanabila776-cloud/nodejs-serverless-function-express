@@ -2,6 +2,7 @@ export const artists = [
   {
     id: 1,
     name: "azazarine",
+    level: "professional",
     rating: 4.8,
     duration: "2-4 hari",
     tags: ["Poster", "Ppt", "Animation"],
@@ -21,10 +22,10 @@ export const artists = [
       },
     ],
   },
-
   {
     id: 2,
     name: "artist2",
+    level: "beginner",
     rating: 4.7,
     duration: "3-5 hari",
     tags: ["Ilustrasi", "Poster"],
@@ -40,10 +41,10 @@ export const artists = [
       },
     ],
   },
-
   {
     id: 3,
     name: "artist3",
+    level: "intermediate",
     rating: 4.9,
     duration: "1-2 hari",
     tags: ["Animation", "Ppt"],

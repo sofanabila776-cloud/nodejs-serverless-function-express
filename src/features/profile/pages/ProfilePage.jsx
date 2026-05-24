@@ -5,10 +5,14 @@ import ProfileAccount from "../components/ProfileAccount"
 import ProfileOrders from "../components/ProfileOrders"
 import ProfileConfirmPopup from "../components/ProfileConfirmPopup"
 
+import ArtistDashboardSidebar from "../../artistDashboard/components/ArtistDashboardSidebar"
+import ArtistPortfolioPage from "../../artistDashboard/components/ArtistPortfolioPage"
+
 function ProfilePage({
   role = "buyer",
   currentUser = null,
   currentArtist = null,
+  artistPortfolio = null,
   currentPage = "profile",
   selectedOrder = null,
   activeSidebar = "account",
@@ -19,6 +23,9 @@ function ProfilePage({
   setShowDeletePopup = () => {},
   setCurrentPage = () => {},
   onDeleteAccount = () => {},
+  onDeletePortfolio = () => {},
+  onDeleteProduct = () => {},
+  onPublishPortfolio = () => {},
   onLogout = () => {},
   phone = "",
   setPhone = () => {},
@@ -61,22 +68,32 @@ function ProfilePage({
         />
       )}
 
-      <div className="flex px-[40px] pt-[140px] gap-[40px]">
-        <ProfileSidebar
-          role={role}
-          activeSidebar={activeSidebar}
-          setActiveSidebar={setActiveSidebar}
-          activeOrderStatus={activeOrderStatus}
-          setActiveOrderStatus={setActiveOrderStatus}
-          setCurrentPage={setCurrentPage}
-        />
+      <div className="flex px-[40px] pt-[140px] pb-[140px] gap-[40px]">
+        {role === "artist" ? (
+          <ArtistDashboardSidebar
+            activeSidebar={activeSidebar}
+            setActiveSidebar={setActiveSidebar}
+            activeOrderStatus={activeOrderStatus}
+            setActiveOrderStatus={setActiveOrderStatus}
+            setCurrentPage={setCurrentPage}
+          />
+        ) : (
+          <ProfileSidebar
+            role={role}
+            activeSidebar={activeSidebar}
+            setActiveSidebar={setActiveSidebar}
+            activeOrderStatus={activeOrderStatus}
+            setActiveOrderStatus={setActiveOrderStatus}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
 
         <div
           className={
-            currentPage === "orderDetail"
-              ? "flex-1 max-w-[960px]"
-              : "flex-1 border-[3px] border-[#D9D9D9] p-8"
-          }
+  currentPage === "orderDetail"
+    ? "flex-1 max-w-[960px]"
+    : "flex-1 border-[3px] border-[#D9D9D9] p-8"
+}
         >
           {activeSidebar === "account" && (
             <ProfileAccount
@@ -90,6 +107,17 @@ function ProfilePage({
               setShowDeletePopup={setShowDeletePopup}
               setShowLogoutPopup={setShowLogoutPopup}
             />
+          )}
+
+          {role === "artist" && activeSidebar === "portfolio" && (
+            <ArtistPortfolioPage
+  portfolio={artistPortfolio}
+  onUploadClick={() => setCurrentPage("artistPortfolioUpload")}
+  onDeleteClick={onDeletePortfolio}
+  onDeleteProduct={onDeleteProduct}
+  onPublishClick={onPublishPortfolio}
+  onAddProductClick={() => setCurrentPage("artistProductForm")}
+/>
           )}
 
           {activeSidebar === "orders" && (
@@ -109,6 +137,24 @@ function ProfilePage({
               uploadResultByArtist={uploadResultByArtist}
               setSelectedOrder={setSelectedOrder}
             />
+          )}
+
+          {role === "artist" && activeSidebar === "bank" && (
+            <div className="text-[24px]">
+              Fitur Bank akan dibuat setelah Portofolio selesai.
+            </div>
+          )}
+
+          {role === "artist" && activeSidebar === "rating" && (
+            <div className="text-[24px]">
+              Fitur Rating akan dibuat setelah Portofolio selesai.
+            </div>
+          )}
+
+          {role === "artist" && activeSidebar === "reviews" && (
+            <div className="text-[24px]">
+              Fitur Riwayat Ulasan akan dibuat setelah Portofolio selesai.
+            </div>
           )}
         </div>
       </div>

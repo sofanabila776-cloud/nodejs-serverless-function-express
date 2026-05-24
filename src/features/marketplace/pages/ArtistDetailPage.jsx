@@ -11,6 +11,12 @@ import {
   IoChevronForward,
 } from "react-icons/io5"
 
+const LEVEL_LABELS = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  professional: "Professional",
+}
+
 function ArtistDetailPage({
   selectedArtist,
   portfolioIndex,
@@ -75,6 +81,10 @@ if (!selectedArtist) {
 
           <p className="text-[32px]">
             {selectedArtist.name}
+          </p>
+
+          <p className="text-[20px] text-[#666666] mt-1">
+            Level: {LEVEL_LABELS[selectedArtist.level] || selectedArtist.level || "-"}
           </p>
 
           <div className="flex gap-4 underline text-[20px] mt-2">

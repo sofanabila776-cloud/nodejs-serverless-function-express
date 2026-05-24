@@ -6,6 +6,8 @@ import BuyerHomePage from "./features/marketplace/pages/BuyerHomePage"
 import ArtistDetailPage from "./features/marketplace/pages/ArtistDetailPage"
 import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
+import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
+import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
 
 import { artists } from "./features/marketplace/data/artists"
 
@@ -32,6 +34,7 @@ import {
   DEFAULT_BUYER,
   DEFAULT_ARTIST,
   MARKETPLACE_CATEGORIES,
+  ARTIST_LEVELS,
 } from "./shared/constants/appDefaults"
 
 import {
@@ -88,6 +91,7 @@ const handleDeleteAccount = async () => {
 
   const [showFilter, setShowFilter] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedLevels, setSelectedLevels] = useState([])
 
   const [selectedArtist, setSelectedArtist] = useState(null)
   const [portfolioIndex, setPortfolioIndex] = useState(0)
@@ -100,6 +104,38 @@ const handleDeleteAccount = async () => {
 
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
+  const [artistPortfolio, setArtistPortfolio] = useState(null)
+  const [publishedArtists, setPublishedArtists] = useState([])
+
+  const addArtistProduct = (newProduct) => {
+  setArtistPortfolio((prevPortfolio) => {
+    if (!prevPortfolio) return prevPortfolio
+
+    return {
+      ...prevPortfolio,
+      products: [...(prevPortfolio.products || []), newProduct],
+    }
+  })
+
+  setActiveSidebar("portfolio")
+  setCurrentPage("profile")
+  showToast("Produk berhasil ditambahkan")
+}
+
+const deleteArtistProduct = (productId) => {
+  setArtistPortfolio((prevPortfolio) => {
+    if (!prevPortfolio) return prevPortfolio
+
+    return {
+      ...prevPortfolio,
+      products: (prevPortfolio.products || []).filter(
+        (product) => product.id !== productId
+      ),
+    }
+  })
+
+  showToast("Produk berhasil dihapus")
+}
 
   const [activeSidebar, setActiveSidebar] = useState("account")
   const [activeOrderStatus, setActiveOrderStatus] = useState("waiting")
@@ -130,6 +166,7 @@ const handleDeleteAccount = async () => {
 })
 
   const categories = MARKETPLACE_CATEGORIES
+  const artistLevels = ARTIST_LEVELS
 
   const toggleCategory = (cat) => {
     if (selectedCategories.includes(cat)) {
@@ -143,21 +180,144 @@ const handleDeleteAccount = async () => {
     setSelectedCategories(selectedCategories.filter((c) => c !== cat))
   }
 
-  const filteredArtists =
-    selectedCategories.length === 0
-      ? artists
-      : artists.filter((a) =>
-          a.tags.some((t) => selectedCategories.includes(t))
-        )
+  const toggleLevel = (level) => {
+  if (selectedLevels.includes(level)) {
+    setSelectedLevels(selectedLevels.filter((item) => item !== level))
+  } else {
+    setSelectedLevels([...selectedLevels, level])
+  }
+}
+
+  const removeLevel = (level) => {
+    setSelectedLevels(selectedLevels.filter((item) => item !== level))
+  }
 
   const currentBuyerName = getCurrentBuyerName(currentUser, DEFAULT_BUYER)
 
-  const currentArtist = getCurrentArtistInfo({
-    role,
-    currentUser,
-    artists,
-    defaultArtist: DEFAULT_ARTIST,
+const marketplaceArtists = [
+  ...publishedArtists,
+  ...artists.filter(
+    (artist) =>
+      !publishedArtists.some(
+        (publishedArtist) =>
+          String(publishedArtist.id) === String(artist.id) ||
+          publishedArtist.name === artist.name
+      )
+  ),
+]
+
+const currentArtist = getCurrentArtistInfo({
+  role,
+  currentUser,
+  artists: marketplaceArtists,
+  defaultArtist: DEFAULT_ARTIST,
+})
+
+const normalizeProductTag = (tag) => {
+  const cleanTag = String(tag || "").replace("#", "").trim()
+
+  const matchedCategory = categories.find(
+    (category) => category.toLowerCase() === cleanTag.toLowerCase()
+  )
+
+  return matchedCategory || cleanTag
+}
+
+const buildPublishedArtist = (portfolio) => {
+  const portfolioProducts = portfolio?.products || []
+  const portfolioPages = portfolio?.pages || []
+
+  const artistId =
+    currentUser?.id ||
+    currentUser?.email ||
+    currentUser?.username ||
+    `published-artist-${Date.now()}`
+
+  const artistName =
+    currentUser?.username || currentUser?.name || "artist-baru"
+
+  return {
+    id: artistId,
+    name: artistName,
+    level: currentUser?.artistLevel || "beginner",
+    rating: 0,
+    duration: `${portfolio.durationMin}-${portfolio.durationMax} hari`,
+    tags: [
+      ...new Set(
+        portfolioProducts.map((product) =>
+          normalizeProductTag(product.tag)
+        )
+      ),
+    ],
+    portfolio: portfolioPages.map((page) => page.imageUrl),
+    portfolioPages,
+    coverImageUrl: portfolioPages[0]?.imageUrl || "",
+    products: portfolioProducts.map((product) => {
+      const cleanTag = normalizeProductTag(product.tag)
+
+      return {
+        tag: `#${cleanTag.toLowerCase()}`,
+        price: `Rp${Number(product.priceMin).toLocaleString(
+          "id-ID"
+        )} - Rp${Number(product.priceMax).toLocaleString("id-ID")}`,
+        coverImageUrl: product.coverImageUrl,
+      }
+    }),
+  }
+}
+
+const publishArtistPortfolio = () => {
+  setArtistPortfolio((prevPortfolio) => {
+    if (!prevPortfolio) return prevPortfolio
+
+    const updatedPortfolio = {
+      ...prevPortfolio,
+      isPublished: true,
+    }
+
+    const publishedArtist = buildPublishedArtist(updatedPortfolio)
+
+    setPublishedArtists((prevArtists) => [
+      publishedArtist,
+      ...prevArtists.filter(
+        (artist) =>
+          String(artist.id) !== String(publishedArtist.id) &&
+          artist.name !== publishedArtist.name
+      ),
+    ])
+
+    return updatedPortfolio
   })
+
+  showToast("Portofolio berhasil dipublikasikan")
+}
+
+const deleteArtistPortfolio = () => {
+  setArtistPortfolio(null)
+
+  setPublishedArtists((prevArtists) =>
+    prevArtists.filter(
+      (artist) =>
+        String(artist.id) !==
+          String(currentUser?.id || currentUser?.email) &&
+        artist.name !== (currentUser?.username || currentUser?.name)
+    )
+  )
+
+  showToast("Portofolio berhasil dihapus")
+}
+
+const filteredArtists = marketplaceArtists.filter((artist) => {
+  const matchCategory =
+    selectedCategories.length === 0 ||
+    artist.tags.some((tag) => selectedCategories.includes(tag))
+
+  const matchLevel =
+    selectedLevels.length === 0 ||
+    selectedLevels.includes(artist.level)
+
+  return matchCategory && matchLevel
+})
 
   const openDetail = (artist) => {
     setSelectedArtist(artist)
@@ -203,6 +363,10 @@ const handleDeleteAccount = async () => {
           selectedCategories={selectedCategories}
           toggleCategory={toggleCategory}
           removeCategory={removeCategory}
+          artistLevels={artistLevels}
+          selectedLevels={selectedLevels}
+          toggleLevel={toggleLevel}
+          removeLevel={removeLevel}
           filteredArtists={filteredArtists}
           openDetail={openDetail}
         />
@@ -220,8 +384,8 @@ const handleDeleteAccount = async () => {
           setCurrentPage={setCurrentPage}
           showLoginWarning={showLoginWarning}
           setShowLoginWarning={setShowLoginWarning}
-          similarArtists={artists.filter(
-            (a) => a.id !== selectedArtist?.id
+          similarArtists={marketplaceArtists.filter(
+           (a) => a.id !== selectedArtist?.id
           )}
           openDetail={openDetail}
         />
@@ -250,6 +414,10 @@ const handleDeleteAccount = async () => {
         <ProfilePage
           role={role}
           currentArtist={currentArtist}
+          artistPortfolio={artistPortfolio}
+          onDeletePortfolio={deleteArtistPortfolio}
+          onDeleteProduct={deleteArtistProduct}
+          onPublishPortfolio={publishArtistPortfolio}
           currentPage={currentPage}
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
@@ -284,6 +452,10 @@ const handleDeleteAccount = async () => {
         <ProfilePage
           role={role}
           currentArtist={currentArtist}
+          artistPortfolio={artistPortfolio}
+          onDeletePortfolio={deleteArtistPortfolio}
+          onDeleteProduct={deleteArtistProduct}
+          onPublishPortfolio={publishArtistPortfolio}
           currentPage={currentPage}
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
@@ -311,6 +483,35 @@ const handleDeleteAccount = async () => {
         />
       )
       break
+
+    case "artistPortfolioUpload":
+  page = (
+    <ArtistPortfolioUploadPage
+      initialPortfolio={artistPortfolio}
+      onUploadPortfolio={(newPortfolio) => {
+        setArtistPortfolio(newPortfolio)
+        setActiveSidebar("portfolio")
+        setCurrentPage("profile")
+        showToast(
+          artistPortfolio
+            ? "Portofolio berhasil diperbarui"
+            : "Portofolio berhasil diupload"
+        )
+      }}
+      setCurrentPage={setCurrentPage}
+    />
+  )
+  break
+
+  case "artistProductForm":
+  page = (
+    <ArtistProductFormPage
+      portfolio={artistPortfolio}
+      onAddProduct={addArtistProduct}
+      setCurrentPage={setCurrentPage}
+    />
+  )
+  break
 
     case "login":
   page = (

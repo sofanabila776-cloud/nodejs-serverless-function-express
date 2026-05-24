@@ -1,5 +1,11 @@
 import { FiStar } from "react-icons/fi"
 
+const LEVEL_LABELS = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  professional: "Professional",
+}
+
 function ArtistCard({
   artist,
   openDetail,
@@ -20,6 +26,10 @@ function ArtistCard({
 
           <p className="text-[20px]">
             {artist.name}
+          </p>
+
+          <p className="text-[18px] text-[#666666] mt-1">
+            Level: {LEVEL_LABELS[artist.level] || artist.level || "-"}
           </p>
 
           <div className="flex gap-4 text-[20px] underline">
