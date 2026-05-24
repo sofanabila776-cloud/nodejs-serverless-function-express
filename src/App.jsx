@@ -249,9 +249,9 @@ const buildPublishedArtist = (portfolio) => {
         )
       ),
     ],
-    portfolio: portfolioPages.map((page) => page.imageUrl),
-    portfolioPages,
     coverImageUrl: portfolioPages[0]?.imageUrl || "",
+    portfolioPages,
+    portfolio: portfolioPages.map((page) => page.imageUrl),
     products: portfolioProducts.map((product) => {
       const cleanTag = normalizeProductTag(product.tag)
 
@@ -260,7 +260,7 @@ const buildPublishedArtist = (portfolio) => {
         price: `Rp${Number(product.priceMin).toLocaleString(
           "id-ID"
         )} - Rp${Number(product.priceMax).toLocaleString("id-ID")}`,
-        coverImageUrl: product.coverImageUrl,
+        coverImageUrl: product.coverImageUrl || "",
       }
     }),
   }

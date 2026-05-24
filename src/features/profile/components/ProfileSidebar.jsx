@@ -12,7 +12,10 @@ function ProfileSidebar({
   return (
     <div className="w-[240px]">
       <button
-        onClick={() => setActiveSidebar("account")}
+        onClick={() => {
+          setActiveSidebar("account")
+          setCurrentPage("profile")
+        }}
         className="flex items-center gap-3 text-[24px]"
       >
         <FiUser />
@@ -22,7 +25,11 @@ function ProfileSidebar({
       </button>
 
       <button
-        onClick={() => setActiveSidebar("orders")}
+        onClick={() => {
+          setActiveSidebar("orders")
+          setActiveOrderStatus(role === "artist" ? "artist_incoming" : "waiting")
+          setCurrentPage("profile")
+        }}
         className="flex items-start gap-3 text-[24px] mt-5"
       >
         <LuClipboardList className="min-w-[24px] min-h-[24px] mt-1" />
@@ -45,7 +52,8 @@ function ProfileSidebar({
               {role === "artist" ? (
                 <>
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("artist_incoming")
                       setCurrentPage("profile")
                     }}
@@ -59,7 +67,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("artist_process")
                       setCurrentPage("profile")
                     }}
@@ -73,7 +82,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("artist_completed")
                       setCurrentPage("profile")
                     }}
@@ -87,7 +97,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("artist_cancelled")
                       setCurrentPage("profile")
                     }}
@@ -103,7 +114,8 @@ function ProfileSidebar({
               ) : (
                 <>
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("waiting")
                       setCurrentPage("profile")
                     }}
@@ -117,7 +129,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("unpaid")
                       setCurrentPage("profile")
                     }}
@@ -131,7 +144,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("process")
                       setCurrentPage("profile")
                     }}
@@ -145,7 +159,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("revision")
                       setCurrentPage("profile")
                     }}
@@ -159,7 +174,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("completed")
                       setCurrentPage("profile")
                     }}
@@ -173,7 +189,8 @@ function ProfileSidebar({
                   </p>
 
                   <p
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation()
                       setActiveOrderStatus("cancelled")
                       setCurrentPage("profile")
                     }}
@@ -194,7 +211,9 @@ function ProfileSidebar({
 
       <button className="flex items-center gap-3 text-[24px] mt-5">
         <FiMessageCircle />
-        <span>Riwayat Ulasan</span>
+        <span>
+          Riwayat Ulasan
+        </span>
       </button>
     </div>
   )
