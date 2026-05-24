@@ -11,6 +11,10 @@ function ArtistCard({
   openDetail,
   selectedCategories,
 }) {
+  const artistCoverImage =
+    artist.coverImageUrl ||
+    artist.portfolioPages?.[0]?.imageUrl ||
+    (typeof artist.portfolio?.[0] === "string" ? artist.portfolio[0] : "")
 
   return (
     <div
@@ -18,7 +22,15 @@ function ArtistCard({
       className="cursor-pointer"
     >
 
-      <div className="w-[570px] h-[280px] border-[3px] border-black rounded-[28px]" />
+      <div className="w-[570px] h-[280px] border-[3px] border-black rounded-[28px] overflow-hidden bg-white">
+  {artistCoverImage && (
+    <img
+      src={artistCoverImage}
+      alt={`Portofolio ${artist.name}`}
+      className="w-full h-full object-contain"
+    />
+  )}
+</div>
 
       <div className="flex justify-between px-4 mt-3">
 

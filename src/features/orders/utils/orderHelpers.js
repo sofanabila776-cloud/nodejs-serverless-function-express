@@ -16,6 +16,7 @@ export function createOrder({
     buyerId: currentUser?.id || null,
     buyerEmail: currentUser?.email || "",
     product: selectedProduct.tag,
+    productCoverImageUrl: selectedProduct.coverImageUrl || "",
     priceRange: selectedProduct.price,
     totalPrice: null,
     quantity,

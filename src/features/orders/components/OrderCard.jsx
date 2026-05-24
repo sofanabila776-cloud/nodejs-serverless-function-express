@@ -12,6 +12,8 @@ function OrderCard({
   const buyer = order?.buyer || "Unknown Buyer"
   const displayName = role === "artist" ? buyer : artist
   const product = order?.product || "Unknown Product"
+  const productCoverImageUrl = order?.productCoverImageUrl || ""
+
   const quantity = order?.quantity || 1
 
   const price =
@@ -70,7 +72,15 @@ function OrderCard({
 
       <div className="mt-1">
         <div className="flex gap-5">
-          <div className="w-[293px] h-[133px] border-[3px] border-black rounded-[18px] flex-shrink-0" />
+          <div className="w-[293px] h-[133px] border-[3px] border-black rounded-[18px] flex-shrink-0 overflow-hidden bg-white">
+  {productCoverImageUrl && (
+    <img
+      src={productCoverImageUrl}
+      alt={product}
+      className="w-full h-full object-contain"
+    />
+  )}
+</div>
 
           <div className="flex flex-col justify-center min-w-0 flex-1">
             <p className="text-[20px]">

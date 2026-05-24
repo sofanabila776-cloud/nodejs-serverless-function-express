@@ -58,19 +58,20 @@ export function useOrderActions({
     showToast("Harga berhasil diajukan", 5000)
   }
 
-  const confirmPaymentByBuyer = (id) => {
-    const changes = {
-      status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
-      paymentConfirmedAt: "05-04-2026 07:15",
-    }
-
-    setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
-    setSelectedOrder((prevOrder) =>
-      updateSelectedOrderById(prevOrder, id, changes)
-    )
-
-    showToast("Konfirmasi pembayaran berhasil dikirim", 5000)
+  const confirmPaymentByBuyer = (id, paymentProofLink) => {
+  const changes = {
+    status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
+    paymentConfirmedAt: "05-04-2026 07:15",
+    paymentProofLink,
   }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  showToast("Konfirmasi pembayaran berhasil dikirim", 5000)
+}
 
   const confirmPaymentByArtist = (id) => {
     const changes = {
