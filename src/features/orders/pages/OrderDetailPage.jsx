@@ -588,7 +588,7 @@ function OrderDetailPage({
     icon: <FiDollarSign />,
     actions:
       role === "artist" ? (
-        <div className="flex justify-end gap-4 mt-4 w-[580px]">
+        <div className="flex justify-end gap-4 mt-4 w-full max-w-[580px] ml-auto">
         <button
           onClick={() => confirmPaymentByArtist(id)}
           className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
@@ -614,7 +614,7 @@ function OrderDetailPage({
       extra:
         role === "buyer" ? (
           <>
-            <div className="mt-4 w-[370px] border-[1px] border-black bg-white flex flex-col items-center py-5">
+            <div className="mt-4 w-[370px] max-w-full border-[1px] border-black bg-white flex flex-col items-center py-5">
               <p className="text-[20px] font-semibold mb-4">
                 {totalPrice}
               </p>
@@ -629,7 +629,7 @@ function OrderDetailPage({
         ) : null,
       actions:
         role === "buyer" ? (
-          <div className="flex justify-end gap-4 mt-4 w-[580px]">
+          <div className="flex justify-end gap-4 mt-4 w-full max-w-[580px] ml-auto">
             <button
   onClick={() => setShowPaymentProofPopup(true)}
   className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
@@ -826,7 +826,7 @@ function OrderDetailPage({
   </>
 )}
 
-      <div className="border-[3px] border-[#D9D9D9] bg-[#F5F5F5] shadow-md overflow-hidden">
+      <div className="w-full max-w-full border-[3px] border-[#D9D9D9] bg-[#F5F5F5] shadow-md overflow-hidden">
         <div className="flex justify-between items-center px-7 py-4 border-b-[2px] border-[#D9D9D9]">
           <div className="flex items-center gap-5">
             <button
@@ -865,7 +865,15 @@ function OrderDetailPage({
 
         <div className="px-7 py-8">
           <div className="flex gap-7">
-            <div className="w-[250px] h-[115px] border-[3px] border-black rounded-[18px] flex-shrink-0" />
+            <div className="w-[250px] h-[115px] border-[3px] border-black rounded-[18px] flex-shrink-0 overflow-hidden bg-white">
+  {productCoverImageUrl && (
+    <img
+      src={productCoverImageUrl}
+      alt={product}
+      className="w-full h-full object-contain"
+    />
+  )}
+</div>
 
             <div className="flex flex-col justify-center">
               <p className="text-[20px]">

@@ -10,7 +10,7 @@ function ProfileSidebar({
   setCurrentPage = () => {},
 }) {
   return (
-    <div className="w-[240px]">
+    <div className="w-[240px] shrink-0">
       <button
         onClick={() => {
           setActiveSidebar("account")
@@ -30,9 +30,9 @@ function ProfileSidebar({
           setActiveOrderStatus(role === "artist" ? "artist_incoming" : "waiting")
           setCurrentPage("profile")
         }}
-        className="flex items-start gap-3 text-[24px] mt-5"
+        className="flex w-full items-start justify-start gap-3 text-left text-[24px] mt-5"
       >
-        <LuClipboardList className="min-w-[24px] min-h-[24px] mt-1" />
+        <LuClipboardList className="min-w-[24px] min-h-[24px] shrink-0 mt-1" />
 
         <div className="text-left">
           <p>
@@ -209,12 +209,15 @@ function ProfileSidebar({
         </div>
       </button>
 
-      <button className="flex items-center gap-3 text-[24px] mt-5">
-        <FiMessageCircle />
-        <span>
-          Riwayat Ulasan
-        </span>
-      </button>
+      <button
+  type="button"
+  className="flex w-full items-center justify-start gap-3 text-left text-[24px] mt-5"
+>
+  <FiMessageCircle className="min-w-[24px] min-h-[24px] shrink-0" />
+  <span className="whitespace-nowrap text-left">
+    Riwayat Ulasan
+  </span>
+</button>
     </div>
   )
 }

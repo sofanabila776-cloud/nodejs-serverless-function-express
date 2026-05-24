@@ -68,7 +68,7 @@ function ProfilePage({
         />
       )}
 
-      <div className="flex px-[40px] pt-[140px] pb-[140px] gap-[40px]">
+      <div className="flex w-full max-w-full overflow-x-hidden px-[40px] pt-[140px] pb-[140px] gap-[40px]">
         {role === "artist" ? (
           <ArtistDashboardSidebar
             activeSidebar={activeSidebar}
@@ -89,12 +89,12 @@ function ProfilePage({
         )}
 
         <div
-          className={
-  currentPage === "orderDetail"
-    ? "flex-1 max-w-[960px]"
-    : "flex-1 border-[3px] border-[#D9D9D9] p-8"
-}
-        >
+  className={
+    currentPage === "orderDetail"
+      ? "flex-1 min-w-0"
+      : "flex-1 min-w-0 border-[3px] border-[#D9D9D9] p-8"
+  }
+>
           {activeSidebar === "account" && (
             <ProfileAccount
               role={role}
