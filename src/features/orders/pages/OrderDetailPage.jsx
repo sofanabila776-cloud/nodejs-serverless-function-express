@@ -24,11 +24,6 @@ function OrderDetailPage({
   const [finalPriceInput, setFinalPriceInput] = useState("0")
   const [showUploadPopup, setShowUploadPopup] = useState(false)
   const [gdriveLink, setGdriveLink] = useState("")
-  const [uploadLinkError, setUploadLinkError] = useState("")
-
-  const [showPaymentProofPopup, setShowPaymentProofPopup] = useState(false)
-  const [paymentProofLink, setPaymentProofLink] = useState("")
-  const [paymentProofError, setPaymentProofError] = useState("")
 
   if (!selectedOrder) {
     return (
@@ -44,7 +39,7 @@ function OrderDetailPage({
   const displayName = role === "artist" ? buyer : artist
 
   const product = selectedOrder?.product || "Unknown Product"
-  const productCoverImageUrl = selectedOrder?.productCoverImageUrl || ""
+
   const price =
     selectedOrder?.priceRange ||
     selectedOrder?.price ||
@@ -137,22 +132,6 @@ function OrderDetailPage({
     return `Rp${Number(number).toLocaleString("id-ID")}`
   }
 
-  const getValidExternalLink = (link) => {
-  const trimmedLink = String(link || "").trim()
-
-  if (!trimmedLink) return ""
-
-  const linkWithProtocol = /^https?:\/\//i.test(trimmedLink)
-    ? trimmedLink
-    : `https://${trimmedLink}`
-
-  try {
-    return new URL(linkWithProtocol).href
-  } catch {
-    return ""
-  }
-}
-
   const DummyQR = () => {
     const cells = Array.from({ length: 225 }, (_, index) => {
       const row = Math.floor(index / 15)
@@ -217,32 +196,12 @@ function OrderDetailPage({
   }
 
   const handleUploadResult = () => {
-  const validLink = getValidExternalLink(gdriveLink)
+    if (!gdriveLink.trim()) return
 
-  if (!validLink) {
-    setUploadLinkError("Masukkan link G-drive yang valid.")
-    return
+    uploadResultByArtist(id, gdriveLink)
+    setShowUploadPopup(false)
+    setGdriveLink("")
   }
-
-  uploadResultByArtist(id, validLink)
-  setShowUploadPopup(false)
-  setGdriveLink("")
-  setUploadLinkError("")
-  }
-
-  const handleSubmitPaymentProof = () => {
-  const validLink = getValidExternalLink(paymentProofLink)
-
-  if (!validLink) {
-    setPaymentProofError("Masukkan link bukti pembayaran yang valid.")
-    return
-  }
-
-  confirmPaymentByBuyer(id, validLink)
-  setShowPaymentProofPopup(false)
-  setPaymentProofLink("")
-  setPaymentProofError("")
-}
 
   const headerStatus = isCancelled
     ? "Dibatalkan"
@@ -294,69 +253,63 @@ function OrderDetailPage({
   }
 
   const TimelineStep = ({ step }) => {
-  const textColor = step.active ? "text-yellow-500" : "text-[#9E9E9E]"
+    const textColor = step.active
+      ? "text-yellow-500"
+      : "text-[#9E9E9E]"
 
-  return (
-    <div className="grid grid-cols-[120px_48px_1fr] gap-4">
-      <p className={`text-[18px] ${textColor}`}>
-        {step.date}
-      </p>
+    return (
+      <div className="relative z-10 flex gap-6">
+        <TimelineMarker
+          type={step.type}
+          active={step.active}
+          icon={step.icon}
+        />
 
-      <TimelineMarker
-        type={step.type}
-        active={step.active}
-        icon={step.icon}
-      />
-
-      <div>
-        <p
-          className={
-            step.bold === false
-              ? `text-[22px] ${textColor}`
-              : `text-[22px] font-medium ${textColor}`
-          }
-        >
-          {step.title}
+        <p className="w-[215px] text-[20px] whitespace-nowrap mt-2 text-black">
+          {step.date}
         </p>
 
-        {step.subtitles?.map((subtitle) => (
+        <div className="flex-1 mt-2 min-w-0">
           <p
-            key={subtitle}
-            className={`text-[20px] ${textColor}`}
+            className={
+              step.bold === false
+                ? `text-[20px] leading-[24px] ${textColor}`
+                : `text-[20px] font-semibold leading-[24px] ${textColor}`
+            }
           >
-            {subtitle}
+            {step.title}
           </p>
-        ))}
 
-        {step.linkText && (
-          <a
-            href={step.linkHref}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => {
-              if (!step.linkHref) e.preventDefault()
-            }}
-            className="inline-block text-[20px] text-[#09027C] underline mt-[4px]"
-          >
-            {step.linkText}
-          </a>
-        )}
+          {step.subtitles?.map((subtitle) => (
+            <p
+              key={subtitle}
+              className={`text-[20px] leading-[24px] mt-[2px] ${textColor}`}
+            >
+              {subtitle}
+            </p>
+          ))}
 
-        {step.extra && (
-          <div className="mt-3">
-            {step.extra}
-          </div>
-        )}
+          {step.linkText && (
+            <a
+              href={step.linkHref || "#"}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => {
+                if (!step.linkHref) e.preventDefault()
+              }}
+              className="inline-block text-[20px] text-[#09027C] underline mt-[2px]"
+            >
+              {step.linkText}
+            </a>
+          )}
 
-        {step.actions && (
-          <div className="flex justify-end mt-4">
-            {step.actions}
-          </div>
-        )}
+          {step.extra}
+
+          {step.actions}
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   const timelineSteps = []
 
@@ -371,42 +324,24 @@ function OrderDetailPage({
   }
 
   const addBuyerWillPayStep = () => {
-  timelineSteps.push({
-    type: "dot",
-    date: acceptedAt,
-    title:
-      role === "buyer"
-        ? "Lakukan pembayaran melalui kode QR berikut"
-        : "Buyer akan melakukan pembayaran",
-    active: false,
-    bold: false,
-  })
-}
+    timelineSteps.push({
+      type: "dot",
+      date: acceptedAt,
+      title: "Buyer akan melakukan pembayaran",
+      active: false,
+      bold: false,
+    })
+  }
 
   const addPaymentConfirmedStep = () => {
-   const paymentProofHref = getValidExternalLink?.(
-    selectedOrder?.paymentProofLink
-  )
-
-  timelineSteps.push({
-    date: paymentConfirmedAt,
-    title: "Menunggu pembayaran",
-    subtitles:
-      role === "buyer"
-        ? ["Pembayaran sedang menunggu konfirmasi artist"]
-        : ["Buyer telah melakukan pembayaran"],
-    linkText:
-      role === "artist" && paymentProofHref
-        ? "Lihat Bukti Pembayaran"
-        : null,
-    linkHref:
-      role === "artist" && paymentProofHref
-        ? paymentProofHref
-        : "",
-    active: false,
-    icon: <FiDollarSign />,
-  })
-}
+    timelineSteps.push({
+      date: paymentConfirmedAt,
+      title: "Menunggu pembayaran",
+      subtitles: ["Buyer telah melakukan pembayaran"],
+      active: false,
+      icon: <FiDollarSign className="text-[20px]" />,
+    })
+  }
 
   const addProcessedStartedStep = () => {
     timelineSteps.push({
@@ -580,41 +515,35 @@ function OrderDetailPage({
     addBuyerWillPayStep()
     addCreatedStep(false)
   } else if (isBuyerConfirmedPayment) {
-  const paymentProofHref = getValidExternalLink(
-    selectedOrder?.paymentProofLink
-  )
+    timelineSteps.push({
+      date: paymentConfirmedAt,
+      title: "Menunggu pembayaran",
+      subtitles:
+        role === "artist"
+          ? ["Buyer telah melakukan pembayaran"]
+          : ["Pembayaran sedang menunggu konfirmasi artist"],
+      active: true,
+      icon: <FiDollarSign className="text-[22px]" />,
+      actions:
+        role === "artist" ? (
+          <div className="flex justify-end gap-5 mt-[30px]">
+            <button className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]">
+              Lihat Bukti
+            </button>
 
-  timelineSteps.push({
-    date: paymentConfirmedAt,
-    title: "Menunggu pembayaran",
-    subtitles:
-      role === "artist"
-        ? ["Buyer telah melakukan pembayaran"]
-        : ["Pembayaran sedang menunggu konfirmasi artist"],
-    linkText:
-      role === "artist" && paymentProofHref
-        ? "Lihat Bukti Pembayaran"
-        : null,
-    linkHref:
-      role === "artist" && paymentProofHref
-        ? paymentProofHref
-        : "",
-    active: true,
-    icon: <FiDollarSign />,
-    actions:
-      role === "artist" ? (
-        <button
-          onClick={() => confirmPaymentByArtist(id)}
-          className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-        >
-          Konfirmasi
-        </button>
-      ) : null,
-  })
+            <button
+              onClick={() => confirmPaymentByArtist(id)}
+              className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
+            >
+              Konfirmasi
+            </button>
+          </div>
+        ) : null,
+    })
 
-  addBuyerWillPayStep()
-  addCreatedStep(false)
-} else if (isAccepted) {
+    addBuyerWillPayStep()
+    addCreatedStep(false)
+  } else if (isAccepted) {
     timelineSteps.push({
       date: acceptedAt,
       title: "Menunggu pembayaran",
@@ -636,7 +565,7 @@ function OrderDetailPage({
             </div>
 
             <p className="text-[20px] text-yellow-500 mt-4">
-              Konfirmasi dengan mengirim bukti pembayaran berupa link G-drive
+              Konfirmasi dengan mengirim bukti pembayaran
             </p>
           </>
         ) : null,
@@ -644,11 +573,11 @@ function OrderDetailPage({
         role === "buyer" ? (
           <div className="flex justify-end gap-4 mt-4 w-[580px]">
             <button
-  onClick={() => setShowPaymentProofPopup(true)}
-  className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
->
-  Konfirmasi
-</button>
+              onClick={() => confirmPaymentByBuyer(id)}
+              className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
+            >
+              Konfirmasi
+            </button>
 
             <button
               onClick={() => {
@@ -766,18 +695,9 @@ function OrderDetailPage({
 
             <input
               value={gdriveLink}
-              onChange={(e) => {
-  setGdriveLink(e.target.value)
-  setUploadLinkError("")
-}}
+              onChange={(e) => setGdriveLink(e.target.value)}
               className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
             />
-
-            {uploadLinkError && (
-  <p className="text-[#FD0707] text-[16px] mt-3">
-    {uploadLinkError}
-  </p>
-)}
 
             <div className="flex justify-end mt-7">
               <button
@@ -790,54 +710,6 @@ function OrderDetailPage({
           </div>
         </>
       )}
-
-      {showPaymentProofPopup && (
-  <>
-    <div className="fixed inset-0 bg-black/40 z-40" />
-
-    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F5F5F5] rounded-[18px] p-8 z-50 shadow-lg w-[520px]">
-      <p className="text-[24px] text-center">
-        Link Bukti Pembayaran
-      </p>
-
-      <input
-        value={paymentProofLink}
-        onChange={(e) => {
-          setPaymentProofLink(e.target.value)
-          setPaymentProofError("")
-        }}
-        placeholder="Masukkan link G-drive bukti pembayaran"
-        className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
-      />
-
-      {paymentProofError && (
-        <p className="text-[#FD0707] text-[16px] mt-3">
-          {paymentProofError}
-        </p>
-      )}
-
-      <div className="flex justify-center gap-4 mt-6">
-        <button
-          onClick={() => {
-            setShowPaymentProofPopup(false)
-            setPaymentProofLink("")
-            setPaymentProofError("")
-          }}
-          className="w-[130px] h-[46px] border-[3px] border-black rounded-[10px] text-[20px]"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={handleSubmitPaymentProof}
-          className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-        >
-          Kirim
-        </button>
-      </div>
-    </div>
-  </>
-)}
 
       <div className="border-[3px] border-[#D9D9D9] bg-[#F5F5F5] shadow-md overflow-hidden">
         <div className="flex justify-between items-center px-7 py-4 border-b-[2px] border-[#D9D9D9]">
@@ -878,15 +750,7 @@ function OrderDetailPage({
 
         <div className="px-7 py-8">
           <div className="flex gap-7">
-            <div className="w-[250px] h-[115px] border-[3px] border-black rounded-[18px] flex-shrink-0 overflow-hidden bg-white">
-  {productCoverImageUrl && (
-    <img
-      src={productCoverImageUrl}
-      alt={product}
-      className="w-full h-full object-contain"
-    />
-  )}
-</div>
+            <div className="w-[250px] h-[115px] border-[3px] border-black rounded-[18px] flex-shrink-0" />
 
             <div className="flex flex-col justify-center">
               <p className="text-[20px]">

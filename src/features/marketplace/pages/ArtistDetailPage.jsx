@@ -37,48 +37,43 @@ if (!selectedArtist) {
   )
 }
 
-const portfolioImages =
-  selectedArtist?.portfolioPages?.map((page) => page.imageUrl).filter(Boolean) ||
-  selectedArtist?.portfolio?.filter((item) => typeof item === "string") ||
-  []
-
-const currentPortfolioImage = portfolioImages[portfolioIndex] || ""
-const isFirstPortfolio = portfolioIndex === 0
-const isLastPortfolio = portfolioIndex === portfolioImages.length - 1
-
   return (
     <div className="px-[40px] pt-[140px] pb-[60px]">
 
       <div className="flex gap-[20px]">
 
         {/* PORTFOLIO */}
-<div className="relative w-[720px] h-[420px] border-[3px] border-black rounded-[28px] overflow-hidden bg-white">
-  {currentPortfolioImage && (
-    <img
-      src={currentPortfolioImage}
-      alt={`Portofolio ${selectedArtist.name}`}
-      className="w-full h-full object-contain"
-    />
-  )}
 
-  {portfolioImages.length > 1 && !isFirstPortfolio && (
-    <button
-      onClick={() => setPortfolioIndex(portfolioIndex - 1)}
-      className="absolute left-4 top-1/2 -translate-y-1/2 w-[40px] h-[40px] rounded-full bg-[#E5E5E5] flex items-center justify-center"
-    >
-      <IoChevronBack className="text-[24px]" />
-    </button>
-  )}
+        <div className="relative w-[720px] h-[420px] border-[3px] border-black rounded-[28px]">
 
-  {portfolioImages.length > 1 && !isLastPortfolio && (
-    <button
-      onClick={() => setPortfolioIndex(portfolioIndex + 1)}
-      className="absolute right-4 top-1/2 -translate-y-1/2 w-[40px] h-[40px] rounded-full bg-[#E5E5E5] flex items-center justify-center"
-    >
-      <IoChevronForward className="text-[24px]" />
-    </button>
-  )}
-</div>
+          <button
+            onClick={() =>
+              setPortfolioIndex(
+                portfolioIndex === 0
+                  ? selectedArtist.portfolio.length - 1
+                  : portfolioIndex - 1
+              )
+            }
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-[40px] h-[40px] rounded-full bg-[#E5E5E5] flex items-center justify-center"
+          >
+            <IoChevronBack className="text-[24px]" />
+          </button>
+
+          <button
+            onClick={() =>
+              setPortfolioIndex(
+                portfolioIndex ===
+                  selectedArtist.portfolio.length - 1
+                  ? 0
+                  : portfolioIndex + 1
+              )
+            }
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-[40px] h-[40px] rounded-full bg-[#E5E5E5] flex items-center justify-center"
+          >
+            <IoChevronForward className="text-[24px]" />
+          </button>
+
+        </div>
 
         {/* INFO */}
 
@@ -154,14 +149,14 @@ const isLastPortfolio = portfolioIndex === portfolioImages.length - 1
               <p className="text-red-500 text-[16px] mt-3">
 
                 <button
-  onClick={() => {
-    setShowLoginWarning(false)
-    setCurrentPage("login")
-  }}
-  className="underline"
->
-  Login
-</button>
+                  onClick={() => {
+                    setIsLoggedIn(true)
+                    setShowLoginWarning(false)
+                  }}
+                  className="underline"
+                >
+                  Login
+                </button>
 
                 {" "}terlebih dahulu untuk membuat pesanan
 

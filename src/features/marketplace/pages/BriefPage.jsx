@@ -106,15 +106,7 @@ if (!selectedArtist) {
                         className="flex gap-4 items-center text-left"
                       >
 
-                        <div className="w-[85px] h-[55px] border-[3px] border-black rounded-[14px] overflow-hidden bg-white shrink-0">
-  {product.coverImageUrl && (
-    <img
-      src={product.coverImageUrl}
-      alt={product.tag}
-      className="w-full h-full object-contain"
-    />
-  )}
-</div>
+                        <div className="w-[85px] h-[55px] border-[3px] border-black rounded-[14px]" />
 
                         <div>
 
@@ -137,16 +129,6 @@ if (!selectedArtist) {
               </div>
             )
           }
-
-        {selectedProduct?.coverImageUrl && (
-  <div className="mt-4 w-[180px] h-[100px] border-[3px] border-black rounded-[14px] overflow-hidden bg-white">
-    <img
-      src={selectedProduct.coverImageUrl}
-      alt={selectedProduct.tag}
-      className="w-full h-full object-contain"
-    />
-  </div>
-)}
 
         </div>
 
