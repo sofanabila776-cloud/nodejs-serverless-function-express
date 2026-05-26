@@ -358,8 +358,11 @@ function OrderDetailPage({
   const addCreatedStep = (active = false) => {
     timelineSteps.push({
       date: createdAt,
-      title: "Pesanan diajukan",
-      subtitles: ["Menunggu persetujuan artist"],
+      title: role === "artist" ? "Pesanan masuk" : "Pesanan diajukan",
+      subtitles:
+       role === "artist"
+        ? ["Tolak/Terima pesanan ini"]
+        : ["Menunggu persetujuan artist"],
       active,
       icon: <LuClipboardList className="text-[20px]" />,
     })
@@ -369,7 +372,10 @@ function OrderDetailPage({
     timelineSteps.push({
       type: "dot",
       date: acceptedAt,
-      title: "Buyer akan melakukan pembayaran",
+      title:
+      role === "artist"
+        ? "Buyer akan melakukan pembayaran"
+        : "Lakukan pembayaran melalui kode QR berikut",
       active: false,
       bold: false,
     })
@@ -381,7 +387,10 @@ function OrderDetailPage({
   timelineSteps.push({
     date: paymentConfirmedAt,
     title: "Menunggu pembayaran",
-    subtitles: ["Buyer telah melakukan pembayaran"],
+    subtitles:
+      role === "artist"
+        ? ["Buyer telah melakukan pembayaran"]
+        : ["Menunggu konfirmasi pembayaran dari artist"],
     linkText:
       role === "artist" && paymentProofHref
         ? "Lihat Bukti Pembayaran"
@@ -399,7 +408,10 @@ function OrderDetailPage({
     timelineSteps.push({
       type: "dot",
       date: processedAt,
-      title: "Karya sedang dibuat",
+      title:
+      role === "artist"
+        ? "Kerjakan dan kirim hasil pesanan"
+        : "Karya sedang dibuat",
       active: false,
       bold: false,
     })
@@ -409,7 +421,7 @@ function OrderDetailPage({
     timelineSteps.push({
       date: resultUploadedAt,
       title: "Pesanan diproses",
-      subtitles: ["Hasil karya sudah dikirim"],
+      subtitles: ["Hasil pesanan sudah dikirim"],
       linkText: "Lihat hasil",
       linkHref: selectedOrder?.resultLink,
       active,
@@ -529,15 +541,7 @@ function OrderDetailPage({
     addBuyerWillPayStep()
     addCreatedStep(false)
   } else if (isResultUploaded) {
-    timelineSteps.push({
-      date: resultUploadedAt,
-      title: "Pesanan diproses",
-      subtitles: ["Hasil karya sudah dikirim"],
-      linkText: "Lihat hasil",
-      linkHref: selectedOrder?.resultLink,
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
-    })
+    addResultUploadedStep(true)
 
     addProcessedStartedStep()
     addPaymentConfirmedStep()
