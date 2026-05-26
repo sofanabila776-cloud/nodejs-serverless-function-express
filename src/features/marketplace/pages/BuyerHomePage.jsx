@@ -17,6 +17,7 @@ function BuyerHomePage({
   removeLevel = () => {},
 
   filteredArtists,
+  searchQuery = "",
   openDetail,
 }) {
   return (
@@ -136,16 +137,25 @@ function BuyerHomePage({
       )}
 
       {/* CARDS */}
-      <div className="flex gap-[32px] flex-wrap mt-8">
-        {filteredArtists.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            openDetail={openDetail}
-            selectedCategories={selectedCategories}
-          />
-        ))}
-      </div>
+      {/* CARDS */}
+{filteredArtists.length > 0 ? (
+  <div className="flex gap-[32px] flex-wrap mt-8">
+    {filteredArtists.map((artist) => (
+      <ArtistCard
+        key={artist.id}
+        artist={artist}
+        openDetail={openDetail}
+        selectedCategories={selectedCategories}
+      />
+    ))}
+  </div>
+) : (
+  <div className="mt-8 text-[22px] text-[#8A8A8A]">
+    {searchQuery.trim()
+      ? `Artist dengan username/nama "${searchQuery.trim()}" tidak ditemukan`
+      : "Artist tidak ditemukan"}
+  </div>
+)}
     </div>
   )
 }

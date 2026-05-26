@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Header from "./shared/components/Header"
 import Toast from "./shared/components/Toast"
 
@@ -8,6 +8,8 @@ import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
+import RevisionBriefPage from "./features/orders/pages/RevisionBriefPage"
+import RevisionBriefViewPage from "./features/orders/pages/RevisionBriefViewPage"
 
 import { artists } from "./features/marketplace/data/artists"
 
@@ -90,6 +92,7 @@ const handleDeleteAccount = async () => {
   const [toastMessage, setToastMessage] = useState("")
 
   const [showFilter, setShowFilter] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedLevels, setSelectedLevels] = useState([])
 
@@ -140,8 +143,53 @@ const deleteArtistProduct = (productId) => {
   const [activeSidebar, setActiveSidebar] = useState("account")
   const [activeOrderStatus, setActiveOrderStatus] = useState("waiting")
 
-  const [phone, setPhone] = useState("")
-  const [gender, setGender] = useState("")
+  const [accountProfiles, setAccountProfiles] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("pickaryaAccountProfiles")) || {}
+  } catch {
+    return {}
+  }
+})
+
+const currentAccountProfileKey =
+  currentUser?.id ||
+  currentUser?.email ||
+  currentUser?.username ||
+  currentUser?.name ||
+  "guest"
+
+const currentAccountProfile =
+  accountProfiles[currentAccountProfileKey] || {}
+
+const phone = currentAccountProfile.phone || ""
+const gender = currentAccountProfile.gender || ""
+
+const updateAccountProfile = (field, value) => {
+  setAccountProfiles((prevProfiles) => {
+    const nextProfiles = {
+      ...prevProfiles,
+      [currentAccountProfileKey]: {
+        ...(prevProfiles[currentAccountProfileKey] || {}),
+        [field]: value,
+      },
+    }
+
+    localStorage.setItem(
+      "pickaryaAccountProfiles",
+      JSON.stringify(nextProfiles)
+    )
+
+    return nextProfiles
+  })
+}
+
+const setPhone = (value) => {
+  updateAccountProfile("phone", value)
+}
+
+const setGender = (value) => {
+  updateAccountProfile("gender", value)
+}
   const [showDeletePopup, setShowDeletePopup] = useState(false)
 
   const showToast = (msg, duration = 3000) => {
@@ -156,6 +204,9 @@ const deleteArtistProduct = (productId) => {
   confirmPaymentByBuyer,
   confirmPaymentByArtist,
   uploadResultByArtist,
+  uploadRevisionByArtist,
+  requestRevisionByBuyer,
+  completeOrderByBuyer,
 } = useOrderActions({
   setOrders,
   setSelectedOrder,
@@ -308,6 +359,20 @@ const deleteArtistPortfolio = () => {
 }
 
 const filteredArtists = marketplaceArtists.filter((artist) => {
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase()
+
+  const artistSearchText = [
+    artist.name,
+    artist.username,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+
+  const matchSearch =
+    normalizedSearchQuery === "" ||
+    artistSearchText.includes(normalizedSearchQuery)
+
   const matchCategory =
     selectedCategories.length === 0 ||
     artist.tags.some((tag) => selectedCategories.includes(tag))
@@ -316,7 +381,7 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
     selectedLevels.length === 0 ||
     selectedLevels.includes(artist.level)
 
-  return matchCategory && matchLevel
+  return matchSearch && matchCategory && matchLevel
 })
 
   const openDetail = (artist) => {
@@ -368,6 +433,7 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           toggleLevel={toggleLevel}
           removeLevel={removeLevel}
           filteredArtists={filteredArtists}
+          searchQuery={searchQuery}
           openDetail={openDetail}
         />
       )
@@ -442,6 +508,9 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           confirmPaymentByBuyer={confirmPaymentByBuyer}
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
+          uploadRevisionByArtist={uploadRevisionByArtist}
+          requestRevisionByBuyer={requestRevisionByBuyer}
+          completeOrderByBuyer={completeOrderByBuyer}
           currentUser={currentUser}
         />
       )
@@ -479,10 +548,33 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           confirmPaymentByBuyer={confirmPaymentByBuyer}
           confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
+          uploadRevisionByArtist={uploadRevisionByArtist}
+          requestRevisionByBuyer={requestRevisionByBuyer}
+          completeOrderByBuyer={completeOrderByBuyer}
           currentUser={currentUser}
         />
       )
       break
+
+    case "revisionBrief":
+      page = (
+        <RevisionBriefPage
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
+          requestRevisionByBuyer={requestRevisionByBuyer}
+          setCurrentPage={setCurrentPage}
+        />
+      )
+      break
+
+      case "revisionBriefView":
+  page = (
+    <RevisionBriefViewPage
+      selectedOrder={selectedOrder}
+      setCurrentPage={setCurrentPage}
+    />
+  )
+  break
 
     case "artistPortfolioUpload":
   page = (
@@ -588,6 +680,8 @@ case "signupArtistUsername":
         role={role}
         setActiveSidebar={setActiveSidebar}
         setActiveOrderStatus={setActiveOrderStatus}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <Toast message={toastMessage} />

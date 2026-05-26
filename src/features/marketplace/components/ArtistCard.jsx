@@ -9,7 +9,7 @@ const LEVEL_LABELS = {
 function ArtistCard({
   artist,
   openDetail,
-  selectedCategories,
+  selectedCategories = [],
 }) {
   const artistCoverImage =
     artist.coverImageUrl ||
@@ -46,13 +46,9 @@ function ArtistCard({
 
           <div className="flex gap-4 text-[20px] underline">
 
-            {
-              artist.tags.map((tag) => {
-
-                const highlighted =
-                  selectedCategories.includes(tag)
-
-                return (
+            {(artist.tags || []).map((tag) => {
+  const highlighted = selectedCategories.includes(tag)
+  return (
                   <span
                     key={tag}
                     className={

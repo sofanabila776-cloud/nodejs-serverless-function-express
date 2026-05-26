@@ -40,16 +40,35 @@ function OrderCard({
     status === ORDER_STATUS.BUYER_CONFIRMED_PAYMENT
 
   const isProcessed =
-    status === ORDER_STATUS.PAID_CONFIRMED ||
-    status === ORDER_STATUS.RESULT_UPLOADED
+  status === ORDER_STATUS.PAID_CONFIRMED ||
+  status === ORDER_STATUS.RESULT_UPLOADED
 
-  const statusText = isCancelled
-    ? "Dibatalkan"
-    : isProcessed
-      ? "Diproses"
-      : isUnpaid
-        ? "Belum Dibayar"
-        : "Menunggu persetujuan"
+const isRevision =
+  status === ORDER_STATUS.REVISION_REQUESTED ||
+  status === ORDER_STATUS.REVISION_UPLOADED
+
+const isCompleted =
+  status === ORDER_STATUS.COMPLETED ||
+  status === ORDER_STATUS.APPROVED_BY_BUYER
+
+const shouldShowTotalPrice =
+  Boolean(totalPrice) &&
+  !isCancelled &&
+  (isUnpaid || isProcessed || isRevision || isCompleted)
+
+const statusText = isCancelled
+  ? "Dibatalkan"
+  : isCompleted
+    ? "Selesai"
+    : isRevision
+      ? "Revisi"
+      : isProcessed
+        ? "Diproses"
+        : isUnpaid
+          ? "Belum Dibayar"
+          : role === "artist"
+            ? "Pesanan masuk"
+            : "Menunggu persetujuan"
 
   const shortDescription =
     description.length > 60
@@ -113,11 +132,11 @@ function OrderCard({
           </div>
         )}
 
-        {(isUnpaid || isProcessed) && totalPrice && (
-          <div className="-mx-5 -mb-5 mt-5 bg-[#D9D9D9] px-10 py-5 text-[24px]">
-            {role === "buyer" ? "Total dari Artist" : "Total"}: {totalPrice}
-          </div>
-        )}
+        {shouldShowTotalPrice && (
+  <div className="-mx-5 -mb-5 mt-5 bg-[#D9D9D9] px-10 py-5 text-[24px]">
+    {role === "buyer" ? "Total dari Artist" : "Total"}: {totalPrice}
+  </div>
+)}
       </div>
     </div>
   )
