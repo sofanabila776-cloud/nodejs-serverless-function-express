@@ -11,6 +11,10 @@ import {
   IoChevronForward,
 } from "react-icons/io5"
 
+import { FaHeart } from "react-icons/fa"
+
+import ProfileAvatar from "../../../shared/components/ProfileAvatar"
+
 const LEVEL_LABELS = {
   beginner: "Beginner",
   intermediate: "Intermediate",
@@ -26,6 +30,10 @@ function ArtistDetailPage({
   setCurrentPage,
   showLoginWarning,
   setShowLoginWarning,
+  showLikeWarning = false,
+  setShowLikeWarning = () => {},
+  isArtistLiked = false,
+  toggleLikedArtist = () => {},
   similarArtists,
   openDetail,
 }) {
@@ -45,6 +53,15 @@ if (!selectedArtist) {
  const currentPortfolioImage = portfolioImages[portfolioIndex] || ""
  const isFirstPortfolio = portfolioIndex === 0
  const isLastPortfolio = portfolioIndex === portfolioImages.length - 1
+
+ const handleLikeClick = () => {
+  if (!isLoggedIn) {
+    setShowLikeWarning(true)
+    return
+  }
+
+  toggleLikedArtist(selectedArtist)
+}
 
   return (
     <div className="px-[40px] pt-[140px] pb-[60px]">
@@ -84,9 +101,17 @@ if (!selectedArtist) {
 
         <div className="flex-1">
 
-          <p className="text-[32px]">
-            {selectedArtist.name}
-          </p>
+          <div className="flex items-center gap-4">
+  <ProfileAvatar
+    imageUrl={selectedArtist.profilePhotoUrl}
+    sizeClass="w-[58px] h-[58px]"
+    iconClass="text-[30px]"
+  />
+
+  <p className="text-[32px]">
+    {selectedArtist.name}
+  </p>
+</div>
 
           <p className="text-[20px] text-[#666666] mt-1">
             Level: {LEVEL_LABELS[selectedArtist.level] || selectedArtist.level || "-"}
@@ -141,11 +166,17 @@ if (!selectedArtist) {
               BUAT PESANAN
             </button>
 
-            <button className="w-[56px] h-[56px] border-[3px] border-black rounded-[18px] flex items-center justify-center">
-
-              <FiHeart className="text-[24px]" />
-
-            </button>
+            <button
+  type="button"
+  onClick={handleLikeClick}
+  className="w-[70px] h-[56px] border-[3px] border-black rounded-[18px] flex items-center justify-center shrink-0"
+>
+  {isArtistLiked ? (
+    <FaHeart className="text-[28px] text-black" />
+  ) : (
+    <FiHeart className="text-[30px] text-black" />
+  )}
+</button>
 
           </div>
 
@@ -168,6 +199,24 @@ if (!selectedArtist) {
               </p>
             )
           }
+
+          {showLikeWarning && (
+  <p className="text-red-500 text-[16px] mt-3">
+
+                <button
+  onClick={() => {
+    setShowLoginWarning(false)
+    setCurrentPage("login")
+  }}
+  className="underline"
+>
+  Login
+</button>
+
+                {" "}terlebih dahulu untuk menyukai portofolio
+
+              </p>
+)}
 
         </div>
 
@@ -229,9 +278,13 @@ if (!selectedArtist) {
     ))
   }
 
+  
+
 </div>
 
     </div>
+
+    
   )
 }
 

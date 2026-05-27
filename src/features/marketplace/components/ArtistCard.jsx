@@ -1,4 +1,5 @@
-import { FiStar } from "react-icons/fi"
+import { FiStar, FiHeart } from "react-icons/fi"
+import { FaHeart } from "react-icons/fa"
 
 const LEVEL_LABELS = {
   beginner: "Beginner",
@@ -10,6 +11,9 @@ function ArtistCard({
   artist,
   openDetail,
   selectedCategories = [],
+  showLikeButton = false,
+  isLiked = false,
+  onToggleLike = () => {},
 }) {
   const artistCoverImage =
     artist.coverImageUrl ||
@@ -22,7 +26,25 @@ function ArtistCard({
       className="cursor-pointer"
     >
 
-      <div className="w-[570px] h-[280px] border-[3px] border-black rounded-[28px] overflow-hidden bg-white">
+      <div className="relative w-[570px] h-[280px] border-[3px] border-black rounded-[28px] overflow-hidden bg-white">
+  {showLikeButton && (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.stopPropagation()
+        onToggleLike(artist)
+      }}
+      className="absolute top-5 right-5 z-10"
+      aria-label="Sukai portofolio"
+    >
+      {isLiked ? (
+        <FaHeart className="text-[28px] text-black" />
+      ) : (
+        <FiHeart className="text-[30px] text-black" />
+      )}
+    </button>
+  )}
+
   {artistCoverImage && (
     <img
       src={artistCoverImage}

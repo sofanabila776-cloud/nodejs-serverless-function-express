@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { FiMoreVertical, FiEdit2 } from "react-icons/fi"
+import ProfileAvatar from "../../../shared/components/ProfileAvatar"
 
 function ProfileAccount({
   role = "buyer",
@@ -8,11 +9,39 @@ function ProfileAccount({
   setPhone = () => {},
   gender = "",
   setGender = () => {},
+  profilePhotoUrl = "",
+  profilePhotoPosition = { x: 0, y: 0 },
+  setProfilePhotoUrl = () => {},
+  setProfilePhotoPosition = () => {},
   showToast = () => {},
   setShowDeletePopup = () => {},
   setShowLogoutPopup = () => {},
 }) {
   const [showAccountMenu, setShowAccountMenu] = useState(false)
+
+  const fileInputRef = useRef(null)
+
+const handleProfilePhotoChange = (event) => {
+  const file = event.target.files?.[0]
+
+  if (!file) return
+
+  if (!file.type.startsWith("image/")) {
+    showToast("File harus berupa gambar")
+    return
+  }
+
+  const reader = new FileReader()
+
+  reader.onload = () => {
+    setProfilePhotoUrl(reader.result)
+    setProfilePhotoPosition({ x: 0, y: 0 })
+    showToast("Foto profil berhasil dipasang")
+  }
+
+  reader.readAsDataURL(file)
+  event.target.value = ""
+}
 
   const profileUsername =
     currentUser?.username || currentUser?.name || "unainaina"
@@ -68,11 +97,32 @@ function ProfileAccount({
 
       <div className="flex gap-[40px] mt-10">
         <div className="flex flex-col items-center">
-          <div className="relative w-[140px] h-[140px] rounded-full bg-[#D9D9D9]">
-            <button className="absolute bottom-0 right-0 w-[38px] h-[38px] rounded-full bg-black flex items-center justify-center">
-              <FiEdit2 className="text-white text-[18px]" />
-            </button>
-          </div>
+          <div className="relative w-[140px] h-[140px]">
+  <div>
+  <ProfileAvatar
+    imageUrl={profilePhotoUrl}
+    sizeClass="w-[140px] h-[140px]"
+    iconClass="text-[70px]"
+  />
+</div>
+
+  <input
+    ref={fileInputRef}
+    type="file"
+    accept="image/*"
+    onChange={handleProfilePhotoChange}
+    className="hidden"
+  />
+
+  <button
+    type="button"
+    onClick={() => fileInputRef.current?.click()}
+    className="absolute bottom-0 right-0 w-[38px] h-[38px] rounded-full bg-black flex items-center justify-center"
+    aria-label="Edit foto profil"
+  >
+    <FiEdit2 className="text-white text-[18px]" />
+  </button>
+</div>
 
           <p className="text-[24px] mt-4">{profileUsername}</p>
 

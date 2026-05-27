@@ -152,7 +152,7 @@ function BuyerHomePage({
 ) : (
   <div className="mt-8 text-[22px] text-[#8A8A8A]">
     {searchQuery.trim()
-      ? `Artist dengan username/nama "${searchQuery.trim()}" tidak ditemukan`
+      ? `Artist dengan username "${searchQuery.trim()}" tidak ditemukan`
       : "Artist tidak ditemukan"}
   </div>
 )}
