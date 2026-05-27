@@ -8,6 +8,9 @@ import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
+import { useEffect } from "react"
+import { getArtists } from "./features/auth/services/artistService"
+import { createOrderAPI } from "./features/auth/services/orderService"
 
 import { artists } from "./features/marketplace/data/artists"
 
@@ -325,31 +328,43 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
     setCurrentPage("detail")
   }
 
-  const handleSubmitBrief = () => {
-    if (!selectedProduct || !quantity || Number(quantity) < 1 || !description) {
-      setShowError(true)
-      return
-    }
-
-    const newOrder = createOrder({
-     selectedArtist,
-     selectedProduct,
-     quantity,
-     description,
-     currentBuyerName,
-     currentUser,
-   })
-
-    setOrders([newOrder, ...orders].filter(Boolean))
-    setCurrentPage("home")
-
-    setSelectedProduct(null)
-    setQuantity("")
-    setDescription("")
-    setShowError(false)
-
-    showToast("Pesanan berhasil dibuat")
+ const handleSubmitBrief = async () => {
+  if (!selectedProduct || !quantity || Number(quantity) < 1 || !description) {
+    setShowError(true)
+    return
   }
+
+  const newOrder = createOrder({
+    selectedArtist,
+    selectedProduct,
+    quantity,
+    description,
+    currentBuyerName,
+    currentUser,
+  })
+
+  if (import.meta.env.VITE_API_URL) {
+    await createOrderAPI({
+      artist: selectedArtist?.name,
+      artistId: selectedArtist?._id || selectedArtist?.id,
+      buyer: currentBuyerName,
+      buyerId: currentUser?.id || null,
+      buyerEmail: currentUser?.email || "",
+      product: selectedProduct.tag,
+      priceRange: selectedProduct.price,
+      quantity: Number(quantity),
+      description,
+    })
+  }
+
+  setOrders([newOrder, ...orders].filter(Boolean))
+  setCurrentPage("home")
+  setSelectedProduct(null)
+  setQuantity("")
+  setDescription("")
+  setShowError(false)
+  showToast("Pesanan berhasil dibuat")
+}
 
   let page
 
