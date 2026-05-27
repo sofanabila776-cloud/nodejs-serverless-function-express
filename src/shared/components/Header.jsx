@@ -21,6 +21,8 @@ function Header({
   role = "buyer",
   setActiveSidebar = () => {},
   setActiveOrderStatus = () => {},
+  searchQuery = "",
+  setSearchQuery = () => {},
 }) {
   const isAuthPage = AUTH_PAGES.includes(currentPage)
 
@@ -75,10 +77,12 @@ function Header({
           <FiSearch className="text-[22px]" />
 
           <input
-            type="text"
-            placeholder="Search"
-            className="ml-3 flex-1 outline-none text-[18px]"
-          />
+  type="text"
+  placeholder="Cari username Artist"
+  value={searchQuery}
+  onChange={(event) => setSearchQuery(event.target.value)}
+  className="ml-3 flex-1 outline-none text-[18px]"
+/>
         </div>
       )}
 

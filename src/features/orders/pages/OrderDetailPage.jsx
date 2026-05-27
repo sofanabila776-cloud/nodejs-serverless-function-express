@@ -5,6 +5,8 @@ import {
   FiX,
   FiDollarSign,
   FiEdit2,
+  FiRefreshCcw,
+  FiCheck,
 } from "react-icons/fi"
 
 import { ORDER_STATUS } from "../constants/orderStatus"
@@ -19,10 +21,14 @@ function OrderDetailPage({
   confirmPaymentByBuyer = () => {},
   confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
+  uploadRevisionByArtist = () => {},
+  requestRevisionByBuyer = () => {},
+  completeOrderByBuyer = () => {},
 }) {
   const [showPricePopup, setShowPricePopup] = useState(false)
   const [finalPriceInput, setFinalPriceInput] = useState("0")
   const [showUploadPopup, setShowUploadPopup] = useState(false)
+  const [uploadMode, setUploadMode] = useState("result")
   const [gdriveLink, setGdriveLink] = useState("")
   const [uploadLinkError, setUploadLinkError] = useState("")
 
@@ -225,8 +231,14 @@ function OrderDetailPage({
     return
   }
 
-  uploadResultByArtist(id, validLink)
+  if (uploadMode === "revision") {
+    uploadRevisionByArtist(id, validLink)
+  } else {
+    uploadResultByArtist(id, validLink)
+  }
+
   setShowUploadPopup(false)
+  setUploadMode("result")
   setGdriveLink("")
   setUploadLinkError("")
 }
@@ -333,10 +345,16 @@ function OrderDetailPage({
 
           {step.linkText && (
   <a
-    href={step.linkHref}
-    target="_blank"
-    rel="noreferrer"
+    href={step.linkHref || "#"}
+    target={step.linkHref ? "_blank" : undefined}
+    rel={step.linkHref ? "noreferrer" : undefined}
     onClick={(e) => {
+      if (step.linkOnClick) {
+        e.preventDefault()
+        step.linkOnClick()
+        return
+      }
+
       if (!step.linkHref) e.preventDefault()
     }}
     className="inline-block text-[20px] text-[#09027C] underline mt-[2px]"
@@ -358,8 +376,11 @@ function OrderDetailPage({
   const addCreatedStep = (active = false) => {
     timelineSteps.push({
       date: createdAt,
-      title: "Pesanan diajukan",
-      subtitles: ["Menunggu persetujuan artist"],
+      title: role === "artist" ? "Pesanan masuk" : "Pesanan diajukan",
+      subtitles:
+       role === "artist"
+        ? ["Tolak/Terima pesanan ini"]
+        : ["Menunggu persetujuan artist"],
       active,
       icon: <LuClipboardList className="text-[20px]" />,
     })
@@ -369,7 +390,10 @@ function OrderDetailPage({
     timelineSteps.push({
       type: "dot",
       date: acceptedAt,
-      title: "Buyer akan melakukan pembayaran",
+      title:
+      role === "artist"
+        ? "Buyer akan melakukan pembayaran"
+        : "Lakukan pembayaran melalui kode QR berikut",
       active: false,
       bold: false,
     })
@@ -381,7 +405,10 @@ function OrderDetailPage({
   timelineSteps.push({
     date: paymentConfirmedAt,
     title: "Menunggu pembayaran",
-    subtitles: ["Buyer telah melakukan pembayaran"],
+    subtitles:
+      role === "artist"
+        ? ["Buyer telah melakukan pembayaran"]
+        : ["Menunggu konfirmasi pembayaran dari artist"],
     linkText:
       role === "artist" && paymentProofHref
         ? "Lihat Bukti Pembayaran"
@@ -399,23 +426,51 @@ function OrderDetailPage({
     timelineSteps.push({
       type: "dot",
       date: processedAt,
-      title: "Karya sedang dibuat",
+      title:
+      role === "artist"
+        ? "Kerjakan dan kirim hasil pesanan"
+        : "Karya sedang dibuat",
       active: false,
       bold: false,
     })
   }
 
   const addResultUploadedStep = (active = false) => {
-    timelineSteps.push({
-      date: resultUploadedAt,
-      title: "Pesanan diproses",
-      subtitles: ["Hasil karya sudah dikirim"],
-      linkText: "Lihat hasil",
-      linkHref: selectedOrder?.resultLink,
-      active,
-      icon: <FiEdit2 className="text-[22px]" />,
-    })
-  }
+  timelineSteps.push({
+    date: resultUploadedAt,
+    title: "Pesanan diproses",
+    subtitles: ["Hasil pesanan sudah dikirim"],
+    linkText: "Lihat hasil",
+    linkHref: selectedOrder?.resultLink,
+    active,
+    icon: <FiEdit2 className="text-[22px]" />,
+    actions:
+      role === "buyer" &&
+      active &&
+      status === ORDER_STATUS.RESULT_UPLOADED &&
+      !selectedOrder?.revisionRequestedAt
+        ? (
+          <div className="flex justify-end gap-5 mt-3 w-full">
+            <button
+              type="button"
+              onClick={() => setCurrentPage("revisionBrief")}
+              className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+            >
+              Ajukan Revisi
+            </button>
+
+            <button
+              type="button"
+              onClick={() => completeOrderByBuyer(id)}
+              className="w-[190px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+            >
+              Selesaikan Pesanan
+            </button>
+          </div>
+        )
+        : null,
+  })
+}
 
   if (isCancelled) {
     timelineSteps.push({
@@ -456,88 +511,124 @@ function OrderDetailPage({
 
     addCreatedStep(false)
   } else if (isCompleted) {
-    timelineSteps.push({
-      date: completedAt,
-      title: "Pesanan selesai",
-      subtitles: ["Pesanan telah disetujui buyer"],
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
-    })
+  timelineSteps.push({
+    date: completedAt,
+    title: "Pesanan selesai",
+    subtitles: role === "buyer" ? [] : ["Pesanan telah disetujui buyer"],
+    active: true,
+    icon: <FiCheck className="text-[22px]" />,
+  })
 
-    if (selectedOrder?.revisionUploadedAt) {
-      timelineSteps.push({
-        date: revisionUploadedAt,
-        title: "Pesanan direvisi",
-        subtitles: ["Hasil revisi 1 sudah dikirim"],
-        linkText: "Lihat hasil revisi 1",
-        linkHref: selectedOrder?.revisionLink,
-        active: false,
-        icon: <FiEdit2 className="text-[20px]" />,
-      })
-
-      timelineSteps.push({
-        type: "dot",
-        date: revisionRequestedAt,
-        title: "Revisi karya sedang dibuat",
-        active: false,
-        bold: false,
-      })
-    }
-
-    addResultUploadedStep(false)
-    addProcessedStartedStep()
-    addPaymentConfirmedStep()
-    addBuyerWillPayStep()
-    addCreatedStep(false)
-  } else if (isRevisionUploaded) {
+  if (selectedOrder?.revisionUploadedAt) {
     timelineSteps.push({
       date: revisionUploadedAt,
       title: "Pesanan direvisi",
-      subtitles: ["Hasil revisi 1 sudah dikirim"],
-      linkText: "Lihat hasil revisi 1",
+      subtitles: ["Hasil revisi telah dikirim"],
+      linkText: "Lihat hasil revisi",
       linkHref: selectedOrder?.revisionLink,
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
+      active: false,
+      icon: <FiRefreshCcw className="text-[22px]" />,
     })
 
     timelineSteps.push({
       type: "dot",
       date: revisionRequestedAt,
-      title: "Revisi karya sedang dibuat",
+      title:
+        role === "artist"
+          ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
+          : "Revisi karya sedang dibuat",
       active: false,
       bold: false,
     })
+  }
 
-    addResultUploadedStep(false)
-    addProcessedStartedStep()
-    addPaymentConfirmedStep()
-    addBuyerWillPayStep()
-    addCreatedStep(false)
+  addResultUploadedStep(false)
+  addProcessedStartedStep()
+  addPaymentConfirmedStep()
+  addBuyerWillPayStep()
+  addCreatedStep(false)
   } else if (isRevisionRequested) {
-    timelineSteps.push({
-      date: revisionRequestedAt,
-      title: "Pesanan direvisi",
-      subtitles: ["Revisi karya sedang dibuat"],
-      linkText: "Lihat brief revisi 1",
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
-    })
+  timelineSteps.push({
+    date: revisionRequestedAt,
+    title: "Pesanan direvisi",
+    subtitles:
+      role === "artist"
+        ? ["Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"]
+        : ["Revisi karya sedang dibuat"],
+    linkText: "Lihat brief revisi",
+    linkOnClick: () => setCurrentPage("revisionBriefView"),
+    active: true,
+    icon: <FiRefreshCcw className="text-[22px]" />,
+    actions:
+      role === "artist"
+        ? (
+          <div className="flex justify-end mt-3 w-full">
+            <button
+              type="button"
+              onClick={() => {
+                setUploadMode("revision")
+                setShowUploadPopup(true)
+              }}
+              className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
+            >
+              Upload
+            </button>
+          </div>
+        )
+        : null,
+  })
 
-    addResultUploadedStep(false)
-    addProcessedStartedStep()
-    addPaymentConfirmedStep()
-    addBuyerWillPayStep()
-    addCreatedStep(false)
-  } else if (isResultUploaded) {
-    timelineSteps.push({
-      date: resultUploadedAt,
-      title: "Pesanan diproses",
-      subtitles: ["Hasil karya sudah dikirim"],
-      linkText: "Lihat hasil",
-      linkHref: selectedOrder?.resultLink,
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
-    })
+  addResultUploadedStep(false)
+  addProcessedStartedStep()
+  addPaymentConfirmedStep()
+  addBuyerWillPayStep()
+  addCreatedStep(false)
+  } else if (isRevisionUploaded) {
+  timelineSteps.push({
+    date: revisionUploadedAt,
+    title: "Pesanan direvisi",
+    subtitles:
+      role === "buyer"
+        ? ["Hasil Revisi telah dikirim"]
+        : ["Hasil revisi telah dikirim"],
+    linkText: "Lihat hasil revisi",
+    linkHref: selectedOrder?.revisionLink,
+    active: true,
+    icon: <FiRefreshCcw className="text-[22px]" />,
+    actions:
+      role === "buyer"
+        ? (
+          <div className="flex justify-end mt-3 w-full">
+            <button
+              type="button"
+              onClick={() => completeOrderByBuyer(id)}
+              className="w-[210px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+            >
+              Selesaikan Pesanan
+            </button>
+          </div>
+        )
+        : null,
+  })
+
+  timelineSteps.push({
+    type: "dot",
+    date: revisionRequestedAt,
+    title:
+      role === "artist"
+        ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
+        : "Revisi karya sedang dibuat",
+    active: false,
+    bold: false,
+  })
+
+  addResultUploadedStep(false)
+  addProcessedStartedStep()
+  addPaymentConfirmedStep()
+  addBuyerWillPayStep()
+  addCreatedStep(false)
+} else if (isResultUploaded) {
+    addResultUploadedStep(true)
 
     addProcessedStartedStep()
     addPaymentConfirmedStep()
@@ -554,7 +645,10 @@ function OrderDetailPage({
         role === "artist" ? (
           <div className="flex justify-end mt-[30px]">
             <button
-              onClick={() => setShowUploadPopup(true)}
+              onClick={() => {
+                setUploadMode("result")
+                setShowUploadPopup(true)
+              }}
               className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
             >
               Upload
@@ -654,8 +748,11 @@ function OrderDetailPage({
   } else {
     timelineSteps.push({
       date: createdAt,
-      title: "Pesanan diajukan",
-      subtitles: ["Menunggu persetujuan artist"],
+      title: role === "artist" ? "Pesanan masuk" : "Pesanan diajukan",
+      subtitles:
+      role === "artist"
+        ? ["Tolak/Terima pesanan ini"]
+        : ["Menunggu persetujuan artist"],
       active: true,
       icon: <LuClipboardList className="text-[20px]" />,
       actions:
@@ -748,7 +845,7 @@ function OrderDetailPage({
 
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[430px] bg-white rounded-[24px] shadow-lg z-[90] px-8 py-8">
             <p className="text-[24px] text-center">
-              Link G-drive
+              {uploadMode === "revision" ? "Link G-drive hasil revisi" : "Link G-drive"}
             </p>
 
             <input
@@ -757,6 +854,11 @@ function OrderDetailPage({
   setGdriveLink(e.target.value)
   setUploadLinkError("")
 }}
+              placeholder={
+                uploadMode === "revision"
+                  ? "Masukkan link G-drive hasil revisi"
+                  : "Masukkan link G-drive hasil pesanan"
+              }
               className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
             />
 

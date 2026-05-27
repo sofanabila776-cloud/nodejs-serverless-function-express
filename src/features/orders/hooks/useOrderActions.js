@@ -106,6 +106,60 @@ export function useOrderActions({
     showToast("Hasil karya berhasil dikirim", 5000)
   }
 
+  const uploadRevisionByArtist = (id, revisionLink) => {
+  const changes = {
+    status: ORDER_STATUS.REVISION_UPLOADED,
+    revisionLink,
+    revisionUploadedAt: "07-04-2026 10:38",
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  showToast("Hasil revisi berhasil dikirim", 5000)
+}
+
+  const requestRevisionByBuyer = (id, revisionDescription, revisionSupportLink = "") => {
+  const changes = {
+    status: ORDER_STATUS.REVISION_REQUESTED,
+    revisionDescription,
+    revisionSupportLink,
+    revisionRequestedAt: "07-04-2026 08:15",
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  setActiveSidebar("orders")
+  setActiveOrderStatus("revision")
+
+  showToast("Request revisi berhasil dikirim", 5000)
+}
+
+  const completeOrderByBuyer = (id) => {
+  const changes = {
+    status: ORDER_STATUS.COMPLETED,
+    completedAt: "07-04-2026 11:00",
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+
+  setActiveSidebar("orders")
+  setActiveOrderStatus("completed")
+
+  showToast("Pesanan berhasil diselesaikan", 5000)
+}
+
   return {
     cancelOrder,
     rejectOrderByArtist,
@@ -113,5 +167,8 @@ export function useOrderActions({
     confirmPaymentByBuyer,
     confirmPaymentByArtist,
     uploadResultByArtist,
+    requestRevisionByBuyer,
+    completeOrderByBuyer,
+    uploadRevisionByArtist,
   }
 }

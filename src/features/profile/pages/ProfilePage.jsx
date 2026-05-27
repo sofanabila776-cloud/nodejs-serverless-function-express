@@ -39,6 +39,9 @@ function ProfilePage({
   confirmPaymentByBuyer = () => {},
   confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
+  uploadRevisionByArtist = () => {},
+  requestRevisionByBuyer = () => {},
+  completeOrderByBuyer = () => {},
   setSelectedOrder = () => {},
 }) {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false)
@@ -135,6 +138,9 @@ function ProfilePage({
               confirmPaymentByBuyer={confirmPaymentByBuyer}
               confirmPaymentByArtist={confirmPaymentByArtist}
               uploadResultByArtist={uploadResultByArtist}
+              uploadRevisionByArtist={uploadRevisionByArtist}
+              requestRevisionByBuyer={requestRevisionByBuyer}
+              completeOrderByBuyer={completeOrderByBuyer}
               setSelectedOrder={setSelectedOrder}
             />
           )}
