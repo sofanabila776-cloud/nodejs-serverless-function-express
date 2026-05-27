@@ -8,14 +8,8 @@ import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
-<<<<<<< HEAD
-import { useEffect } from "react"
-import { getArtists } from "./features/auth/services/artistService"
-import { createOrderAPI } from "./features/auth/services/orderService"
-=======
 import RevisionBriefPage from "./features/orders/pages/RevisionBriefPage"
 import RevisionBriefViewPage from "./features/orders/pages/RevisionBriefViewPage"
->>>>>>> f1c4c2f87461ee6b8e58317f3aa0c397fd07fb7e
 
 import { artists } from "./features/marketplace/data/artists"
 
@@ -50,49 +44,51 @@ import {
   getCurrentArtistInfo,
 } from "./shared/utils/userHelpers"
 
+import LikedPortfolioPage from "./features/marketplace/pages/LikedPortfolioPage"
+
 function App() {
   const handleLoginSuccess = (user) => {
-  setCurrentUser(user)
-  setIsLoggedIn(true)
-  setRole(user.role)
+    setCurrentUser(user)
+    setIsLoggedIn(true)
+    setRole(user.role)
 
-  if (user.role === "artist") {
-    setCurrentPage("profile")
-    setActiveSidebar("account")
-    setActiveOrderStatus("artist_incoming")
-  } else {
-    setCurrentPage("home")
+    if (user.role === "artist") {
+      setCurrentPage("profile")
+      setActiveSidebar("account")
+      setActiveOrderStatus("artist_incoming")
+    } else {
+      setCurrentPage("home")
+    }
   }
-}
 
-const handleLogout = () => {
-  logoutUser()
-  setCurrentUser(null)
-  setIsLoggedIn(false)
-  setRole("buyer")
-  setCurrentPage("home")
-}
-
-const handleDeleteAccount = async () => {
-  try {
-    await deleteCurrentUserAccount()
-
+  const handleLogout = () => {
+    logoutUser()
     setCurrentUser(null)
     setIsLoggedIn(false)
     setRole("buyer")
-    setShowDeletePopup(false)
     setCurrentPage("home")
-
-    showToast("Akun berhasil dihapus")
-  } catch (error) {
-    showToast(error.message || "Gagal menghapus akun")
   }
-}
 
-  const [currentUser, setCurrentUser] = useState(getCurrentUser())
-  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(currentUser))
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteCurrentUserAccount()
+
+      setCurrentUser(null)
+      setIsLoggedIn(false)
+      setRole("buyer")
+      setShowDeletePopup(false)
+      setCurrentPage("home")
+
+      showToast("Akun berhasil dihapus")
+    } catch (error) {
+      showToast(error.message || "Gagal menghapus akun")
+    }
+  }
+
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentPage, setCurrentPage] = useState("home")
-  const [role, setRole] = useState(currentUser?.role || "buyer")
+  const [role, setRole] = useState("buyer")
   const [signupData, setSignupData] = useState({})
 
   const [toastMessage, setToastMessage] = useState("")
@@ -106,6 +102,16 @@ const handleDeleteAccount = async () => {
   const [portfolioIndex, setPortfolioIndex] = useState(0)
   const [showLoginWarning, setShowLoginWarning] = useState(false)
 
+  const [showLikeWarning, setShowLikeWarning] = useState(false)
+
+const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("pickaryaLikedArtistIdsByUser")) || {}
+  } catch {
+    return {}
+  }
+})
+
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [quantity, setQuantity] = useState("")
   const [description, setDescription] = useState("")
@@ -117,86 +123,139 @@ const handleDeleteAccount = async () => {
   const [publishedArtists, setPublishedArtists] = useState([])
 
   const addArtistProduct = (newProduct) => {
-  setArtistPortfolio((prevPortfolio) => {
-    if (!prevPortfolio) return prevPortfolio
+    setArtistPortfolio((prevPortfolio) => {
+      if (!prevPortfolio) return prevPortfolio
 
-    return {
-      ...prevPortfolio,
-      products: [...(prevPortfolio.products || []), newProduct],
-    }
-  })
+      return {
+        ...prevPortfolio,
+        products: [...(prevPortfolio.products || []), newProduct],
+      }
+    })
 
-  setActiveSidebar("portfolio")
-  setCurrentPage("profile")
-  showToast("Produk berhasil ditambahkan")
-}
+    setActiveSidebar("portfolio")
+    setCurrentPage("profile")
+    showToast("Produk berhasil ditambahkan")
+  }
 
-const deleteArtistProduct = (productId) => {
-  setArtistPortfolio((prevPortfolio) => {
-    if (!prevPortfolio) return prevPortfolio
+  const deleteArtistProduct = (productId) => {
+    setArtistPortfolio((prevPortfolio) => {
+      if (!prevPortfolio) return prevPortfolio
 
-    return {
-      ...prevPortfolio,
-      products: (prevPortfolio.products || []).filter(
-        (product) => product.id !== productId
-      ),
-    }
-  })
+      return {
+        ...prevPortfolio,
+        products: (prevPortfolio.products || []).filter(
+          (product) => product.id !== productId
+        ),
+      }
+    })
 
-  showToast("Produk berhasil dihapus")
-}
+    showToast("Produk berhasil dihapus")
+  }
 
   const [activeSidebar, setActiveSidebar] = useState("account")
   const [activeOrderStatus, setActiveOrderStatus] = useState("waiting")
 
   const [accountProfiles, setAccountProfiles] = useState(() => {
-  try {
-    return JSON.parse(localStorage.getItem("pickaryaAccountProfiles")) || {}
-  } catch {
-    return {}
-  }
-})
-
-const currentAccountProfileKey =
-  currentUser?.id ||
-  currentUser?.email ||
-  currentUser?.username ||
-  currentUser?.name ||
-  "guest"
-
-const currentAccountProfile =
-  accountProfiles[currentAccountProfileKey] || {}
-
-const phone = currentAccountProfile.phone || ""
-const gender = currentAccountProfile.gender || ""
-
-const updateAccountProfile = (field, value) => {
-  setAccountProfiles((prevProfiles) => {
-    const nextProfiles = {
-      ...prevProfiles,
-      [currentAccountProfileKey]: {
-        ...(prevProfiles[currentAccountProfileKey] || {}),
-        [field]: value,
-      },
+    try {
+      return JSON.parse(localStorage.getItem("pickaryaAccountProfiles")) || {}
+    } catch {
+      return {}
     }
-
-    localStorage.setItem(
-      "pickaryaAccountProfiles",
-      JSON.stringify(nextProfiles)
-    )
-
-    return nextProfiles
   })
-}
 
-const setPhone = (value) => {
-  updateAccountProfile("phone", value)
-}
+  const currentAccountProfileKey =
+    currentUser?.id ||
+    currentUser?.email ||
+    currentUser?.username ||
+    currentUser?.name ||
+    "guest"
 
-const setGender = (value) => {
-  updateAccountProfile("gender", value)
-}
+  const currentAccountProfile =
+    accountProfiles[currentAccountProfileKey] || {}
+
+  const phone = currentAccountProfile.phone || ""
+  const gender = currentAccountProfile.gender || ""
+
+  const profilePhotoUrl = currentAccountProfile.profilePhotoUrl || ""
+
+  const profilePhotoPosition =
+    currentAccountProfile.profilePhotoPosition || { x: 0, y: 0 }
+
+  const updateAccountProfile = (field, value) => {
+    setAccountProfiles((prevProfiles) => {
+      const nextProfiles = {
+        ...prevProfiles,
+        [currentAccountProfileKey]: {
+          ...(prevProfiles[currentAccountProfileKey] || {}),
+          [field]: value,
+        },
+      }
+
+      localStorage.setItem(
+        "pickaryaAccountProfiles",
+        JSON.stringify(nextProfiles)
+      )
+
+      return nextProfiles
+    })
+  }
+
+  const setPhone = (value) => {
+    updateAccountProfile("phone", value)
+  }
+
+  const setGender = (value) => {
+    updateAccountProfile("gender", value)
+  }
+
+  const syncPublishedArtistProfile = (changes) => {
+    if (role !== "artist" || !currentUser) return
+
+    const currentArtistId =
+      currentUser?.id ||
+      currentUser?.email ||
+      currentUser?.username
+
+    const currentArtistName =
+      currentUser?.username ||
+      currentUser?.name
+
+    setPublishedArtists((prevArtists) =>
+      prevArtists.map((artist) =>
+        String(artist.id) === String(currentArtistId) ||
+        artist.name === currentArtistName
+          ? {
+              ...artist,
+              ...changes,
+            }
+          : artist
+      )
+    )
+  }
+
+  const setProfilePhotoUrl = (value) => {
+    updateAccountProfile("profilePhotoUrl", value)
+    syncPublishedArtistProfile({ profilePhotoUrl: value })
+  }
+
+  const setProfilePhotoPosition = (value) => {
+    updateAccountProfile("profilePhotoPosition", value)
+    syncPublishedArtistProfile({ profilePhotoPosition: value })
+  }
+
   const [showDeletePopup, setShowDeletePopup] = useState(false)
+
+  useEffect(() => {
+    logoutUser()
+  }, [])
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    })
+  }, [currentPage, activeSidebar, activeOrderStatus, selectedOrder?.id])
 
   const showToast = (msg, duration = 3000) => {
     setToastMessage(msg)
@@ -204,23 +263,23 @@ const setGender = (value) => {
   }
 
   const {
-  cancelOrder,
-  rejectOrderByArtist,
-  acceptOrderByArtist,
-  confirmPaymentByBuyer,
-  confirmPaymentByArtist,
-  uploadResultByArtist,
-  uploadRevisionByArtist,
-  requestRevisionByBuyer,
-  completeOrderByBuyer,
-} = useOrderActions({
-  setOrders,
-  setSelectedOrder,
-  setCurrentPage,
-  setActiveSidebar,
-  setActiveOrderStatus,
-  showToast,
-})
+    cancelOrder,
+    rejectOrderByArtist,
+    acceptOrderByArtist,
+    confirmPaymentByBuyer,
+    confirmPaymentByArtist,
+    uploadResultByArtist,
+    uploadRevisionByArtist,
+    requestRevisionByBuyer,
+    completeOrderByBuyer,
+  } = useOrderActions({
+    setOrders,
+    setSelectedOrder,
+    setCurrentPage,
+    setActiveSidebar,
+    setActiveOrderStatus,
+    showToast,
+  })
 
   const categories = MARKETPLACE_CATEGORIES
   const artistLevels = ARTIST_LEVELS
@@ -238,12 +297,12 @@ const setGender = (value) => {
   }
 
   const toggleLevel = (level) => {
-  if (selectedLevels.includes(level)) {
-    setSelectedLevels(selectedLevels.filter((item) => item !== level))
-  } else {
-    setSelectedLevels([...selectedLevels, level])
+    if (selectedLevels.includes(level)) {
+      setSelectedLevels(selectedLevels.filter((item) => item !== level))
+    } else {
+      setSelectedLevels([...selectedLevels, level])
+    }
   }
-}
 
   const removeLevel = (level) => {
     setSelectedLevels(selectedLevels.filter((item) => item !== level))
@@ -251,152 +310,212 @@ const setGender = (value) => {
 
   const currentBuyerName = getCurrentBuyerName(currentUser, DEFAULT_BUYER)
 
-const marketplaceArtists = [
-  ...publishedArtists,
-  ...artists.filter(
-    (artist) =>
-      !publishedArtists.some(
-        (publishedArtist) =>
-          String(publishedArtist.id) === String(artist.id) ||
-          publishedArtist.name === artist.name
-      )
-  ),
-]
-
-const currentArtist = getCurrentArtistInfo({
-  role,
-  currentUser,
-  artists: marketplaceArtists,
-  defaultArtist: DEFAULT_ARTIST,
-})
-
-const normalizeProductTag = (tag) => {
-  const cleanTag = String(tag || "").replace("#", "").trim()
-
-  const matchedCategory = categories.find(
-    (category) => category.toLowerCase() === cleanTag.toLowerCase()
-  )
-
-  return matchedCategory || cleanTag
-}
-
-const buildPublishedArtist = (portfolio) => {
-  const portfolioProducts = portfolio?.products || []
-  const portfolioPages = portfolio?.pages || []
-
-  const artistId =
-    currentUser?.id ||
-    currentUser?.email ||
-    currentUser?.username ||
-    `published-artist-${Date.now()}`
-
-  const artistName =
-    currentUser?.username || currentUser?.name || "artist-baru"
-
-  return {
-    id: artistId,
-    name: artistName,
-    level: currentUser?.artistLevel || "beginner",
-    rating: 0,
-    duration: `${portfolio.durationMin}-${portfolio.durationMax} hari`,
-    tags: [
-      ...new Set(
-        portfolioProducts.map((product) =>
-          normalizeProductTag(product.tag)
+  const marketplaceArtists = [
+    ...publishedArtists,
+    ...artists.filter(
+      (artist) =>
+        !publishedArtists.some(
+          (publishedArtist) =>
+            String(publishedArtist.id) === String(artist.id) ||
+            publishedArtist.name === artist.name
         )
-      ),
-    ],
-    coverImageUrl: portfolioPages[0]?.imageUrl || "",
-    portfolioPages,
-    portfolio: portfolioPages.map((page) => page.imageUrl),
-    products: portfolioProducts.map((product) => {
-      const cleanTag = normalizeProductTag(product.tag)
+    ),
+  ]
 
-      return {
-        tag: `#${cleanTag.toLowerCase()}`,
-        price: `Rp${Number(product.priceMin).toLocaleString(
-          "id-ID"
-        )} - Rp${Number(product.priceMax).toLocaleString("id-ID")}`,
-        coverImageUrl: product.coverImageUrl || "",
-      }
-    }),
-  }
+  const currentLikedUserKey =
+  currentUser?.id ||
+  currentUser?.email ||
+  currentUser?.username ||
+  currentUser?.name ||
+  "guest"
+
+const likedArtistIds =
+  likedArtistIdsByUser[currentLikedUserKey] || []
+
+const isArtistLiked = (artist) => {
+  return likedArtistIds.some(
+    (artistId) => String(artistId) === String(artist?.id)
+  )
 }
 
-const publishArtistPortfolio = () => {
-  setArtistPortfolio((prevPortfolio) => {
-    if (!prevPortfolio) return prevPortfolio
+const likedArtists = marketplaceArtists.filter((artist) =>
+  isArtistLiked(artist)
+)
 
-    const updatedPortfolio = {
-      ...prevPortfolio,
-      isPublished: true,
+const toggleLikedArtist = (artist) => {
+  if (!artist) return
+
+  if (!isLoggedIn) {
+    setShowLikeWarning(true)
+    return
+  }
+
+  setLikedArtistIdsByUser((prevLikedData) => {
+    const previousLikedIds = prevLikedData[currentLikedUserKey] || []
+    const artistId = artist.id
+
+    const nextLikedIds = previousLikedIds.some(
+      (likedId) => String(likedId) === String(artistId)
+    )
+      ? previousLikedIds.filter(
+          (likedId) => String(likedId) !== String(artistId)
+        )
+      : [...previousLikedIds, artistId]
+
+    const nextLikedData = {
+      ...prevLikedData,
+      [currentLikedUserKey]: nextLikedIds,
     }
 
-    const publishedArtist = buildPublishedArtist(updatedPortfolio)
+    localStorage.setItem(
+      "pickaryaLikedArtistIdsByUser",
+      JSON.stringify(nextLikedData)
+    )
 
-    setPublishedArtists((prevArtists) => [
-      publishedArtist,
-      ...prevArtists.filter(
-        (artist) =>
-          String(artist.id) !== String(publishedArtist.id) &&
-          artist.name !== publishedArtist.name
-      ),
-    ])
-
-    return updatedPortfolio
+    return nextLikedData
   })
 
-  showToast("Portofolio berhasil dipublikasikan")
+  setShowLikeWarning(false)
 }
 
-const deleteArtistPortfolio = () => {
-  setArtistPortfolio(null)
+  const currentArtist = getCurrentArtistInfo({
+    role,
+    currentUser,
+    artists: marketplaceArtists,
+    defaultArtist: DEFAULT_ARTIST,
+  })
 
-  setPublishedArtists((prevArtists) =>
-    prevArtists.filter(
-      (artist) =>
-        String(artist.id) !==
-          String(currentUser?.id || currentUser?.email) &&
-        artist.name !== (currentUser?.username || currentUser?.name)
+  const normalizeProductTag = (tag) => {
+    const cleanTag = String(tag || "").replace("#", "").trim()
+
+    const matchedCategory = categories.find(
+      (category) => category.toLowerCase() === cleanTag.toLowerCase()
     )
-  )
 
-  showToast("Portofolio berhasil dihapus")
-}
-
-const filteredArtists = marketplaceArtists.filter((artist) => {
-  const normalizedSearchQuery = searchQuery.trim().toLowerCase()
-
-  const artistSearchText = [
-    artist.name,
-    artist.username,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase()
-
-  const matchSearch =
-    normalizedSearchQuery === "" ||
-    artistSearchText.includes(normalizedSearchQuery)
-
-  const matchCategory =
-    selectedCategories.length === 0 ||
-    artist.tags.some((tag) => selectedCategories.includes(tag))
-
-  const matchLevel =
-    selectedLevels.length === 0 ||
-    selectedLevels.includes(artist.level)
-
-  return matchSearch && matchCategory && matchLevel
-})
-
-  const openDetail = (artist) => {
-    setSelectedArtist(artist)
-    setPortfolioIndex(0)
-    setCurrentPage("detail")
+    return matchedCategory || cleanTag
   }
 
- const handleSubmitBrief = async () => {
+  const buildPublishedArtist = (portfolio) => {
+    const portfolioProducts = portfolio?.products || []
+    const portfolioPages = portfolio?.pages || []
+
+    const artistId =
+      currentUser?.id ||
+      currentUser?.email ||
+      currentUser?.username ||
+      `published-artist-${Date.now()}`
+
+    const artistName =
+      currentUser?.username || currentUser?.name || "artist-baru"
+
+    return {
+      id: artistId,
+      name: artistName,
+      profilePhotoUrl,
+      profilePhotoPosition,
+      level: currentUser?.artistLevel || "beginner",
+      rating: 0,
+      duration: `${portfolio.durationMin}-${portfolio.durationMax} hari`,
+      tags: [
+        ...new Set(
+          portfolioProducts.map((product) =>
+            normalizeProductTag(product.tag)
+          )
+        ),
+      ],
+      coverImageUrl: portfolioPages[0]?.imageUrl || "",
+      portfolioPages,
+      portfolio: portfolioPages.map((page) => page.imageUrl),
+      products: portfolioProducts.map((product) => {
+        const cleanTag = normalizeProductTag(product.tag)
+
+        return {
+          tag: `#${cleanTag.toLowerCase()}`,
+          price: `Rp${Number(product.priceMin).toLocaleString(
+            "id-ID"
+          )} - Rp${Number(product.priceMax).toLocaleString("id-ID")}`,
+          coverImageUrl: product.coverImageUrl || "",
+        }
+      }),
+    }
+  }
+
+  const publishArtistPortfolio = () => {
+    setArtistPortfolio((prevPortfolio) => {
+      if (!prevPortfolio) return prevPortfolio
+
+      const updatedPortfolio = {
+        ...prevPortfolio,
+        isPublished: true,
+      }
+
+      const publishedArtist = buildPublishedArtist(updatedPortfolio)
+
+      setPublishedArtists((prevArtists) => [
+        publishedArtist,
+        ...prevArtists.filter(
+          (artist) =>
+            String(artist.id) !== String(publishedArtist.id) &&
+            artist.name !== publishedArtist.name
+        ),
+      ])
+
+      return updatedPortfolio
+    })
+
+    showToast("Portofolio berhasil dipublikasikan")
+  }
+
+  const deleteArtistPortfolio = () => {
+    setArtistPortfolio(null)
+
+    setPublishedArtists((prevArtists) =>
+      prevArtists.filter(
+        (artist) =>
+          String(artist.id) !==
+            String(currentUser?.id || currentUser?.email) &&
+          artist.name !== (currentUser?.username || currentUser?.name)
+      )
+    )
+
+    showToast("Portofolio berhasil dihapus")
+  }
+
+  const filteredArtists = marketplaceArtists.filter((artist) => {
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase()
+
+    const artistSearchText = [
+      artist.name,
+      artist.username,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+
+    const matchSearch =
+      normalizedSearchQuery === "" ||
+      artistSearchText.includes(normalizedSearchQuery)
+
+    const matchCategory =
+      selectedCategories.length === 0 ||
+      artist.tags.some((tag) => selectedCategories.includes(tag))
+
+    const matchLevel =
+      selectedLevels.length === 0 ||
+      selectedLevels.includes(artist.level)
+
+    return matchSearch && matchCategory && matchLevel
+  })
+
+  const openDetail = (artist) => {
+  setSelectedArtist(artist)
+  setPortfolioIndex(0)
+  setShowLikeWarning(false)
+  setShowLoginWarning(false)
+  setCurrentPage("detail")
+}
+
+ const handleSubmitBrief = () => {
   if (!selectedProduct || !quantity || Number(quantity) < 1 || !description) {
     setShowError(true)
     return
@@ -411,26 +530,14 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
     currentUser,
   })
 
-  if (import.meta.env.VITE_API_URL) {
-    await createOrderAPI({
-      artist: selectedArtist?.name,
-      artistId: selectedArtist?._id || selectedArtist?.id,
-      buyer: currentBuyerName,
-      buyerId: currentUser?.id || null,
-      buyerEmail: currentUser?.email || "",
-      product: selectedProduct.tag,
-      priceRange: selectedProduct.price,
-      quantity: Number(quantity),
-      description,
-    })
-  }
-
   setOrders([newOrder, ...orders].filter(Boolean))
   setCurrentPage("home")
+
   setSelectedProduct(null)
   setQuantity("")
   setDescription("")
   setShowError(false)
+
   showToast("Pesanan berhasil dibuat")
 }
 
@@ -457,6 +564,20 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
       )
       break
 
+    case "likedPortfolio":
+  page = (
+    <LikedPortfolioPage
+      isLoggedIn={isLoggedIn}
+      likedArtists={likedArtists}
+      openDetail={openDetail}
+      setCurrentPage={setCurrentPage}
+      selectedCategories={selectedCategories}
+      isArtistLiked={isArtistLiked}
+      toggleLikedArtist={toggleLikedArtist}
+    />
+  )
+  break
+
     case "detail":
       page = (
         <ArtistDetailPage
@@ -468,8 +589,12 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           setCurrentPage={setCurrentPage}
           showLoginWarning={showLoginWarning}
           setShowLoginWarning={setShowLoginWarning}
+          showLikeWarning={showLikeWarning}
+          setShowLikeWarning={setShowLikeWarning}
+          isArtistLiked={isArtistLiked(selectedArtist)}
+          toggleLikedArtist={toggleLikedArtist}
           similarArtists={marketplaceArtists.filter(
-           (a) => a.id !== selectedArtist?.id
+            (a) => a.id !== selectedArtist?.id
           )}
           openDetail={openDetail}
         />
@@ -518,6 +643,10 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           setPhone={setPhone}
           gender={gender}
           setGender={setGender}
+          profilePhotoUrl={profilePhotoUrl}
+          profilePhotoPosition={profilePhotoPosition}
+          setProfilePhotoUrl={setProfilePhotoUrl}
+          setProfilePhotoPosition={setProfilePhotoPosition}
           showToast={showToast}
           orders={orders}
           cancelOrder={cancelOrder}
@@ -558,6 +687,10 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
           setPhone={setPhone}
           gender={gender}
           setGender={setGender}
+          profilePhotoUrl={profilePhotoUrl}
+          profilePhotoPosition={profilePhotoPosition}
+          setProfilePhotoUrl={setProfilePhotoUrl}
+          setProfilePhotoPosition={setProfilePhotoPosition}
           showToast={showToast}
           orders={orders}
           cancelOrder={cancelOrder}
@@ -585,104 +718,104 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
       )
       break
 
-      case "revisionBriefView":
-  page = (
-    <RevisionBriefViewPage
-      selectedOrder={selectedOrder}
-      setCurrentPage={setCurrentPage}
-    />
-  )
-  break
+    case "revisionBriefView":
+      page = (
+        <RevisionBriefViewPage
+          selectedOrder={selectedOrder}
+          setCurrentPage={setCurrentPage}
+        />
+      )
+      break
 
     case "artistPortfolioUpload":
-  page = (
-    <ArtistPortfolioUploadPage
-      initialPortfolio={artistPortfolio}
-      onUploadPortfolio={(newPortfolio) => {
-        setArtistPortfolio(newPortfolio)
-        setActiveSidebar("portfolio")
-        setCurrentPage("profile")
-        showToast(
-          artistPortfolio
-            ? "Portofolio berhasil diperbarui"
-            : "Portofolio berhasil diupload"
-        )
-      }}
-      setCurrentPage={setCurrentPage}
-    />
-  )
-  break
+      page = (
+        <ArtistPortfolioUploadPage
+          initialPortfolio={artistPortfolio}
+          onUploadPortfolio={(newPortfolio) => {
+            setArtistPortfolio(newPortfolio)
+            setActiveSidebar("portfolio")
+            setCurrentPage("profile")
+            showToast(
+              artistPortfolio
+                ? "Portofolio berhasil diperbarui"
+                : "Portofolio berhasil diupload"
+            )
+          }}
+          setCurrentPage={setCurrentPage}
+        />
+      )
+      break
 
-  case "artistProductForm":
-  page = (
-    <ArtistProductFormPage
-      portfolio={artistPortfolio}
-      onAddProduct={addArtistProduct}
-      setCurrentPage={setCurrentPage}
-    />
-  )
-  break
+    case "artistProductForm":
+      page = (
+        <ArtistProductFormPage
+          portfolio={artistPortfolio}
+          onAddProduct={addArtistProduct}
+          setCurrentPage={setCurrentPage}
+        />
+      )
+      break
 
     case "login":
-  page = (
-    <LoginPage
-      setCurrentPage={setCurrentPage}
-      onLoginSuccess={handleLoginSuccess}
-    />
-  )
-  break
+      page = (
+        <LoginPage
+          setCurrentPage={setCurrentPage}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )
+      break
 
-case "signupAccount":
-  page = (
-    <SignupAccountPage
-      setCurrentPage={setCurrentPage}
-      signupData={signupData}
-      setSignupData={setSignupData}
-    />
-  )
-  break
+    case "signupAccount":
+      page = (
+        <SignupAccountPage
+          setCurrentPage={setCurrentPage}
+          signupData={signupData}
+          setSignupData={setSignupData}
+        />
+      )
+      break
 
-case "signupRole":
-  page = (
-    <SignupRolePage
-      setCurrentPage={setCurrentPage}
-      signupData={signupData}
-      setSignupData={setSignupData}
-    />
-  )
-  break
+    case "signupRole":
+      page = (
+        <SignupRolePage
+          setCurrentPage={setCurrentPage}
+          signupData={signupData}
+          setSignupData={setSignupData}
+        />
+      )
+      break
 
-case "signupBuyerUsername":
-  page = (
-    <SignupBuyerUsernamePage
-      setCurrentPage={setCurrentPage}
-      signupData={signupData}
-      setSignupData={setSignupData}
-      onLoginSuccess={handleLoginSuccess}
-    />
-  )
-  break
+    case "signupBuyerUsername":
+      page = (
+        <SignupBuyerUsernamePage
+          setCurrentPage={setCurrentPage}
+          signupData={signupData}
+          setSignupData={setSignupData}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )
+      break
 
-case "signupArtistLevel":
-  page = (
-    <SignupArtistLevelPage
-      setCurrentPage={setCurrentPage}
-      signupData={signupData}
-      setSignupData={setSignupData}
-    />
-  )
-  break
+    case "signupArtistLevel":
+      page = (
+        <SignupArtistLevelPage
+          setCurrentPage={setCurrentPage}
+          signupData={signupData}
+          setSignupData={setSignupData}
+        />
+      )
+      break
 
-case "signupArtistUsername":
-  page = (
-    <SignupArtistUsernamePage
-      setCurrentPage={setCurrentPage}
-      signupData={signupData}
-      setSignupData={setSignupData}
-      onLoginSuccess={handleLoginSuccess}
-    />
-  )
-  break
+    case "signupArtistUsername":
+      page = (
+        <SignupArtistUsernamePage
+          setCurrentPage={setCurrentPage}
+          signupData={signupData}
+          setSignupData={setSignupData}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )
+      break
 
     default:
       page = <div>Page not found</div>
@@ -708,5 +841,4 @@ case "signupArtistUsername":
     </div>
   )
 }
-
 export default App

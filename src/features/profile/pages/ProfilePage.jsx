@@ -31,6 +31,10 @@ function ProfilePage({
   setPhone = () => {},
   gender = "",
   setGender = () => {},
+  profilePhotoUrl = "",
+  profilePhotoPosition = { x: 0, y: 0 },
+  setProfilePhotoUrl = () => {},
+  setProfilePhotoPosition = () => {},
   showToast = () => {},
   orders = [],
   cancelOrder = () => {},
@@ -106,6 +110,10 @@ function ProfilePage({
               setPhone={setPhone}
               gender={gender}
               setGender={setGender}
+              profilePhotoUrl={profilePhotoUrl}
+              profilePhotoPosition={profilePhotoPosition}
+              setProfilePhotoUrl={setProfilePhotoUrl}
+              setProfilePhotoPosition={setProfilePhotoPosition}
               showToast={showToast}
               setShowDeletePopup={setShowDeletePopup}
               setShowLogoutPopup={setShowLogoutPopup}
