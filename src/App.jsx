@@ -8,14 +8,11 @@ import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
-<<<<<<< HEAD
-import { useEffect } from "react"
+
 import { getArtists } from "./features/auth/services/artistService"
 import { createOrderAPI } from "./features/auth/services/orderService"
-=======
 import RevisionBriefPage from "./features/orders/pages/RevisionBriefPage"
 import RevisionBriefViewPage from "./features/orders/pages/RevisionBriefViewPage"
->>>>>>> f1c4c2f87461ee6b8e58317f3aa0c397fd07fb7e
 
 import { artists } from "./features/marketplace/data/artists"
 
@@ -412,9 +409,14 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
   })
 
   if (import.meta.env.VITE_API_URL) {
-    await createOrderAPI({
+  try {
+    const rawArtistId = selectedArtist?._id || selectedArtist?.id
+    // MongoDB ObjectId = string 24 karakter hex
+    const isMongoId = typeof rawArtistId === "string" && /^[a-f\d]{24}$/i.test(rawArtistId)
+
+    const result = await createOrderAPI({
       artist: selectedArtist?.name,
-      artistId: selectedArtist?._id || selectedArtist?.id,
+      artistId: isMongoId ? rawArtistId : null, // ← fix di sini
       buyer: currentBuyerName,
       buyerId: currentUser?.id || null,
       buyerEmail: currentUser?.email || "",
@@ -423,6 +425,11 @@ const filteredArtists = marketplaceArtists.filter((artist) => {
       quantity: Number(quantity),
       description,
     })
+    console.log("Order API result:", result)
+  } catch (err) {
+    console.error("Gagal kirim order ke API:", err)
+  }
+
   }
 
   setOrders([newOrder, ...orders].filter(Boolean))
