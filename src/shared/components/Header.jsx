@@ -1,6 +1,5 @@
 import {
   FiSearch,
-  FiBell,
   FiHeart,
   FiUser,
 } from "react-icons/fi"
@@ -98,14 +97,13 @@ function Header({
 
         {isLoggedIn && (
           <>
-            <button>
-              <FiBell className="text-[28px]" />
-            </button>
-
             {role === "buyer" && (
-              <button>
-                <FiHeart className="text-[28px]" />
-              </button>
+              <button
+  type="button"
+  onClick={() => setCurrentPage("likedPortfolio")}
+>
+  <FiHeart className="text-[28px]" />
+</button>
             )}
 
             <button onClick={openProfile}>
