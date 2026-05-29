@@ -23,6 +23,9 @@ function ProfileOrders({
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
   completeOrderByBuyer = () => {},
+  updatePaymentProofLink = () => {},
+  updateResultLink = () => {},
+  updateRevisionLink = () => {},
   setSelectedOrder = () => {},
 }) {
   const statusGroups =
@@ -80,6 +83,9 @@ function ProfileOrders({
         uploadRevisionByArtist={uploadRevisionByArtist}
         requestRevisionByBuyer={requestRevisionByBuyer}
         completeOrderByBuyer={completeOrderByBuyer}
+        updatePaymentProofLink={updatePaymentProofLink}
+        updateResultLink={updateResultLink}
+        updateRevisionLink={updateRevisionLink}
       />
     )
   }

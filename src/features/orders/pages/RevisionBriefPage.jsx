@@ -115,6 +115,10 @@ function RevisionBriefPage({
     placeholder="Masukkan link"
     className="w-full h-[52px] border-[3px] border-black rounded-[16px] bg-transparent px-5 text-[19px] outline-none placeholder:text-[#8A8A8A]"
   />
+
+  <p className="text-[17px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dapat dibuka.
+  </p>
 </div>
 
         {error && (

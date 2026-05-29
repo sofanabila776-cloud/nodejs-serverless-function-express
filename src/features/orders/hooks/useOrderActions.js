@@ -161,6 +161,42 @@ export function useOrderActions({
   showToast("Pesanan berhasil diselesaikan", 5000)
 }
 
+  const updatePaymentProofLink = (id, paymentProofLink) => {
+  const changes = {
+    paymentProofLink,
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+  showToast("Link bukti pembayaran berhasil diganti", 5000)
+}
+
+const updateResultLink = (id, resultLink) => {
+  const changes = {
+    resultLink,
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+  showToast("Link hasil pesanan berhasil diganti", 5000)
+}
+
+const updateRevisionLink = (id, revisionLink) => {
+  const changes = {
+    revisionLink,
+  }
+
+  setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
+  setSelectedOrder((prevOrder) =>
+    updateSelectedOrderById(prevOrder, id, changes)
+  )
+  showToast("Link hasil revisi berhasil diganti", 5000)
+}
+
   return {
     cancelOrder,
     rejectOrderByArtist,
@@ -171,5 +207,8 @@ export function useOrderActions({
     requestRevisionByBuyer,
     completeOrderByBuyer,
     uploadRevisionByArtist,
+    updatePaymentProofLink,
+    updateResultLink,
+    updateRevisionLink,
   }
 }

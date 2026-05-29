@@ -274,6 +274,9 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
     uploadRevisionByArtist,
     requestRevisionByBuyer,
     completeOrderByBuyer,
+    updatePaymentProofLink,
+    updateResultLink,
+    updateRevisionLink,
   } = useOrderActions({
     setOrders,
     setSelectedOrder,
@@ -660,6 +663,9 @@ const toggleLikedArtist = (artist) => {
           uploadRevisionByArtist={uploadRevisionByArtist}
           requestRevisionByBuyer={requestRevisionByBuyer}
           completeOrderByBuyer={completeOrderByBuyer}
+          updatePaymentProofLink={updatePaymentProofLink}
+          updateResultLink={updateResultLink}
+          updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
         />
       )
@@ -704,6 +710,9 @@ const toggleLikedArtist = (artist) => {
           uploadRevisionByArtist={uploadRevisionByArtist}
           requestRevisionByBuyer={requestRevisionByBuyer}
           completeOrderByBuyer={completeOrderByBuyer}
+          updatePaymentProofLink={updatePaymentProofLink}
+          updateResultLink={updateResultLink}
+          updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
         />
       )
