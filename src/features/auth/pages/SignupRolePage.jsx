@@ -20,16 +20,11 @@ function SignupRolePage({ setCurrentPage, signupData, setSignupData }) {
 
     setSignupData((prev) => ({ ...prev, role: selectedRole }));
 
-    if (selectedRole === "buyer") {
-      setCurrentPage("signupBuyerUsername");
-      return;
-    }
-
-    setCurrentPage("signupArtistLevel");
+    setCurrentPage("signupPhone")
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-screen relative">
+    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
 
       <section aria-labelledby="signup-title" className="absolute inset-0">
         <h1 id="signup-title" className="absolute top-[239px] left-[529px] font-normal text-black text-6xl tracking-[0] leading-[normal]">
@@ -75,11 +70,22 @@ function SignupRolePage({ setCurrentPage, signupData, setSignupData }) {
             </p>
           )}
 
-          <button type="submit" aria-label="Next" className="absolute top-[526px] left-[370px] w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <span className="absolute top-[13px] left-[230px] font-normal text-black text-[32px] tracking-[0] leading-[normal]">
-              NEXT
-            </span>
-          </button>
+          <div className="absolute top-[540px] left-[374px] w-[533px] h-[66px] flex gap-[25px]">
+  <button
+    type="button"
+    onClick={() => setCurrentPage("signupAccount")}
+    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
+  >
+    BACK
+  </button>
+
+  <button
+    type="submit"
+    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
+  >
+    NEXT
+  </button>
+</div>
         </form>
       </section>
     </main>

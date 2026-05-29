@@ -9,15 +9,15 @@ const artistLevels = [
 const levelDescriptions = [
   {
     title: "Beginner",
-    text: "Untuk artist yang baru mulai menjual karya digital di PICKARYA. Cocok untuk artist yang sedang membangun portofolio, belum memiliki banyak dokumentasi penjualan, atau masih mencari audiens dan pengalaman commission pertama.",
+    text: "Pernah menyelesaikan 0–2 project/commission, memiliki 1–2 karya portfolio, belum banyak memiliki testimoni atau review buyer, masih membangun pengalaman menerima brief dari client",
   },
   {
     title: "Intermediate",
-    text: "Untuk artist yang sudah pernah menjual karya digital dan memiliki portofolio lebih berkembang. Biasanya sudah pernah menerima pesanan, punya contoh karya lebih lengkap, dan mulai memiliki bukti atau dokumentasi pengalaman penjualan.",
+    text: "Pernah menyelesaikan 3–10 project/commission, memiliki 3-5 karya portfolio, sudah pernah berkomunikasi dengan buyer/client, memiliki beberapa bukti pengalaman/testimoni",
   },
   {
     title: "Professional",
-    text: "Untuk artist yang sudah memiliki reputasi dan pengalaman lebih luas. Cocok untuk artist yang sering menerima pesanan, memiliki banyak portofolio, mendapat respons positif dari buyer, dan memiliki pengalaman penjualan cukup banyak, misalnya lebih dari 10 commission.",
+    text: "Pernah menyelesaikan lebih dari 10 project/commission, memiliki lebih dari 5 karya portfolio, memiliki review/dokumentasi pengalaman yang cukup kuat, dan mampu menjaga kualitas karya secara konsisten",
   },
 ];
 
@@ -40,7 +40,7 @@ function SignupArtistLevelPage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-screen relative">
+    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
       {showLevelInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-8">
           <div className="relative w-[900px] max-h-[620px] overflow-y-auto rounded-[24px] border-[3px] border-black bg-white px-8 py-7">
@@ -133,24 +133,33 @@ function SignupArtistLevelPage({ setCurrentPage, signupData, setSignupData }) {
           <button
             type="button"
             onClick={() => setShowLevelInfo(true)}
-            className="absolute top-[522px] left-[438px] text-[22px] text-black underline"
+            className="absolute top-[515px] left-[385px] text-[22px] text-black underline"
           >
             Lihat penjelasan level &gt;
           </button>
 
           {error && (
-            <p className="absolute top-[548px] left-[394px] text-red-600 text-[18px]">
+            <p className="absolute top-[540px] left-[385px] text-red-600 text-[18px]">
               {error}
             </p>
           )}
 
-          <div className="top-[582px] left-[372px] w-[535px] h-[66px] absolute">
-            <button type="submit" aria-label="Next" className="relative w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-              <span className="absolute top-[13px] left-[230px] font-normal text-black text-[32px] tracking-[0] leading-[normal]">
-                NEXT
-              </span>
-            </button>
-          </div>
+          <div className="absolute top-[570px] left-[374px] w-[533px] h-[66px] flex gap-[25px]">
+  <button
+    type="button"
+    onClick={() => setCurrentPage("signupArtistBank")}
+    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
+  >
+    BACK
+  </button>
+
+  <button
+    type="submit"
+    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
+  >
+    NEXT
+  </button>
+</div>
         </form>
       </section>
     </main>

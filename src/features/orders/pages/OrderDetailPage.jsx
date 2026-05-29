@@ -35,6 +35,7 @@ function OrderDetailPage({
   const [showPaymentProofPopup, setShowPaymentProofPopup] = useState(false)
   const [paymentProofLink, setPaymentProofLink] = useState("")
   const [paymentProofError, setPaymentProofError] = useState("")
+  const ADMIN_WHATSAPP_LINK = "https://wa.me/6282228874637"
 
   if (!selectedOrder) {
     return (
@@ -65,23 +66,23 @@ function OrderDetailPage({
   const description = selectedOrder?.description || "-"
   const status = selectedOrder?.status || ORDER_STATUS.WAITING
 
-  const createdAt = selectedOrder?.createdAt || "04-04-2026 09:45"
-  const cancelledAt = selectedOrder?.cancelledAt || "04-04-2026 11:00"
-  const acceptedAt = selectedOrder?.acceptedAt || "04-04-2026 12:45"
-  const paymentConfirmedAt = selectedOrder?.paymentConfirmedAt || "05-04-2026 07:15"
-  const processedAt = selectedOrder?.processedAt || "05-04-2026 07:15"
-  const resultUploadedAt = selectedOrder?.resultUploadedAt || "05-04-2026 08:00"
+  const createdAt = selectedOrder?.createdAt || "-"
+  const cancelledAt = selectedOrder?.cancelledAt || "-"
+  const acceptedAt = selectedOrder?.acceptedAt || "-"
+  const paymentConfirmedAt = selectedOrder?.paymentConfirmedAt || "-"
+  const processedAt = selectedOrder?.processedAt || "-"
+  const resultUploadedAt = selectedOrder?.resultUploadedAt || "-"
 
   const revisionRequestedAt =
-    selectedOrder?.revisionRequestedAt || "07-04-2026 08:15"
+  selectedOrder?.revisionRequestedAt || "-"
 
   const revisionUploadedAt =
-    selectedOrder?.revisionUploadedAt || "07-04-2026 10:38"
+  selectedOrder?.revisionUploadedAt || "-"
 
   const completedAt =
-    selectedOrder?.completedAt ||
-    selectedOrder?.approvedAt ||
-    "07-04-2026 11:00"
+  selectedOrder?.completedAt ||
+  selectedOrder?.approvedAt ||
+  "-"
 
   const isCancelled =
     status === ORDER_STATUS.CANCELLED_BY_BUYER ||
@@ -512,12 +513,29 @@ function OrderDetailPage({
     addCreatedStep(false)
   } else if (isCompleted) {
   timelineSteps.push({
-    date: completedAt,
-    title: "Pesanan selesai",
-    subtitles: role === "buyer" ? [] : ["Pesanan telah disetujui buyer"],
-    active: true,
-    icon: <FiCheck className="text-[22px]" />,
-  })
+  date: completedAt,
+  title: "Pesanan selesai",
+  subtitles: [],
+  active: true,
+  icon: <FiCheck className="text-[22px]" />,
+  extra:
+    role === "artist" ? (
+      <div className="mt-[2px]">
+        <p className="text-[20px] leading-[24px] text-yellow-500">
+          Admin akan melakukan pembayaran pada pukul 10.00 WIB melalui rekening yang Anda daftarkan
+        </p>
+
+        <a
+          href={ADMIN_WHATSAPP_LINK}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-block text-[20px] leading-[24px] text-[#09027C] underline mt-[2px]"
+        >
+          Hubungi Admin
+        </a>
+      </div>
+    ) : null,
+})
 
   if (selectedOrder?.revisionUploadedAt) {
     timelineSteps.push({

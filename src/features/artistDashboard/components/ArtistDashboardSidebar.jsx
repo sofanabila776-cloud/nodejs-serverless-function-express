@@ -1,8 +1,5 @@
 import {
   FiUser,
-  FiCreditCard,
-  FiStar,
-  FiMessageCircle,
   FiImage,
 } from "react-icons/fi"
 import { LuClipboardList } from "react-icons/lu"
@@ -41,32 +38,6 @@ function ArtistDashboardSidebar({
           className={activeSidebar === "portfolio" ? "text-yellow-500" : ""}
         >
           Portofolio
-        </span>
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveSidebar("bank")
-          setCurrentPage("profile")
-        }}
-        className="flex items-center gap-3 text-[24px] mt-5"
-      >
-        <FiCreditCard />
-        <span className={activeSidebar === "bank" ? "text-yellow-500" : ""}>
-          Bank
-        </span>
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveSidebar("rating")
-          setCurrentPage("profile")
-        }}
-        className="flex items-center gap-3 text-[24px] mt-5"
-      >
-        <FiStar />
-        <span className={activeSidebar === "rating" ? "text-yellow-500" : ""}>
-          Rating
         </span>
       </button>
 
@@ -151,24 +122,6 @@ function ArtistDashboardSidebar({
             </div>
           )}
         </div>
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveSidebar("reviews")
-          setCurrentPage("profile")
-        }}
-        className="flex items-start gap-3 text-[24px] mt-5"
-      >
-        <FiMessageCircle className="min-w-[24px] min-h-[24px] mt-1" />
-
-        <span
-          className={activeSidebar === "reviews" ? "text-yellow-500" : ""}
-        >
-          Riwayat
-          <br />
-          Ulasan
-        </span>
       </button>
     </div>
   )

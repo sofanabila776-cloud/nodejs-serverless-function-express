@@ -25,6 +25,8 @@ import SignupRolePage from "./features/auth/pages/SignupRolePage"
 import SignupBuyerUsernamePage from "./features/auth/pages/SignupBuyerUsernamePage"
 import SignupArtistLevelPage from "./features/auth/pages/SignupArtistLevelPage"
 import SignupArtistUsernamePage from "./features/auth/pages/SignupArtistUsernamePage"
+import SignupPhonePage from "./features/auth/pages/SignupPhonePage"
+import SignupArtistBankPage from "./features/auth/pages/SignupArtistBankPage"
 
 import {
   getCurrentUser,
@@ -784,6 +786,26 @@ const toggleLikedArtist = (artist) => {
         />
       )
       break
+
+    case "signupPhone":
+  page = (
+    <SignupPhonePage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+    />
+  )
+  break
+
+case "signupArtistBank":
+  page = (
+    <SignupArtistBankPage
+      setCurrentPage={setCurrentPage}
+      signupData={signupData}
+      setSignupData={setSignupData}
+    />
+  )
+  break
 
     case "signupBuyerUsername":
       page = (

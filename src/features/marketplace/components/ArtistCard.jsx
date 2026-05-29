@@ -1,4 +1,4 @@
-import { FiStar, FiHeart } from "react-icons/fi"
+import { FiHeart } from "react-icons/fi"
 import { FaHeart } from "react-icons/fa"
 
 const LEVEL_LABELS = {
@@ -54,52 +54,34 @@ function ArtistCard({
   )}
 </div>
 
-      <div className="flex justify-between px-4 mt-3">
+      <div className="mt-2 px-5 w-full">
+  <div className="flex items-start justify-between w-full">
+    <div className="min-w-0">
+      <p className="text-[20px]">
+        {artist.name}
+      </p>
 
-        <div>
+      <div className="flex gap-3 mt-0 flex-wrap">
+        {(artist.tags || []).map((tag) => {
+          const highlighted = selectedCategories.includes(tag)
 
-          <p className="text-[20px]">
-            {artist.name}
-          </p>
-
-          <p className="text-[18px] text-[#666666] mt-1">
-            Level: {LEVEL_LABELS[artist.level] || artist.level || "-"}
-          </p>
-
-          <div className="flex gap-4 text-[20px] underline">
-
-            {(artist.tags || []).map((tag) => {
-  const highlighted = selectedCategories.includes(tag)
-  return (
-                  <span
-                    key={tag}
-                    className={
-                      highlighted
-                        ? "bg-yellow-500"
-                        : ""
-                    }
-                  >
-                    #{tag.toLowerCase()}
-                  </span>
-                )
-              })
-            }
-
-          </div>
-
-        </div>
-
-        <div className="flex items-center gap-2">
-
-          <FiStar className="text-[24px]" />
-
-          <p className="text-[20px]">
-            {artist.rating}
-          </p>
-
-        </div>
-
+          return (
+            <span
+              key={tag}
+              className={highlighted ? "bg-yellow-500" : ""}
+            >
+              #{String(tag).replace("#", "").toLowerCase()}
+            </span>
+          )
+        })}
       </div>
+    </div>
+
+    <p className="text-[18px] text-[#777777] shrink-0 text-right ml-6">
+      {LEVEL_LABELS[artist.level] || artist.level}    
+    </p>
+  </div>
+</div>
 
     </div>
   )

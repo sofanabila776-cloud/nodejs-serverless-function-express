@@ -1,7 +1,6 @@
 // Halaman detail artist/potofolio yang diclick dari HomePage
 
 import {
-  FiStar,
   FiClock,
   FiHeart,
 } from "react-icons/fi"
@@ -14,6 +13,7 @@ import {
 import { FaHeart } from "react-icons/fa"
 
 import ProfileAvatar from "../../../shared/components/ProfileAvatar"
+import ArtistCard from "../components/ArtistCard"
 
 const LEVEL_LABELS = {
   beginner: "Beginner",
@@ -129,16 +129,6 @@ if (!selectedArtist) {
 
           </div>
 
-          <div className="flex items-center gap-2 mt-3">
-
-            <FiStar className="text-[24px]" />
-
-            <p className="text-[20px]">
-              {selectedArtist.rating} (14 ulasan)
-            </p>
-
-          </div>
-
           <div className="flex items-center gap-2 mt-2">
 
             <FiClock className="text-[24px]" />
@@ -228,57 +218,17 @@ if (!selectedArtist) {
   Artist serupa
 </p>
 
+<div className="flex gap-[32px] flex-wrap">
+  {similarArtists.map((artist) => (
+    <ArtistCard
+      key={artist.id}
+      artist={artist}
+      openDetail={openDetail}
+    />
+  ))}
+</div>
+
 <div className="grid grid-cols-2 gap-[90px] mt-6">
-
-  {
-    similarArtists.slice(0, 2).map((artist) => (
-      <div
-        key={artist.id}
-        onClick={() => openDetail(artist)}
-        className="cursor-pointer w-full"
-      >
-
-        <div className="w-full h-[250px] border-[3px] border-black rounded-[18px]" />
-
-        <div className="flex justify-between items-start px-4 mt-3">
-
-          <div className="min-w-0">
-
-            <p className="text-[20px]">
-              {artist.name}
-            </p>
-
-            <div className="flex gap-3 underline text-[20px] flex-wrap">
-
-              {
-                artist.tags.map((tag) => (
-                  <span key={tag}>
-                    #{tag.toLowerCase()}
-                  </span>
-                ))
-              }
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 mt-2">
-
-            <FiStar className="text-[22px]" />
-
-            <p className="text-[20px]">
-              {artist.rating}
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-    ))
-  }
-
-  
 
 </div>
 

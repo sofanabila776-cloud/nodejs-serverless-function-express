@@ -1,6 +1,7 @@
 import { ORDER_STATUS } from "../constants/orderStatus"
 
 import {
+  getCurrentOrderDateTime,
   updateOrderById,
   updateSelectedOrderById,
 } from "../utils/orderHelpers"
@@ -16,7 +17,7 @@ export function useOrderActions({
   const cancelOrder = (id) => {
     const changes = {
       status: ORDER_STATUS.CANCELLED_BY_BUYER,
-      cancelledAt: "04-04-2026 11:00",
+      cancelledAt: getCurrentOrderDateTime(),
       cancelReason: "Anda membatalkan pesanan",
     }
 
@@ -31,8 +32,8 @@ export function useOrderActions({
   const rejectOrderByArtist = (id) => {
     const changes = {
       status: ORDER_STATUS.REJECTED_BY_ARTIST,
-      rejectedAt: "04-04-2026 10:30",
-      cancelledAt: "04-04-2026 10:30",
+      rejectedAt: getCurrentOrderDateTime(),
+      cancelledAt: getCurrentOrderDateTime(),
     }
 
     setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -47,7 +48,7 @@ export function useOrderActions({
     const changes = {
       status: ORDER_STATUS.ACCEPTED,
       totalPrice,
-      acceptedAt: "04-04-2026 12:45",
+      acceptedAt: getCurrentOrderDateTime(),
     }
 
     setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -61,7 +62,7 @@ export function useOrderActions({
   const confirmPaymentByBuyer = (id, paymentProofLink) => {
   const changes = {
     status: ORDER_STATUS.BUYER_CONFIRMED_PAYMENT,
-    paymentConfirmedAt: "05-04-2026 07:15",
+    paymentConfirmedAt: getCurrentOrderDateTime(),
     paymentProofLink,
   }
 
@@ -76,7 +77,7 @@ export function useOrderActions({
   const confirmPaymentByArtist = (id) => {
     const changes = {
       status: ORDER_STATUS.PAID_CONFIRMED,
-      processedAt: "05-04-2026 07:15",
+      processedAt: getCurrentOrderDateTime(),
     }
 
     setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -95,7 +96,7 @@ export function useOrderActions({
     const changes = {
       status: ORDER_STATUS.RESULT_UPLOADED,
       resultLink,
-      resultUploadedAt: "05-04-2026 08:00",
+      resultUploadedAt: getCurrentOrderDateTime(),
     }
 
     setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -110,7 +111,7 @@ export function useOrderActions({
   const changes = {
     status: ORDER_STATUS.REVISION_UPLOADED,
     revisionLink,
-    revisionUploadedAt: "07-04-2026 10:38",
+    revisionUploadedAt: getCurrentOrderDateTime(),
   }
 
   setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -127,7 +128,7 @@ export function useOrderActions({
     status: ORDER_STATUS.REVISION_REQUESTED,
     revisionDescription,
     revisionSupportLink,
-    revisionRequestedAt: "07-04-2026 08:15",
+    revisionRequestedAt: getCurrentOrderDateTime(),
   }
 
   setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
@@ -145,7 +146,7 @@ export function useOrderActions({
   const completeOrderByBuyer = (id) => {
   const changes = {
     status: ORDER_STATUS.COMPLETED,
-    completedAt: "07-04-2026 11:00",
+    completedAt: getCurrentOrderDateTime(),
   }
 
   setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))

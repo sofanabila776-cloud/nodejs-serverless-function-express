@@ -213,7 +213,7 @@ function ArtistProductFormPage({
         </div>
       </div>
 
-      <div className="flex justify-end mt-[88px]">
+      <div className="flex justify-end mt-[45px]">
         <button
           onClick={handleSubmit}
           className="w-[180px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"

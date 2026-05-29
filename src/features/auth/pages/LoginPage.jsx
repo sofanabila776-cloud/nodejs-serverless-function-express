@@ -29,7 +29,7 @@ function LoginPage({ setCurrentPage, onLoginSuccess }) {
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-screen relative">
+    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
 
       <section aria-labelledby="login-title" className="absolute top-[199px] left-[374px] w-[535px]">
         <h1 id="login-title" className="absolute top-0 left-[166px] font-normal text-black text-6xl text-center tracking-[0] leading-[normal]">
@@ -86,8 +86,8 @@ function LoginPage({ setCurrentPage, onLoginSuccess }) {
             Lupa password?
           </button>
 
-          <button type="submit" className="absolute top-[227px] left-0 w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black" aria-label="Log in">
-            <span className="absolute top-3.5 left-[164px] w-[205px] font-normal text-black text-[32px] text-center tracking-[0] leading-[normal]">
+          <button type="submit" className="absolute top-[227px] left-0 w-[533px] h-[66px] rounded-[20px] bg-black flex items-center justify-center font-normal" aria-label="Log in">
+            <span className="absolute top-3.5 left-[164px] w-[205px] font-normal text-white text-[32px] text-center tracking-[0] leading-[normal]">
               LOG IN
             </span>
           </button>
