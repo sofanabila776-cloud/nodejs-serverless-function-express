@@ -57,7 +57,7 @@ function ArtistCard({
       <div className="mt-2 px-5 w-full">
   <div className="flex items-start justify-between w-full">
     <div className="min-w-0">
-      <p className="text-[20px]">
+      <p className="text-[20px] font-semibold leading-[28px]">
         {artist.name}
       </p>
 

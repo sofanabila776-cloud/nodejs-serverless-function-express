@@ -108,7 +108,7 @@ if (!selectedArtist) {
     iconClass="text-[30px]"
   />
 
-  <p className="text-[32px]">
+  <p className="text-[32px] font-semibold leading-[28px]">
     {selectedArtist.name}
   </p>
 </div>

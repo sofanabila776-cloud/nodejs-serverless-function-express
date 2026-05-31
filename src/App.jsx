@@ -71,21 +71,64 @@ function App() {
     setCurrentPage("home")
   }
 
+  const getArtistIdentityKeys = (artist = {}) => {
+  return [
+    artist.id,
+    artist.email,
+    artist.username,
+    artist.name,
+  ]
+    .filter(Boolean)
+    .map(String)
+}
+
+const isSameArtistByKeys = (artist, keys = []) => {
+  const artistKeys = getArtistIdentityKeys(artist)
+  return artistKeys.some((key) => keys.includes(key))
+}
+
   const handleDeleteAccount = async () => {
-    try {
-      await deleteCurrentUserAccount()
+  const deletedUser = currentUser
+  const deletedUserKeys = getArtistIdentityKeys(deletedUser)
 
-      setCurrentUser(null)
-      setIsLoggedIn(false)
-      setRole("buyer")
-      setShowDeletePopup(false)
-      setCurrentPage("home")
+  try {
+    await deleteCurrentUserAccount()
 
-      showToast("Akun berhasil dihapus")
-    } catch (error) {
-      showToast(error.message || "Gagal menghapus akun")
+    if (deletedUser?.role === "artist") {
+      setArtistPortfolio(null)
+
+      setPublishedArtists((prevArtists) =>
+        prevArtists.filter(
+          (artist) => !isSameArtistByKeys(artist, deletedUserKeys)
+        )
+      )
+
+      setDeletedArtistKeys((prevKeys) => {
+        const nextKeys = [...new Set([...prevKeys, ...deletedUserKeys])]
+        localStorage.setItem(
+          "pickaryaDeletedArtistKeys",
+          JSON.stringify(nextKeys)
+        )
+        return nextKeys
+      })
+
+      setSelectedArtist((prevArtist) =>
+        prevArtist && isSameArtistByKeys(prevArtist, deletedUserKeys)
+          ? null
+          : prevArtist
+      )
     }
+
+    setCurrentUser(null)
+    setIsLoggedIn(false)
+    setRole("buyer")
+    setShowDeletePopup(false)
+    setCurrentPage("home")
+    showToast("Akun berhasil dihapus")
+  } catch (error) {
+    showToast(error.message || "Gagal menghapus akun")
   }
+}
 
   const [currentUser, setCurrentUser] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -123,6 +166,14 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [artistPortfolio, setArtistPortfolio] = useState(null)
   const [publishedArtists, setPublishedArtists] = useState([])
+
+  const [deletedArtistKeys, setDeletedArtistKeys] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("pickaryaDeletedArtistKeys")) || []
+  } catch {
+    return []
+  }
+})
 
   const addArtistProduct = (newProduct) => {
     setArtistPortfolio((prevPortfolio) => {
@@ -248,8 +299,22 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
   const [showDeletePopup, setShowDeletePopup] = useState(false)
 
   useEffect(() => {
-    logoutUser()
-  }, [])
+  const savedUser = getCurrentUser()
+
+  if (!savedUser) return
+
+  setCurrentUser(savedUser)
+  setIsLoggedIn(true)
+  setRole(savedUser.role)
+
+  if (savedUser.role === "artist") {
+    setCurrentPage("profile")
+    setActiveSidebar("account")
+    setActiveOrderStatus("artist_incoming")
+  } else {
+    setCurrentPage("home")
+  }
+}, [])
 
   useEffect(() => {
     window.scrollTo({
@@ -316,16 +381,18 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
   const currentBuyerName = getCurrentBuyerName(currentUser, DEFAULT_BUYER)
 
   const marketplaceArtists = [
-    ...publishedArtists,
-    ...artists.filter(
-      (artist) =>
-        !publishedArtists.some(
-          (publishedArtist) =>
-            String(publishedArtist.id) === String(artist.id) ||
-            publishedArtist.name === artist.name
-        )
-    ),
-  ]
+  ...publishedArtists,
+  ...artists.filter(
+    (artist) =>
+      !publishedArtists.some(
+        (publishedArtist) =>
+          String(publishedArtist.id) === String(artist.id) ||
+          publishedArtist.name === artist.name
+      )
+  ),
+].filter(
+  (artist) => !isSameArtistByKeys(artist, deletedArtistKeys)
+)
 
   const currentLikedUserKey =
   currentUser?.id ||
@@ -455,6 +522,21 @@ const toggleLikedArtist = (artist) => {
       }
 
       const publishedArtist = buildPublishedArtist(updatedPortfolio)
+
+      const publishedArtistKeys = getArtistIdentityKeys(publishedArtist)
+
+setDeletedArtistKeys((prevKeys) => {
+  const nextKeys = prevKeys.filter(
+    (key) => !publishedArtistKeys.includes(key)
+  )
+
+  localStorage.setItem(
+    "pickaryaDeletedArtistKeys",
+    JSON.stringify(nextKeys)
+  )
+
+  return nextKeys
+})
 
       setPublishedArtists((prevArtists) => [
         publishedArtist,

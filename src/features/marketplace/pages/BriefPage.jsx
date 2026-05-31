@@ -8,9 +8,9 @@ import {
 } from "react-icons/io5"
 
 import {
-  FiStar,
   FiAlertCircle,
 } from "react-icons/fi"
+import ProfileAvatar from "../../../shared/components/ProfileAvatar"
 
 function BriefPage({
   selectedArtist,
@@ -47,19 +47,28 @@ if (!selectedArtist) {
         Brief Pesanan
       </p>
 
-      <div className="flex items-center gap-3 mt-10">
+      <div className="flex items-center gap-4 mt-4">
+  <ProfileAvatar
+  imageUrl={
+    selectedArtist.profilePhotoUrl ||
+    selectedArtist.profileImageUrl ||
+    selectedArtist.profileImage ||
+    ""
+  }
+  sizeClass="w-[56px] h-[56px]"
+  iconClass="text-[28px]"
+/>
 
-        <p className="text-[24px]">
-          {selectedArtist.name}
-        </p>
+  <div>
+    <p className="text-[16px] text-[#8A8A8A] leading-[20px]">
+      Artist
+    </p>
 
-        <FiStar className="text-[24px]" />
-
-        <p className="text-[24px]">
-          {selectedArtist.rating} (14 ulasan)
-        </p>
-
-      </div>
+    <p className="text-[24px] font-semibold leading-[28px]">
+      {selectedArtist.name}
+    </p>
+  </div>
+</div>
 
       {/* PRODUCT */}
 

@@ -127,9 +127,6 @@ function RevisionBriefPage({
   Pastikan link benar dan akses file sudah dibuka.
 </p>
 
-  <p className="text-[17px] text-[#8A8A8A] mt-2">
-  Pastikan link benar dan akses file sudah dapat dibuka.
-  </p>
 </div>
 
         {error && (
