@@ -8,9 +8,9 @@ import {
 } from "react-icons/io5"
 
 import {
-  FiStar,
   FiAlertCircle,
 } from "react-icons/fi"
+import ProfileAvatar from "../../../shared/components/ProfileAvatar"
 
 function BriefPage({
   selectedArtist,
@@ -27,6 +27,11 @@ function BriefPage({
 
   const [showDropdown, setShowDropdown] = useState(false)
 
+  const handleQuantityChange = (event) => {
+  const numbersOnly = event.target.value.replace(/\D/g, "")
+  setQuantity(numbersOnly)
+}
+
 if (!selectedArtist) {
   return (
     <div className="pt-[140px] text-center text-red-500">
@@ -42,19 +47,28 @@ if (!selectedArtist) {
         Brief Pesanan
       </p>
 
-      <div className="flex items-center gap-3 mt-10">
+      <div className="flex items-center gap-4 mt-4">
+  <ProfileAvatar
+  imageUrl={
+    selectedArtist.profilePhotoUrl ||
+    selectedArtist.profileImageUrl ||
+    selectedArtist.profileImage ||
+    ""
+  }
+  sizeClass="w-[56px] h-[56px]"
+  iconClass="text-[28px]"
+/>
 
-        <p className="text-[24px]">
-          {selectedArtist.name}
-        </p>
+  <div>
+    <p className="text-[16px] text-[#8A8A8A] leading-[20px]">
+      Artist
+    </p>
 
-        <FiStar className="text-[24px]" />
-
-        <p className="text-[24px]">
-          {selectedArtist.rating} (14 ulasan)
-        </p>
-
-      </div>
+    <p className="text-[24px] font-semibold leading-[28px]">
+      {selectedArtist.name}
+    </p>
+  </div>
+</div>
 
       {/* PRODUCT */}
 
@@ -159,27 +173,13 @@ if (!selectedArtist) {
           </p>
 
           <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) =>
-              setQuantity(e.target.value)
-            }
-            className="
-              w-[140px]
-              h-[56px]
-              border-[2px]
-              border-black
-              rounded-[14px]
-              px-4
-              text-[20px]
-              outline-none
-
-              [appearance:textfield]
-              [&::-webkit-outer-spin-button]:appearance-none
-              [&::-webkit-inner-spin-button]:appearance-none
-            "
-          />
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={quantity}
+  onChange={handleQuantityChange}
+  className="w-[140px] h-[56px] border-[2px] border-black rounded-[14px] px-4 text-[20px] outline-none"
+/>
 
           {
             Number(quantity) < 1 && (

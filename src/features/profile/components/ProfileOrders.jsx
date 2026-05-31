@@ -18,11 +18,13 @@ function ProfileOrders({
   rejectOrderByArtist = () => {},
   acceptOrderByArtist = () => {},
   confirmPaymentByBuyer = () => {},
-  confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
   completeOrderByBuyer = () => {},
+  updatePaymentProofLink = () => {},
+  updateResultLink = () => {},
+  updateRevisionLink = () => {},
   setSelectedOrder = () => {},
 }) {
   const statusGroups =
@@ -75,11 +77,13 @@ function ProfileOrders({
         rejectOrderByArtist={rejectOrderByArtist}
         acceptOrderByArtist={acceptOrderByArtist}
         confirmPaymentByBuyer={confirmPaymentByBuyer}
-        confirmPaymentByArtist={confirmPaymentByArtist}
         uploadResultByArtist={uploadResultByArtist}
         uploadRevisionByArtist={uploadRevisionByArtist}
         requestRevisionByBuyer={requestRevisionByBuyer}
         completeOrderByBuyer={completeOrderByBuyer}
+        updatePaymentProofLink={updatePaymentProofLink}
+        updateResultLink={updateResultLink}
+        updateRevisionLink={updateRevisionLink}
       />
     )
   }

@@ -34,7 +34,7 @@ function SignupAccountPage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-screen relative">
+    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
 
       <section aria-labelledby="signup-heading" className="absolute inset-0">
         <h1 id="signup-heading" className="absolute top-[201px] left-[529px] font-normal text-black text-6xl text-center tracking-[0] leading-[normal]">
@@ -100,7 +100,7 @@ function SignupAccountPage({ setCurrentPage, signupData, setSignupData }) {
             </p>
           )}
 
-          <button type="submit" className="absolute top-[565px] left-[374px] w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black font-normal text-black text-[32px] text-center tracking-[0] leading-[normal]">
+          <button type="submit" className="absolute top-[550px] left-[374px] w-[533px] h-[66px] rounded-[20px] border-[3px] bg-black text-white flex items-center justify-center font-normal text-[32px]">
             NEXT
           </button>
         </form>

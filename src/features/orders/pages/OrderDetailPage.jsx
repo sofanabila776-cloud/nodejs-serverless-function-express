@@ -8,7 +8,7 @@ import {
   FiRefreshCcw,
   FiCheck,
 } from "react-icons/fi"
-
+import qrisPickarya from "../../../assets/qris-pickarya.jpeg"
 import { ORDER_STATUS } from "../constants/orderStatus"
 
 function OrderDetailPage({
@@ -19,11 +19,13 @@ function OrderDetailPage({
   rejectOrderByArtist = () => {},
   acceptOrderByArtist = () => {},
   confirmPaymentByBuyer = () => {},
-  confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
   completeOrderByBuyer = () => {},
+  updatePaymentProofLink = () => {},
+  updateResultLink = () => {},
+  updateRevisionLink = () => {},
 }) {
   const [showPricePopup, setShowPricePopup] = useState(false)
   const [finalPriceInput, setFinalPriceInput] = useState("0")
@@ -35,6 +37,9 @@ function OrderDetailPage({
   const [showPaymentProofPopup, setShowPaymentProofPopup] = useState(false)
   const [paymentProofLink, setPaymentProofLink] = useState("")
   const [paymentProofError, setPaymentProofError] = useState("")
+  const [isEditingUploadLink, setIsEditingUploadLink] = useState(false)
+  const [isEditingPaymentProof, setIsEditingPaymentProof] = useState(false)
+  const ADMIN_WHATSAPP_LINK = "https://wa.me/6282228874637"
 
   if (!selectedOrder) {
     return (
@@ -65,23 +70,23 @@ function OrderDetailPage({
   const description = selectedOrder?.description || "-"
   const status = selectedOrder?.status || ORDER_STATUS.WAITING
 
-  const createdAt = selectedOrder?.createdAt || "04-04-2026 09:45"
-  const cancelledAt = selectedOrder?.cancelledAt || "04-04-2026 11:00"
-  const acceptedAt = selectedOrder?.acceptedAt || "04-04-2026 12:45"
-  const paymentConfirmedAt = selectedOrder?.paymentConfirmedAt || "05-04-2026 07:15"
-  const processedAt = selectedOrder?.processedAt || "05-04-2026 07:15"
-  const resultUploadedAt = selectedOrder?.resultUploadedAt || "05-04-2026 08:00"
+  const createdAt = selectedOrder?.createdAt || "-"
+  const cancelledAt = selectedOrder?.cancelledAt || "-"
+  const acceptedAt = selectedOrder?.acceptedAt || "-"
+  const paymentConfirmedAt = selectedOrder?.paymentConfirmedAt || "-"
+  const processedAt = selectedOrder?.processedAt || "-"
+  const resultUploadedAt = selectedOrder?.resultUploadedAt || "-"
 
   const revisionRequestedAt =
-    selectedOrder?.revisionRequestedAt || "07-04-2026 08:15"
+  selectedOrder?.revisionRequestedAt || "-"
 
   const revisionUploadedAt =
-    selectedOrder?.revisionUploadedAt || "07-04-2026 10:38"
+  selectedOrder?.revisionUploadedAt || "-"
 
   const completedAt =
-    selectedOrder?.completedAt ||
-    selectedOrder?.approvedAt ||
-    "07-04-2026 11:00"
+  selectedOrder?.completedAt ||
+  selectedOrder?.approvedAt ||
+  "-"
 
   const isCancelled =
     status === ORDER_STATUS.CANCELLED_BY_BUYER ||
@@ -149,57 +154,33 @@ function OrderDetailPage({
 
   if (!trimmedLink) return ""
 
+  if (/\s/.test(trimmedLink)) return ""
+
   const linkWithProtocol = /^https?:\/\//i.test(trimmedLink)
     ? trimmedLink
     : `https://${trimmedLink}`
 
   try {
-    return new URL(linkWithProtocol).href
+    const url = new URL(linkWithProtocol)
+    const hostname = url.hostname.toLowerCase()
+
+    if (!hostname.includes(".")) return ""
+
+    return url.href
   } catch {
     return ""
   }
 }
 
   const DummyQR = () => {
-    const cells = Array.from({ length: 225 }, (_, index) => {
-      const row = Math.floor(index / 15)
-      const col = index % 15
-
-      const inTopLeft = row < 5 && col < 5
-      const inTopRight = row < 5 && col > 9
-      const inBottomLeft = row > 9 && col < 5
-
-      const finder =
-        inTopLeft ||
-        inTopRight ||
-        inBottomLeft
-
-      const randomFill =
-        (row * col + row + col) % 3 === 0 ||
-        (row + col) % 5 === 0
-
-      const filled = finder || randomFill
-
-      return (
-        <div
-          key={index}
-          className={filled ? "bg-black" : "bg-white"}
-        />
-      )
-    })
-
-    return (
-      <div
-        className="w-[270px] h-[270px] grid border-[1px] border-black bg-white p-3"
-        style={{
-          gridTemplateColumns: "repeat(15, 1fr)",
-          gridTemplateRows: "repeat(15, 1fr)",
-        }}
-      >
-        {cells}
-      </div>
-    )
-  }
+  return (
+    <img
+      src={qrisPickarya}
+      alt="QRIS pembayaran"
+      className="w-[270px] h-[270px] object-contain"
+    />
+  )
+}
 
   const handlePriceChange = (e) => {
     const onlyNumbers = e.target.value.replace(/\D/g, "")
@@ -223,38 +204,68 @@ function OrderDetailPage({
     setCurrentPage("profile")
   }
 
+  const openUploadPopup = (mode, currentLink = "", isEditing = false) => {
+  setUploadMode(mode)
+  setGdriveLink(currentLink || "")
+  setUploadLinkError("")
+  setIsEditingUploadLink(isEditing)
+  setShowUploadPopup(true)
+}
+
+  const openPaymentProofPopup = (currentLink = "", isEditing = false) => {
+  setPaymentProofLink(currentLink || "")
+  setPaymentProofError("")
+  setIsEditingPaymentProof(isEditing)
+  setShowPaymentProofPopup(true)
+}
+
   const handleUploadResult = () => {
   const validLink = getValidExternalLink(gdriveLink)
 
   if (!validLink) {
-    setUploadLinkError("Masukkan link G-drive yang valid.")
+    setUploadLinkError("Masukkan link yang valid. Pastikan akses file sudah dibuka.")
     return
   }
 
   if (uploadMode === "revision") {
-    uploadRevisionByArtist(id, validLink)
+    if (isEditingUploadLink) {
+      updateRevisionLink(id, validLink)
+    } else {
+      uploadRevisionByArtist(id, validLink)
+    }
   } else {
-    uploadResultByArtist(id, validLink)
+    if (isEditingUploadLink) {
+      updateResultLink(id, validLink)
+    } else {
+      uploadResultByArtist(id, validLink)
+    }
   }
 
   setShowUploadPopup(false)
   setUploadMode("result")
   setGdriveLink("")
   setUploadLinkError("")
+  setIsEditingUploadLink(false)
 }
 
   const handleSubmitPaymentProof = () => {
   const validLink = getValidExternalLink(paymentProofLink)
 
   if (!validLink) {
-    setPaymentProofError("Masukkan link bukti pembayaran yang valid.")
+    setPaymentProofError("Masukkan link bukti pembayaran yang valid. Pastikan akses file sudah dibuka.")
     return
   }
 
-  confirmPaymentByBuyer(id, validLink)
+  if (isEditingPaymentProof) {
+    updatePaymentProofLink(id, validLink)
+  } else {
+    confirmPaymentByBuyer(id, validLink)
+  }
+
   setShowPaymentProofPopup(false)
   setPaymentProofLink("")
   setPaymentProofError("")
+  setIsEditingPaymentProof(false)
 }
 
   const headerStatus = isCancelled
@@ -407,14 +418,14 @@ function OrderDetailPage({
     title: "Menunggu pembayaran",
     subtitles:
       role === "artist"
-        ? ["Buyer telah melakukan pembayaran"]
-        : ["Menunggu konfirmasi pembayaran dari artist"],
+        ? ["Buyer akan melakukan pembayaran"]
+        : ["Menunggu verifikasi pembayaran oleh admin"],
     linkText:
-      role === "artist" && paymentProofHref
+      role === "buyer" && paymentProofHref
         ? "Lihat Bukti Pembayaran"
         : null,
     linkHref:
-      role === "artist" && paymentProofHref
+      role === "buyer" && paymentProofHref
         ? paymentProofHref
         : "",
     active: false,
@@ -444,6 +455,22 @@ function OrderDetailPage({
     linkHref: selectedOrder?.resultLink,
     active,
     icon: <FiEdit2 className="text-[22px]" />,
+    extra:
+  role === "artist" &&
+  active &&
+  status === ORDER_STATUS.RESULT_UPLOADED ? (
+    <div className="flex justify-end mt-3 w-full">
+      <button
+        type="button"
+        onClick={() =>
+          openUploadPopup("result", selectedOrder?.resultLink, true)
+        }
+        className="w-[190px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+      >
+        Ganti Link Hasil
+      </button>
+    </div>
+  ) : null,
     actions:
       role === "buyer" &&
       active &&
@@ -490,7 +517,10 @@ function OrderDetailPage({
       timelineSteps.push({
         date: processedAt,
         title: "Pesanan diproses",
-        subtitles: ["Karya sedang dibuat"],
+        subtitles:
+        role === "artist"
+         ? ["Kerjakan dan kirim hasil pesanan"]
+         : ["Karya sedang dibuat"],
         active: false,
         icon: <FiEdit2 className="text-[20px]" />,
       })
@@ -503,7 +533,10 @@ function OrderDetailPage({
       timelineSteps.push({
         date: acceptedAt,
         title: "Menunggu pembayaran",
-        subtitles: ["Buyer akan melakukan pembayaran"],
+        subtitles:
+         role === "buyer"
+          ? ["Lakukan pembayaran melalui kode QR berikut"]
+          : ["Buyer akan melakukan pembayaran"],
         active: false,
         icon: <FiDollarSign className="text-[20px]" />,
       })
@@ -512,12 +545,29 @@ function OrderDetailPage({
     addCreatedStep(false)
   } else if (isCompleted) {
   timelineSteps.push({
-    date: completedAt,
-    title: "Pesanan selesai",
-    subtitles: role === "buyer" ? [] : ["Pesanan telah disetujui buyer"],
-    active: true,
-    icon: <FiCheck className="text-[22px]" />,
-  })
+  date: completedAt,
+  title: "Pesanan selesai",
+  subtitles: [],
+  active: true,
+  icon: <FiCheck className="text-[22px]" />,
+  extra:
+    role === "artist" ? (
+      <div className="mt-[2px]">
+        <p className="text-[20px] leading-[24px] text-yellow-500">
+          Admin akan melakukan pembayaran pada pukul 10.00 WIB melalui rekening yang Anda daftarkan
+        </p>
+
+        <a
+          href={ADMIN_WHATSAPP_LINK}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-block text-[20px] leading-[24px] text-[#09027C] underline mt-[2px]"
+        >
+          Hubungi Admin
+        </a>
+      </div>
+    ) : null,
+})
 
   if (selectedOrder?.revisionUploadedAt) {
     timelineSteps.push({
@@ -531,15 +581,17 @@ function OrderDetailPage({
     })
 
     timelineSteps.push({
-      type: "dot",
-      date: revisionRequestedAt,
-      title:
-        role === "artist"
-          ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
-          : "Revisi karya sedang dibuat",
-      active: false,
-      bold: false,
-    })
+  type: "dot",
+  date: revisionRequestedAt,
+  title:
+    role === "artist"
+      ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
+      : "Revisi karya sedang dibuat",
+  linkText: "Lihat brief revisi",
+  linkOnClick: () => setCurrentPage("revisionBriefView"),
+  active: false,
+  bold: false,
+})
   }
 
   addResultUploadedStep(false)
@@ -565,10 +617,7 @@ function OrderDetailPage({
           <div className="flex justify-end mt-3 w-full">
             <button
               type="button"
-              onClick={() => {
-                setUploadMode("revision")
-                setShowUploadPopup(true)
-              }}
+              onClick={() => openUploadPopup("revision")}
               className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
             >
               Upload
@@ -587,14 +636,25 @@ function OrderDetailPage({
   timelineSteps.push({
     date: revisionUploadedAt,
     title: "Pesanan direvisi",
-    subtitles:
-      role === "buyer"
-        ? ["Hasil Revisi telah dikirim"]
-        : ["Hasil revisi telah dikirim"],
+    subtitles: ["Hasil revisi telah dikirim"],
     linkText: "Lihat hasil revisi",
     linkHref: selectedOrder?.revisionLink,
     active: true,
     icon: <FiRefreshCcw className="text-[22px]" />,
+    extra:
+  role === "artist" ? (
+    <div className="flex justify-end mt-3 w-full">
+      <button
+        type="button"
+        onClick={() =>
+          openUploadPopup("revision", selectedOrder?.revisionLink, true)
+        }
+        className="w-[230px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+      >
+        Ganti Link Hasil Revisi
+      </button>
+    </div>
+  ) : null,
     actions:
       role === "buyer"
         ? (
@@ -612,15 +672,17 @@ function OrderDetailPage({
   })
 
   timelineSteps.push({
-    type: "dot",
-    date: revisionRequestedAt,
-    title:
-      role === "artist"
-        ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
-        : "Revisi karya sedang dibuat",
-    active: false,
-    bold: false,
-  })
+  type: "dot",
+  date: revisionRequestedAt,
+  title:
+    role === "artist"
+      ? "Buyer mengajukan revisi, kerjakan dan kirim hasil revisi"
+      : "Revisi karya sedang dibuat",
+  linkText: "Lihat brief revisi",
+  linkOnClick: () => setCurrentPage("revisionBriefView"),
+  active: false,
+  bold: false,
+})
 
   addResultUploadedStep(false)
   addProcessedStartedStep()
@@ -636,19 +698,19 @@ function OrderDetailPage({
     addCreatedStep(false)
   } else if (isProcessed) {
     timelineSteps.push({
-      date: processedAt,
-      title: "Pesanan diproses",
-      subtitles: ["Karya sedang dibuat"],
-      active: true,
-      icon: <FiEdit2 className="text-[22px]" />,
-      actions:
-        role === "artist" ? (
+    date: processedAt,
+    title: "Pesanan diproses",
+    subtitles:
+     role === "artist"
+      ? ["Kerjakan dan kirim hasil pesanan"]
+      : ["Karya sedang dibuat"],
+    active: true,
+    icon: <FiEdit2 className="text-[22px]" />,
+    actions:
+    role === "artist" ? (
           <div className="flex justify-end mt-[30px]">
             <button
-              onClick={() => {
-                setUploadMode("result")
-                setShowUploadPopup(true)
-              }}
+              onClick={() => openUploadPopup("result")}
               className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
             >
               Upload
@@ -668,29 +730,33 @@ function OrderDetailPage({
     title: "Menunggu pembayaran",
     subtitles:
       role === "artist"
-        ? ["Buyer telah melakukan pembayaran"]
-        : ["Pembayaran sedang menunggu konfirmasi artist"],
+        ? ["Buyer akan melakukan pembayaran"]
+        : ["Menunggu verifikasi pembayaran oleh admin"],
     linkText:
-      role === "artist" && paymentProofHref
+      role === "buyer" && paymentProofHref
         ? "Lihat Bukti Pembayaran"
         : null,
     linkHref:
-      role === "artist" && paymentProofHref
+      role === "buyer" && paymentProofHref
         ? paymentProofHref
         : "",
     active: true,
     icon: <FiDollarSign />,
-    actions:
-      role === "artist" ? (
-        <div className="flex justify-end gap-4 mt-4 w-full max-w-[580px] ml-auto">
-        <button
-          onClick={() => confirmPaymentByArtist(id)}
-          className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-        >
-          Konfirmasi
-        </button>
+    extra:
+      role === "buyer" && paymentProofHref ? (
+        <div className="flex justify-end mt-3 w-full">
+          <button
+            type="button"
+            onClick={() =>
+              openPaymentProofPopup(selectedOrder?.paymentProofLink, true)
+            }
+            className="w-[230px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+          >
+            Ganti Bukti Pembayaran
+          </button>
         </div>
       ) : null,
+    actions: null,
   })
 
   addBuyerWillPayStep()
@@ -725,7 +791,7 @@ function OrderDetailPage({
         role === "buyer" ? (
           <div className="flex justify-end gap-4 mt-4 w-full max-w-[580px] ml-auto">
             <button
-  onClick={() => setShowPaymentProofPopup(true)}
+  onClick={() => openPaymentProofPopup()}
   className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
 >
   Konfirmasi
@@ -845,7 +911,13 @@ function OrderDetailPage({
 
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[430px] bg-white rounded-[24px] shadow-lg z-[90] px-8 py-8">
             <p className="text-[24px] text-center">
-              {uploadMode === "revision" ? "Link G-drive hasil revisi" : "Link G-drive"}
+              {isEditingUploadLink
+               ? uploadMode === "revision"
+                 ? "Ganti link G-drive hasil revisi"
+                 : "Ganti link G-drive hasil pesanan"
+               : uploadMode === "revision"
+                 ? "Link G-drive hasil revisi"
+                 : "Link G-drive"}
             </p>
 
             <input
@@ -862,6 +934,10 @@ function OrderDetailPage({
               className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
             />
 
+            <p className="text-[16px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dibuka.
+</p>
+
             {uploadLinkError && (
   <p className="text-[#FD0707] text-[16px] mt-3">
     {uploadLinkError}
@@ -873,7 +949,7 @@ function OrderDetailPage({
                 onClick={handleUploadResult}
                 className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
               >
-                Upload
+                {isEditingUploadLink ? "Simpan" : "Upload"}
               </button>
             </div>
           </div>
@@ -886,7 +962,7 @@ function OrderDetailPage({
 
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F5F5F5] rounded-[18px] p-8 z-50 shadow-lg w-[520px]">
       <p className="text-[24px] text-center">
-        Link Bukti Pembayaran
+        {isEditingPaymentProof ? "Ganti Link Bukti Pembayaran" : "Link Bukti Pembayaran"}
       </p>
 
       <input
@@ -898,6 +974,10 @@ function OrderDetailPage({
         placeholder="Masukkan link G-drive bukti pembayaran"
         className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
       />
+
+      <p className="text-[16px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dibuka.
+</p>
 
       {paymentProofError && (
         <p className="text-[#FD0707] text-[16px] mt-3">
@@ -911,6 +991,7 @@ function OrderDetailPage({
             setShowPaymentProofPopup(false)
             setPaymentProofLink("")
             setPaymentProofError("")
+            setIsEditingPaymentProof(false)
           }}
           className="w-[130px] h-[46px] border-[3px] border-black rounded-[10px] text-[20px]"
         >
@@ -921,7 +1002,7 @@ function OrderDetailPage({
           onClick={handleSubmitPaymentProof}
           className="w-[130px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
         >
-          Kirim
+          {isEditingPaymentProof ? "Simpan" : "Kirim"}
         </button>
       </div>
     </div>

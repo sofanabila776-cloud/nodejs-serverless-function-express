@@ -47,6 +47,11 @@ const handleProfilePhotoChange = (event) => {
     currentUser?.username || currentUser?.name || "unainaina"
 
   const profileEmail = currentUser?.email || "Email"
+  const profilePhone = currentUser?.phone || "-"
+  const profileBank =
+   currentUser?.bankName && currentUser?.bankAccountNumber
+    ? `${currentUser.bankName} - ${currentUser.bankAccountNumber}`
+    : "-"
 
   const artistLevelLabel =
     {
@@ -142,39 +147,27 @@ const handleProfilePhotoChange = (event) => {
             className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2"
           />
 
-          <p className="text-[20px] mt-5">Nomor Telepon</p>
+          <div className="mt-7">
+  <p className="text-[20px]">
+    Nomor Telepon
+  </p>
 
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Masukkan nomor telepon"
-            className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2 placeholder:text-[#8E8E8E]"
-          />
+  <div className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] mt-2 flex items-center bg-transparent">
+    {profilePhone}
+  </div>
+</div>
 
-          <p className="text-[20px] mt-5">Jenis Kelamin</p>
+       {role === "artist" && (
+  <div className="mt-5">
+    <p className="text-[20px]">
+      Rekening pembayaran
+    </p>
 
-          <div className="flex gap-8 mt-3 text-[20px]">
-            {["Perempuan", "Laki-laki", "Rahasia"].map((item) => (
-              <label key={item} className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={gender === item}
-                  onChange={() => setGender(item)}
-                />
-
-                {item}
-              </label>
-            ))}
-          </div>
-
-          <div className="flex justify-end mt-8">
-            <button
-              onClick={() => showToast("Profil berhasil disimpan")}
-              className="w-[140px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
-            >
-              Simpan
-            </button>
-          </div>
+    <div className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] mt-2 flex items-center bg-transparent">
+      {profileBank}
+    </div>
+  </div>
+)}
         </div>
       </div>
     </>

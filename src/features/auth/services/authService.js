@@ -10,6 +10,7 @@ const defaultUsers = [
     password: "12345678",
     role: "buyer",
     username: "unainaina",
+    phone: "081234567890",
   },
   {
     id: 2,
@@ -18,6 +19,9 @@ const defaultUsers = [
     role: "artist",
     username: "azazarine",
     artistLevel: "professional",
+    phone: "081234567891",
+    bankName: "MANDIRI",
+    bankAccountNumber: "099278",
   },
 ];
 
@@ -168,13 +172,17 @@ export const registerUser = async (payload) => {
   }
 
   const newUser = {
-    id: Date.now(),
-    email: normalizedEmail,
-    password: payload.password,
-    role: payload.role,
-    username: normalizedUsername,
-    artistLevel: payload.artistLevel || null,
-  };
+  id: Date.now(),
+  email: normalizedEmail,
+  password: payload.password,
+  role: payload.role,
+  username: normalizedUsername,
+  phone: payload.phone || "",
+  artistLevel: payload.artistLevel || null,
+  bankName: payload.role === "artist" ? payload.bankName || "" : "",
+  bankAccountNumber:
+    payload.role === "artist" ? payload.bankAccountNumber || "" : "",
+};
 
   const nextUsers = [...users, newUser];
   saveUsers(nextUsers);

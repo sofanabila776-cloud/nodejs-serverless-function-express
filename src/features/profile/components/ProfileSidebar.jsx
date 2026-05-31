@@ -1,4 +1,4 @@
-import { FiUser, FiMessageCircle } from "react-icons/fi"
+import { FiUser } from "react-icons/fi"
 import { LuClipboardList } from "react-icons/lu"
 
 function ProfileSidebar({
@@ -209,15 +209,6 @@ function ProfileSidebar({
         </div>
       </button>
 
-      <button
-  type="button"
-  className="flex w-full items-center justify-start gap-3 text-left text-[24px] mt-5"
->
-  <FiMessageCircle className="min-w-[24px] min-h-[24px] shrink-0" />
-  <span className="whitespace-nowrap text-left">
-    Riwayat Ulasan
-  </span>
-</button>
     </div>
   )
 }
