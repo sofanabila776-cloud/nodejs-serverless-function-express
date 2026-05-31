@@ -228,10 +228,6 @@ if (!selectedArtist) {
   ))}
 </div>
 
-<div className="grid grid-cols-2 gap-[90px] mt-6">
-
-</div>
-
     </div>
 
     
