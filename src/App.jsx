@@ -6,15 +6,17 @@ import BuyerHomePage from "./features/marketplace/pages/BuyerHomePage"
 import ArtistDetailPage from "./features/marketplace/pages/ArtistDetailPage"
 import BriefPage from "./features/marketplace/pages/BriefPage"
 import ProfilePage from "./features/profile/pages/ProfilePage"
+
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
+import { getArtists, getArtistByUserId, uploadPortfolio, publishPortfolio, unpublishPortfolio, clearPortfolio } from "./features/auth/services/artistService"
 
-import { getArtists } from "./features/auth/services/artistService"
-import { createOrderAPI } from "./features/auth/services/orderService"
+import { createOrderAPI, getOrdersByBuyer, getOrdersByArtist } from "./features/auth/services/orderService"
 import RevisionBriefPage from "./features/orders/pages/RevisionBriefPage"
 import RevisionBriefViewPage from "./features/orders/pages/RevisionBriefViewPage"
 
 import { artists } from "./features/marketplace/data/artists"
+
 
 import {
   createOrder,
@@ -124,15 +126,24 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [artistPortfolio, setArtistPortfolio] = useState(null)
   const [publishedArtists, setPublishedArtists] = useState([])
-
+  const [artistId, setArtistId] = useState(null)
+  const [artistList, setArtistList] = useState([])
   const addArtistProduct = (newProduct) => {
     setArtistPortfolio((prevPortfolio) => {
       if (!prevPortfolio) return prevPortfolio
 
-      return {
+      const updated = {
         ...prevPortfolio,
         products: [...(prevPortfolio.products || []), newProduct],
       }
+      // Save draft to localStorage
+      if (currentUser?.id) {
+        localStorage.setItem(
+          `pickaryaArtistPortfolioDraft_${currentUser.id}`,
+          JSON.stringify(updated)
+        )
+      }
+      return updated
     })
 
     setActiveSidebar("portfolio")
@@ -249,17 +260,72 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
   const [showDeletePopup, setShowDeletePopup] = useState(false)
 
   useEffect(() => {
-    logoutUser()
+    // Restore user session saat app mount
+    const currentUser = getCurrentUser()
+    if (currentUser) {
+      setCurrentUser(currentUser)
+      setIsLoggedIn(true)
+      setRole(currentUser.role)
+    }
   }, [])
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "auto",
+  if (currentUser?.role === 'artist' && currentUser?.id) {
+    getArtistByUserId(currentUser.id).then((data) => {
+      if (data && data._id) {
+        setArtistId(data._id)
+        // Restore artist portfolio dari backend
+        if (data.portfolioPages && data.portfolioPages.length > 0) {
+          setArtistPortfolio({
+            id: data._id,
+            title: data.title || '',
+            durationMin: data.durationMin || '1',
+            durationMax: data.durationMax || '2',
+            pages: data.portfolioPages || [],
+            products: data.products || [],
+            isPublished: data.isPublished || false,
+          })
+        } else {
+          // Jika tidak ada di backend, coba restore dari localStorage
+          const draft = localStorage.getItem(`pickaryaArtistPortfolioDraft_${currentUser.id}`)
+          if (draft) {
+            try {
+              setArtistPortfolio(JSON.parse(draft))
+            } catch (e) {
+              console.error("Error parsing portfolio draft:", e)
+            }
+          }
+        }
+      }
     })
-  }, [currentPage, activeSidebar, activeOrderStatus, selectedOrder?.id])
+  }
+}, [currentUser])
 
+useEffect(() => {
+  getArtists().then((data) => {
+    if (data && Array.isArray(data)) {
+      setArtistList(data)
+    }
+  })
+}, [])
+
+  useEffect(() => {
+  if (isLoggedIn && currentUser?.id) {
+    if (role === 'buyer') {
+      getOrdersByBuyer(currentUser.id).then((data) => {
+        if (Array.isArray(data)) {
+          setOrders(data)
+        }
+      }).catch(err => console.error("Error fetching buyer orders:", err))
+    } else if (role === 'artist') {
+      getOrdersByArtist(currentUser.id).then((data) => {
+        if (Array.isArray(data)) {
+          setOrders(data)
+        }
+      }).catch(err => console.error("Error fetching artist orders:", err))
+    }
+  }
+}, [isLoggedIn, currentUser?.id, role])
   const showToast = (msg, duration = 3000) => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(""), duration)
@@ -313,17 +379,17 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
 
   const currentBuyerName = getCurrentBuyerName(currentUser, DEFAULT_BUYER)
 
-  const marketplaceArtists = [
-    ...publishedArtists,
-    ...artists.filter(
-      (artist) =>
-        !publishedArtists.some(
-          (publishedArtist) =>
-            String(publishedArtist.id) === String(artist.id) ||
-            publishedArtist.name === artist.name
-        )
-    ),
-  ]
+  const marketplaceArtists = artistList.length > 0
+  ? artistList
+  : [
+      ...publishedArtists,
+      ...artists.filter(
+        (artist) =>
+          !publishedArtists.some(
+            (pa) => String(pa.id) === String(artist.id) || pa.name === artist.name
+          )
+      ),
+    ]
 
   const currentLikedUserKey =
   currentUser?.id ||
@@ -443,47 +509,76 @@ const toggleLikedArtist = (artist) => {
     }
   }
 
-  const publishArtistPortfolio = () => {
+  const publishArtistPortfolio = async () => {
+  const resolvedArtistId = artistId || artistPortfolio?.id
+  console.log("DEBUG: publishArtistPortfolio called, artistId=", artistId, "portfolio=", artistPortfolio)
+  
+  if (!artistPortfolio || artistPortfolio.pages.length === 0) {
+    showToast("Portfolio masih kosong, silakan upload gambar terlebih dahulu")
+    return
+  }
+
+  if (!resolvedArtistId) {
+    showToast("Error: Artist ID tidak ditemukan. Silakan refresh dan login ulang")
+    return
+  }
+
+  try {
+    console.log("DEBUG: Sending portfolio to backend...")
+    await uploadPortfolio(resolvedArtistId, {
+      title: artistPortfolio?.title,
+      durationMin: artistPortfolio?.durationMin,
+      durationMax: artistPortfolio?.durationMax,
+      pages: artistPortfolio?.pages || [],
+      products: artistPortfolio?.products || [],
+    })
+    
+    console.log("DEBUG: Portfolio uploaded, publishing...")
+    await publishPortfolio(resolvedArtistId)
+
+    // Clear draft from localStorage
+    localStorage.removeItem(`pickaryaArtistPortfolioDraft_${currentUser.id}`)
+
+    getArtists().then((data) => {
+      if (data && Array.isArray(data)) {
+        setArtistList(data)
+      }
+    })
+    
     setArtistPortfolio((prevPortfolio) => {
       if (!prevPortfolio) return prevPortfolio
-
-      const updatedPortfolio = {
-        ...prevPortfolio,
-        isPublished: true,
-      }
-
-      const publishedArtist = buildPublishedArtist(updatedPortfolio)
-
-      setPublishedArtists((prevArtists) => [
-        publishedArtist,
-        ...prevArtists.filter(
-          (artist) =>
-            String(artist.id) !== String(publishedArtist.id) &&
-            artist.name !== publishedArtist.name
-        ),
-      ])
-
-      return updatedPortfolio
+      return { ...prevPortfolio, isPublished: true }
     })
 
     showToast("Portofolio berhasil dipublikasikan")
+  } catch (error) {
+    console.error("Error publishing portfolio:", error)
+    showToast(error.message || "Gagal mempublikasikan portofolio")
   }
+}
 
-  const deleteArtistPortfolio = () => {
+ const deleteArtistPortfolio = async () => {
+  try {
+    if (artistId) {
+      await clearPortfolio(artistId) // ✅ hapus dari MongoDB
+    }
+
     setArtistPortfolio(null)
+    localStorage.removeItem(`pickaryaArtistPortfolioDraft_${currentUser?.id}`)
 
-    setPublishedArtists((prevArtists) =>
-      prevArtists.filter(
-        (artist) =>
-          String(artist.id) !==
-            String(currentUser?.id || currentUser?.email) &&
-          artist.name !== (currentUser?.username || currentUser?.name)
-      )
-    )
+    // Refresh artist list
+    getArtists().then((data) => {
+      if (data && Array.isArray(data)) {
+        setArtistList(data)
+      }
+    })
 
     showToast("Portofolio berhasil dihapus")
+  } catch (error) {
+    console.error("Error deleting portfolio:", error)
+    showToast("Gagal menghapus portofolio")
   }
-
+}
   const filteredArtists = marketplaceArtists.filter((artist) => {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase()
 
@@ -518,30 +613,41 @@ const toggleLikedArtist = (artist) => {
   setCurrentPage("detail")
 }
 
- const handleSubmitBrief = () => {
+ const handleSubmitBrief = async () => {
   if (!selectedProduct || !quantity || Number(quantity) < 1 || !description) {
     setShowError(true)
     return
   }
 
-  const newOrder = createOrder({
-    selectedArtist,
-    selectedProduct,
-    quantity,
-    description,
-    currentBuyerName,
-    currentUser,
-  })
+  try {
+    const newOrder = createOrder({
+      selectedArtist,
+      selectedProduct,
+      quantity,
+      description,
+      currentBuyerName,
+      currentUser,
+    })
 
-  setOrders([newOrder, ...orders].filter(Boolean))
-  setCurrentPage("home")
+    const savedOrder = await createOrderAPI(newOrder)
 
-  setSelectedProduct(null)
-  setQuantity("")
-  setDescription("")
-  setShowError(false)
+    if (!savedOrder || savedOrder.error) {
+      throw new Error(savedOrder?.error || "Gagal menyimpan pesanan")
+    }
 
-  showToast("Pesanan berhasil dibuat")
+    setOrders((prevOrders) => [savedOrder, ...prevOrders].filter(Boolean))
+    setCurrentPage("home")
+
+    setSelectedProduct(null)
+    setQuantity("")
+    setDescription("")
+    setShowError(false)
+
+    showToast("Pesanan berhasil dibuat")
+  } catch (error) {
+    console.error("Gagal membuat pesanan:", error)
+    showToast(error.message || "Gagal menyimpan pesanan ke database")
+  }
 }
 
   let page
@@ -736,6 +842,13 @@ const toggleLikedArtist = (artist) => {
           initialPortfolio={artistPortfolio}
           onUploadPortfolio={(newPortfolio) => {
             setArtistPortfolio(newPortfolio)
+            // Save draft to localStorage
+            if (currentUser?.id) {
+              localStorage.setItem(
+                `pickaryaArtistPortfolioDraft_${currentUser.id}`,
+                JSON.stringify(newPortfolio)
+              )
+            }
             setActiveSidebar("portfolio")
             setCurrentPage("profile")
             showToast(

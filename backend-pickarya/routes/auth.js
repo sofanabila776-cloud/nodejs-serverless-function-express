@@ -139,9 +139,16 @@ router.put('/me', authMiddleware, async (req, res) => {
   }
 });
 
+
 // DELETE /api/auth/me
 router.delete('/me', authMiddleware, async (req, res) => {
   try {
+    // ✅ Hapus dokumen Artist juga kalau rolenya artist
+    const user = await User.findById(req.user.id)
+    if (user && user.role === 'artist') {
+      await Artist.findOneAndDelete({ userId: req.user.id })
+    }
+
     await User.findByIdAndDelete(req.user.id);
     res.json({ message: 'Akun berhasil dihapus' });
   } catch (err) {

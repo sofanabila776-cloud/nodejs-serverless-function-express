@@ -7,14 +7,11 @@ const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
 const artistRoutes = require('./routes/artists');
 
-console.log('orderRoutes type:', typeof orderRoutes);
-console.log('authRoutes type:', typeof authRoutes);
-console.log('artistRoutes type:', typeof artistRoutes); 
-
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }))        // ✅ dipindah ke sini
+app.use(express.urlencoded({ limit: '50mb', extended: true }))  // ✅ dipindah ke sini
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/pickarya';
 

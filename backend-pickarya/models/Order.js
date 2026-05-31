@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema(
   {
     // Informasi dasar
-    artistId: { type: mongoose.Schema.Types.ObjectId, ref: 'Artist', default: null },
+    artistId: { type: String, default: null },
     artist: { type: String, required: true },
     buyer: { type: String, required: true },
-    
+
     // Informasi buyer
-    buyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    buyerId: { type: String, default: null },
     buyerEmail: { type: String, default: '' },
     
     // Produk & harga
