@@ -334,7 +334,6 @@ const [likedArtistIdsByUser, setLikedArtistIdsByUser] = useState(() => {
     rejectOrderByArtist,
     acceptOrderByArtist,
     confirmPaymentByBuyer,
-    confirmPaymentByArtist,
     uploadResultByArtist,
     uploadRevisionByArtist,
     requestRevisionByBuyer,
@@ -745,7 +744,6 @@ setDeletedArtistKeys((prevKeys) => {
           rejectOrderByArtist={rejectOrderByArtist}
           acceptOrderByArtist={acceptOrderByArtist}
           confirmPaymentByBuyer={confirmPaymentByBuyer}
-          confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
           uploadRevisionByArtist={uploadRevisionByArtist}
           requestRevisionByBuyer={requestRevisionByBuyer}
@@ -792,7 +790,6 @@ setDeletedArtistKeys((prevKeys) => {
           rejectOrderByArtist={rejectOrderByArtist}
           acceptOrderByArtist={acceptOrderByArtist}
           confirmPaymentByBuyer={confirmPaymentByBuyer}
-          confirmPaymentByArtist={confirmPaymentByArtist}
           uploadResultByArtist={uploadResultByArtist}
           uploadRevisionByArtist={uploadRevisionByArtist}
           requestRevisionByBuyer={requestRevisionByBuyer}

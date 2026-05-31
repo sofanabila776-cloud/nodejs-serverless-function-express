@@ -74,24 +74,6 @@ export function useOrderActions({
   showToast("Konfirmasi pembayaran berhasil dikirim", 5000)
 }
 
-  const confirmPaymentByArtist = (id) => {
-    const changes = {
-      status: ORDER_STATUS.PAID_CONFIRMED,
-      processedAt: getCurrentOrderDateTime(),
-    }
-
-    setOrders((prevOrders) => updateOrderById(prevOrders, id, changes))
-    setSelectedOrder((prevOrder) =>
-      updateSelectedOrderById(prevOrder, id, changes)
-    )
-
-    setCurrentPage("profile")
-    setActiveSidebar("orders")
-    setActiveOrderStatus("artist_process")
-
-    showToast("Pembayaran berhasil dikonfirmasi", 5000)
-  }
-
   const uploadResultByArtist = (id, resultLink) => {
     const changes = {
       status: ORDER_STATUS.RESULT_UPLOADED,
@@ -202,7 +184,6 @@ const updateRevisionLink = (id, revisionLink) => {
     rejectOrderByArtist,
     acceptOrderByArtist,
     confirmPaymentByBuyer,
-    confirmPaymentByArtist,
     uploadResultByArtist,
     requestRevisionByBuyer,
     completeOrderByBuyer,

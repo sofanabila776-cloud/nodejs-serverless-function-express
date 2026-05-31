@@ -18,7 +18,6 @@ function ProfileOrders({
   rejectOrderByArtist = () => {},
   acceptOrderByArtist = () => {},
   confirmPaymentByBuyer = () => {},
-  confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
@@ -78,7 +77,6 @@ function ProfileOrders({
         rejectOrderByArtist={rejectOrderByArtist}
         acceptOrderByArtist={acceptOrderByArtist}
         confirmPaymentByBuyer={confirmPaymentByBuyer}
-        confirmPaymentByArtist={confirmPaymentByArtist}
         uploadResultByArtist={uploadResultByArtist}
         uploadRevisionByArtist={uploadRevisionByArtist}
         requestRevisionByBuyer={requestRevisionByBuyer}

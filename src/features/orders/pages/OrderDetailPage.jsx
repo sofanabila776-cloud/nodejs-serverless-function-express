@@ -19,7 +19,6 @@ function OrderDetailPage({
   rejectOrderByArtist = () => {},
   acceptOrderByArtist = () => {},
   confirmPaymentByBuyer = () => {},
-  confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
@@ -418,11 +417,17 @@ function OrderDetailPage({
     date: paymentConfirmedAt,
     title: "Menunggu pembayaran",
     subtitles:
-  role === "artist"
-    ? ["Buyer telah melakukan pembayaran"]
-    : ["Menunggu konfirmasi pembayaran dari artist"],
-  linkText: paymentProofHref ? "Lihat Bukti Pembayaran" : null,
-  linkHref: paymentProofHref || "",
+      role === "artist"
+        ? ["Buyer akan melakukan pembayaran"]
+        : ["Menunggu verifikasi pembayaran oleh admin"],
+    linkText:
+      role === "buyer" && paymentProofHref
+        ? "Lihat Bukti Pembayaran"
+        : null,
+    linkHref:
+      role === "buyer" && paymentProofHref
+        ? paymentProofHref
+        : "",
     active: false,
     icon: <FiDollarSign />,
   })
@@ -725,37 +730,33 @@ function OrderDetailPage({
     title: "Menunggu pembayaran",
     subtitles:
       role === "artist"
-        ? ["Buyer telah melakukan pembayaran"]
-        : ["Pembayaran sedang menunggu konfirmasi artist"],
-    linkText: paymentProofHref ? "Lihat Bukti Pembayaran" : null,
-    linkHref: paymentProofHref || "",
+        ? ["Buyer akan melakukan pembayaran"]
+        : ["Menunggu verifikasi pembayaran oleh admin"],
+    linkText:
+      role === "buyer" && paymentProofHref
+        ? "Lihat Bukti Pembayaran"
+        : null,
+    linkHref:
+      role === "buyer" && paymentProofHref
+        ? paymentProofHref
+        : "",
     active: true,
     icon: <FiDollarSign />,
     extra:
-  role === "buyer" && paymentProofHref ? (
-    <div className="flex justify-end mt-3 w-full">
-      <button
-        type="button"
-        onClick={() =>
-          openPaymentProofPopup(selectedOrder?.paymentProofLink, true)
-        }
-        className="w-[230px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
-      >
-        Ganti Bukti Pembayaran
-      </button>
-    </div>
-  ) : null,
-    actions:
-      role === "artist" ? (
-        <div className="flex justify-end gap-4 mt-4 w-full max-w-[580px] ml-auto">
-        <button
-          onClick={() => confirmPaymentByArtist(id)}
-          className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-        >
-          Konfirmasi
-        </button>
+      role === "buyer" && paymentProofHref ? (
+        <div className="flex justify-end mt-3 w-full">
+          <button
+            type="button"
+            onClick={() =>
+              openPaymentProofPopup(selectedOrder?.paymentProofLink, true)
+            }
+            className="w-[230px] h-[46px] bg-black text-white rounded-[10px] text-[18px]"
+          >
+            Ganti Bukti Pembayaran
+          </button>
         </div>
       ) : null,
+    actions: null,
   })
 
   addBuyerWillPayStep()
