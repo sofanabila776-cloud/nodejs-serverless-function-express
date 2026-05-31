@@ -521,30 +521,35 @@ const toggleLikedArtist = (artist) => {
 }
 
   const handleSubmitBrief = () => {
-    if (!selectedProduct || !quantity || Number(quantity) < 1 || !description) {
-      setShowError(true)
-      return
-    }
+  const cleanQuantity = Number(quantity)
 
-    const newOrder = createOrder({
-      selectedArtist,
-      selectedProduct,
-      quantity,
-      description,
-      currentBuyerName,
-      currentUser,
-    })
-
-    setOrders([newOrder, ...orders].filter(Boolean))
-    setCurrentPage("home")
-
-    setSelectedProduct(null)
-    setQuantity("")
-    setDescription("")
-    setShowError(false)
-
-    showToast("Pesanan berhasil dibuat")
+  if (
+    !selectedProduct ||
+    !cleanQuantity ||
+    cleanQuantity < 1 ||
+    !description.trim()
+  ) {
+    setShowError(true)
+    return
   }
+
+  const newOrder = createOrder({
+    selectedArtist,
+    selectedProduct,
+    quantity: cleanQuantity,
+    description,
+    currentBuyerName,
+    currentUser,
+  })
+
+  setOrders([newOrder, ...orders].filter(Boolean))
+  setCurrentPage("home")
+  setSelectedProduct(null)
+  setQuantity("")
+  setDescription("")
+  setShowError(false)
+  showToast("Pesanan berhasil dibuat")
+}
 
   let page
 

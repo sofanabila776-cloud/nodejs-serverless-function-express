@@ -155,12 +155,19 @@ function OrderDetailPage({
 
   if (!trimmedLink) return ""
 
+  if (/\s/.test(trimmedLink)) return ""
+
   const linkWithProtocol = /^https?:\/\//i.test(trimmedLink)
     ? trimmedLink
     : `https://${trimmedLink}`
 
   try {
-    return new URL(linkWithProtocol).href
+    const url = new URL(linkWithProtocol)
+    const hostname = url.hostname.toLowerCase()
+
+    if (!hostname.includes(".")) return ""
+
+    return url.href
   } catch {
     return ""
   }
@@ -217,7 +224,7 @@ function OrderDetailPage({
   const validLink = getValidExternalLink(gdriveLink)
 
   if (!validLink) {
-    setUploadLinkError("Masukkan link G-drive yang valid.")
+    setUploadLinkError("Masukkan link yang valid. Pastikan akses file sudah dibuka.")
     return
   }
 
@@ -246,7 +253,7 @@ function OrderDetailPage({
   const validLink = getValidExternalLink(paymentProofLink)
 
   if (!validLink) {
-    setPaymentProofError("Masukkan link bukti pembayaran yang valid.")
+    setPaymentProofError("Masukkan link bukti pembayaran yang valid. Pastikan akses file sudah dibuka.")
     return
   }
 
@@ -926,6 +933,10 @@ function OrderDetailPage({
               className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
             />
 
+            <p className="text-[16px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dibuka.
+</p>
+
             {uploadLinkError && (
   <p className="text-[#FD0707] text-[16px] mt-3">
     {uploadLinkError}
@@ -962,6 +973,10 @@ function OrderDetailPage({
         placeholder="Masukkan link G-drive bukti pembayaran"
         className="w-full h-[46px] border-[3px] border-black rounded-[18px] px-4 text-[18px] outline-none mt-6"
       />
+
+      <p className="text-[16px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dibuka.
+</p>
 
       {paymentProofError && (
         <p className="text-[#FD0707] text-[16px] mt-3">

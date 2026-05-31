@@ -27,6 +27,11 @@ function BriefPage({
 
   const [showDropdown, setShowDropdown] = useState(false)
 
+  const handleQuantityChange = (event) => {
+  const numbersOnly = event.target.value.replace(/\D/g, "")
+  setQuantity(numbersOnly)
+}
+
 if (!selectedArtist) {
   return (
     <div className="pt-[140px] text-center text-red-500">
@@ -159,27 +164,13 @@ if (!selectedArtist) {
           </p>
 
           <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) =>
-              setQuantity(e.target.value)
-            }
-            className="
-              w-[140px]
-              h-[56px]
-              border-[2px]
-              border-black
-              rounded-[14px]
-              px-4
-              text-[20px]
-              outline-none
-
-              [appearance:textfield]
-              [&::-webkit-outer-spin-button]:appearance-none
-              [&::-webkit-inner-spin-button]:appearance-none
-            "
-          />
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={quantity}
+  onChange={handleQuantityChange}
+  className="w-[140px] h-[56px] border-[2px] border-black rounded-[14px] px-4 text-[20px] outline-none"
+/>
 
           {
             Number(quantity) < 1 && (
