@@ -27,6 +27,13 @@ const artistSchema = new mongoose.Schema({
     }
   ],
   isPublished: { type: Boolean, default: false },
+
+  // ✅ BARU: field phone & rekening
+  phone: { type: String, default: '' },
+  bankName: { type: String, default: '' },      // nama bank (BCA, BRI, dll)
+  bankAccount: { type: String, default: '' },   // nomor rekening
+  bankHolder: { type: String, default: '' },    // nama pemilik rekening
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Artist', artistSchema);

@@ -4,12 +4,19 @@ const Artist = require('../models/Artist');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // GET semua artist yang sudah published
+// GET semua artist yang sudah published
 router.get('/', async (req, res) => {
   try {
     const { all } = req.query;
     const filter = all ? {} : { isPublished: true };
     const artists = await Artist.find(filter);
-    res.json(artists);
+    
+    const mapped = artists.map(a => ({
+      ...a.toObject(),
+      id: String(a._id),
+    }));
+    
+    res.json(mapped);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -114,6 +121,24 @@ router.patch('/:id/clear', authMiddleware, async (req, res) => {
       },
       { new: true }
     );
+    res.json(artist);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+// Tambahkan di backend-pickarya/routes/artists.js
+// PATCH update profile (phone, bank)
+router.patch('/:id/profile', authMiddleware, async (req, res) => {
+  try {
+    const { phone, bankName, bankAccount, bankHolder } = req.body;
+
+    const artist = await Artist.findByIdAndUpdate(
+      req.params.id,
+      { phone, bankName, bankAccount, bankHolder },
+      { new: true }
+    );
+
+    if (!artist) return res.status(404).json({ message: 'Artist tidak ditemukan' });
     res.json(artist);
   } catch (err) {
     res.status(500).json({ message: err.message });

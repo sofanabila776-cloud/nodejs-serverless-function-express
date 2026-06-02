@@ -14,14 +14,18 @@ const generateToken = (user) => {
   );
 };
 
-const userResponse = (user) => ({
+// ✅ Sekarang terima artist optional, untuk include data bank
+const userResponse = (user, artist = null) => ({
   id: user._id,
   email: user.email,
   username: user.username,
   role: user.role,
   artistLevel: user.artistLevel,
-  phone: user.phone,
-  gender: user.gender,
+  phone: user.phone || '',
+  gender: user.gender || '',
+  bankName: artist?.bankName || '',
+  bankAccount: artist?.bankAccount || '',
+  bankHolder: artist?.bankHolder || '',
 });
 
 // POST /api/auth/check-email
@@ -38,17 +42,13 @@ router.post('/check-email', async (req, res) => {
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, username, role, artistLevel } = req.body;
+    const { email, password, username, role, artistLevel, phone, bankName, bankAccountNumber } = req.body;
 
     const emailExists = await User.findOne({ email: email.toLowerCase() });
-    if (emailExists) {
-      return res.status(400).json({ message: 'Email sudah terdaftar/digunakan' });
-    }
+    if (emailExists) return res.status(400).json({ message: 'Email sudah terdaftar/digunakan' });
 
     const usernameExists = await User.findOne({ username: username.toLowerCase() });
-    if (usernameExists) {
-      return res.status(400).json({ message: 'Username sudah digunakan' });
-    }
+    if (usernameExists) return res.status(400).json({ message: 'Username sudah digunakan' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -58,10 +58,12 @@ router.post('/register', async (req, res) => {
       username: username.toLowerCase(),
       role,
       artistLevel: artistLevel || null,
+      phone: phone || '',
     });
 
+    let artist = null;
     if (role === 'artist') {
-      await Artist.create({
+      artist = await Artist.create({
         userId: user._id,
         name: username.toLowerCase(),
         rating: 0,
@@ -69,15 +71,14 @@ router.post('/register', async (req, res) => {
         tags: [],
         portfolio: [],
         products: [],
+        phone: phone || '',
+        bankName: bankName || '',
+        bankAccount: bankAccountNumber || '',
       });
     }
 
     const token = generateToken(user);
-
-    res.status(201).json({
-      token,
-      user: userResponse(user),
-    });
+    res.status(201).json({ token, user: userResponse(user, artist) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -89,21 +90,19 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(400).json({ message: 'Password/email salah' });
-    }
+    if (!user) return res.status(400).json({ message: 'Password/email salah' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Password/email salah' });
+    if (!isMatch) return res.status(400).json({ message: 'Password/email salah' });
+
+    // ✅ Ambil data Artist untuk include bank info
+    let artist = null;
+    if (user.role === 'artist') {
+      artist = await Artist.findOne({ userId: user._id });
     }
 
     const token = generateToken(user);
-
-    res.json({
-      token,
-      user: userResponse(user),
-    });
+    res.json({ token, user: userResponse(user, artist) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -113,10 +112,14 @@ router.post('/login', async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User tidak ditemukan' });
+    if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
+
+    let artist = null;
+    if (user.role === 'artist') {
+      artist = await Artist.findOne({ userId: user._id });
     }
-    res.json({ user: userResponse(user) });
+
+    res.json({ user: userResponse(user, artist) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -133,22 +136,24 @@ router.put('/me', authMiddleware, async (req, res) => {
       { new: true }
     );
 
-    res.json({ user: userResponse(updatedUser) });
+    let artist = null;
+    if (updatedUser.role === 'artist') {
+      artist = await Artist.findOne({ userId: req.user.id });
+    }
+
+    res.json({ user: userResponse(updatedUser, artist) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-
 // DELETE /api/auth/me
 router.delete('/me', authMiddleware, async (req, res) => {
   try {
-    // ✅ Hapus dokumen Artist juga kalau rolenya artist
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id);
     if (user && user.role === 'artist') {
-      await Artist.findOneAndDelete({ userId: req.user.id })
+      await Artist.findOneAndDelete({ userId: req.user.id });
     }
-
     await User.findByIdAndDelete(req.user.id);
     res.json({ message: 'Akun berhasil dihapus' });
   } catch (err) {

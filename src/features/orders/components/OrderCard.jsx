@@ -7,7 +7,7 @@ function OrderCard({
   setSelectedOrder = () => {},
   setCurrentPage = () => {},
 }) {
-  const id = order?.id
+  const id = order?._id || order?.id
   const artist = order?.artist || "Unknown Artist"
   const buyer = order?.buyer || "Unknown Buyer"
   const displayName = role === "artist" ? buyer : artist

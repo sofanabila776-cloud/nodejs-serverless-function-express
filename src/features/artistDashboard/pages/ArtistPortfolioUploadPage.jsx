@@ -270,12 +270,12 @@ function ArtistPortfolioUploadPage({
           )}
         </div>
       </div>
- 
-      <p className="w-[412px] text-center text-[#FD0707] text-[16px] mt-7">
+
+      <p className="w-[412px] text-center text-[#FD0707] text-[16px] mt-3">
         *Pastikan menambahkan watermark pada portofolio
       </p>
- 
-      <div className="flex justify-end mt-[88px]">
+
+      <div className="flex justify-end mt-[30px]">
         <button
           onClick={handleSubmit}
           disabled={isUploading}
@@ -289,5 +289,6 @@ function ArtistPortfolioUploadPage({
     </div>
   )
 }
- 
+
+
 export default ArtistPortfolioUploadPage

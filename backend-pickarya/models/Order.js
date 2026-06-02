@@ -13,16 +13,18 @@ const orderSchema = new mongoose.Schema(
     
     // Produk & harga
     product: { type: String, required: true },
+    productCoverImageUrl: { type: String, default: '' }, // ✅ tambah ini (ada di frontend)
     priceRange: { type: String },
-    totalPrice: { type: Number, default: null },
+    totalPrice: { type: String, default: null },
     quantity: { type: Number, required: true },
     description: { type: String, required: true },
 
     // Status
     status: { type: String, default: 'waiting' },
 
-    // Timestamps (kapan terjadi apa)
-    createdAt: { type: Date, default: Date.now },
+    // ✅ createdAt DIHAPUS dari sini — sudah di-handle timestamps: true di bawah
+
+    // Timestamps status order
     rejectedAt: { type: Date, default: null },
     cancelledAt: { type: Date, default: null },
     acceptedAt: { type: Date, default: null },
@@ -39,8 +41,16 @@ const orderSchema = new mongoose.Schema(
     revisionNote: { type: String, default: '' },
     revisionLink: { type: String, default: '' },
     finalLink: { type: String, default: '' },
+    paymentProofLink: { type: String, default: '' },
+
+    revisionDescription: { type: String, default: '' },
+    revisionSupportLink: { type: String, default: '' },
+
+    // Tambah di bagian Links & notes
+   
+    
   },
-  { timestamps: true }
+  { timestamps: true } // ✅ ini yang handle createdAt & updatedAt otomatis
 );
 
 module.exports = mongoose.model('Order', orderSchema);

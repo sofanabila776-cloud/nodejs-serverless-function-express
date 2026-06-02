@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const Artist = require('../models/Artist');
 
 // CREATE order baru
 router.post('/', async (req, res) => {
@@ -13,14 +14,24 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET semua order (bisa filter by buyerId atau artistId)
+// GET semua order
 router.get('/', async (req, res) => {
   try {
     const { buyerId, artistId } = req.query;
     const filter = {};
     if (buyerId) filter.buyerId = buyerId;
-    if (artistId) filter.artistId = artistId;
-    const orders = await Order.find(filter);
+    if (artistId) {
+      const artistDoc = await Artist.findOne({ userId: artistId });
+      if (artistDoc) {
+        filter.$or = [
+          { artistId: String(artistDoc._id) },
+          { artistId: artistId },
+        ];
+      } else {
+        filter.artistId = artistId;
+      }
+    }
+    const orders = await Order.find(filter).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -75,9 +86,10 @@ router.patch('/:id/cancel', async (req, res) => {
 // PATCH accept
 router.patch('/:id/accept', async (req, res) => {
   try {
+    const { totalPrice } = req.body;
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status: 'accepted', acceptedAt: new Date() },
+      { status: 'accepted', acceptedAt: new Date(), totalPrice },
       { new: true }
     );
     res.json(order);
@@ -91,7 +103,7 @@ router.patch('/:id/reject', async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status: 'rejected', rejectedAt: new Date() },
+      { status: 'rejected_by_artist', rejectedAt: new Date() },
       { new: true }
     );
     res.json(order);
@@ -103,9 +115,14 @@ router.patch('/:id/reject', async (req, res) => {
 // PATCH buyer-confirm-payment
 router.patch('/:id/buyer-confirm-payment', async (req, res) => {
   try {
+    const { paymentProofLink } = req.body;
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status: 'buyer_confirmed_payment', paymentConfirmedAt: new Date() },
+      { 
+        status: 'buyer_confirmed_payment', 
+        paymentConfirmedAt: new Date(),
+        paymentProofLink: paymentProofLink || ''
+      },
       { new: true }
     );
     res.json(order);
@@ -121,6 +138,50 @@ router.patch('/:id/upload-result', async (req, res) => {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       { status: 'result_uploaded', resultUploadedAt: new Date(), resultLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH request-revision
+router.patch('/:id/request-revision', async (req, res) => {
+  try {
+    const { revisionDescription, revisionSupportLink } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status: 'revision_requested', revisionRequestedAt: new Date(), revisionDescription, revisionSupportLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH upload-revision
+router.patch('/:id/upload-revision', async (req, res) => {
+  try {
+    const { revisionLink } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status: 'revision_uploaded', revisionUploadedAt: new Date(), revisionLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH complete
+router.patch('/:id/complete', async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status: 'completed', completedAt: new Date() },
       { new: true }
     );
     res.json(order);

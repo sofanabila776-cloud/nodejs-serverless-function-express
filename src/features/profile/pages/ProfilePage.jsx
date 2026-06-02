@@ -41,11 +41,13 @@ function ProfilePage({
   rejectOrderByArtist = () => {},
   acceptOrderByArtist = () => {},
   confirmPaymentByBuyer = () => {},
-  confirmPaymentByArtist = () => {},
   uploadResultByArtist = () => {},
   uploadRevisionByArtist = () => {},
   requestRevisionByBuyer = () => {},
   completeOrderByBuyer = () => {},
+  updatePaymentProofLink = () => {},
+  updateResultLink = () => {},
+  updateRevisionLink = () => {},
   setSelectedOrder = () => {},
 }) {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false)
@@ -144,11 +146,13 @@ function ProfilePage({
               rejectOrderByArtist={rejectOrderByArtist}
               acceptOrderByArtist={acceptOrderByArtist}
               confirmPaymentByBuyer={confirmPaymentByBuyer}
-              confirmPaymentByArtist={confirmPaymentByArtist}
               uploadResultByArtist={uploadResultByArtist}
               uploadRevisionByArtist={uploadRevisionByArtist}
               requestRevisionByBuyer={requestRevisionByBuyer}
               completeOrderByBuyer={completeOrderByBuyer}
+              updatePaymentProofLink={updatePaymentProofLink}
+              updateResultLink={updateResultLink}
+              updateRevisionLink={updateRevisionLink}
               setSelectedOrder={setSelectedOrder}
             />
           )}

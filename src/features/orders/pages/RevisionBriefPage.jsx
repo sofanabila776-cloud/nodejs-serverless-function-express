@@ -10,20 +10,27 @@ function RevisionBriefPage({
   const [error, setError] = useState("")
 
   const getValidExternalLink = (link) => {
-    const trimmedLink = String(link || "").trim()
+  const trimmedLink = String(link || "").trim()
 
-    if (!trimmedLink) return ""
+  if (!trimmedLink) return ""
 
-    const linkWithProtocol = /^https?:\/\//i.test(trimmedLink)
-      ? trimmedLink
-      : `https://${trimmedLink}`
+  if (/\s/.test(trimmedLink)) return ""
 
-    try {
-      return new URL(linkWithProtocol).href
-    } catch {
-      return ""
-    }
+  const linkWithProtocol = /^https?:\/\//i.test(trimmedLink)
+    ? trimmedLink
+    : `https://${trimmedLink}`
+
+  try {
+    const url = new URL(linkWithProtocol)
+    const hostname = url.hostname.toLowerCase()
+
+    if (!hostname.includes(".")) return ""
+
+    return url.href
+  } catch {
+    return ""
   }
+}
 
   if (!selectedOrder) {
     return (
@@ -43,12 +50,12 @@ function RevisionBriefPage({
     }
 
     if (supportLink.trim() && !supportHref) {
-      setError("Masukkan link Google Drive pendukung yang valid.")
-      return
-    }
+  setError("Masukkan link gambar pendukung yang valid. Pastikan akses file sudah dibuka.")
+  return
+}
 
     requestRevisionByBuyer(
-      selectedOrder.id,
+      selectedOrder._id || selectedOrder.id,
       revisionDescription.trim(),
       supportHref
     )
@@ -64,7 +71,7 @@ function RevisionBriefPage({
       <div className="text-center mb-8">
         <h1 className="text-[30px]">Brief Revisi</h1>
         <p className="text-[20px] mt-1">
-          NO. PESANAN. {selectedOrder.id}
+          NO. PESANAN. {selectedOrder._id || selectedOrder.id}
         </p>
       </div>
 
@@ -115,6 +122,11 @@ function RevisionBriefPage({
     placeholder="Masukkan link"
     className="w-full h-[52px] border-[3px] border-black rounded-[16px] bg-transparent px-5 text-[19px] outline-none placeholder:text-[#8A8A8A]"
   />
+
+  <p className="text-[17px] text-[#8A8A8A] mt-2">
+  Pastikan link benar dan akses file sudah dibuka.
+</p>
+
 </div>
 
         {error && (
