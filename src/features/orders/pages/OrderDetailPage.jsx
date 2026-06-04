@@ -10,7 +10,6 @@ import {
 } from "react-icons/fi"
 import qrisPickarya from "../../../assets/qris-pickarya.jpeg"
 import { ORDER_STATUS } from "../constants/orderStatus"
-
 function OrderDetailPage({
   role = "buyer",
   selectedOrder,
@@ -41,6 +40,15 @@ function OrderDetailPage({
   const [isEditingPaymentProof, setIsEditingPaymentProof] = useState(false)
   const ADMIN_WHATSAPP_LINK = "https://wa.me/6282228874637"
 
+  const formatDateTime = (dateStr) => {
+  if (!dateStr || dateStr === '-') return '-'
+  const date = new Date(dateStr)
+  if (isNaN(date)) return '-'
+  const tanggal = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+  return `${tanggal} ${jam}`
+}
+
   if (!selectedOrder) {
     return (
       <div className="p-10 text-center">
@@ -56,37 +64,27 @@ function OrderDetailPage({
 
   const product = selectedOrder?.product || "Unknown Product"
   const productCoverImageUrl = selectedOrder?.productCoverImageUrl || ""
-  
-  const price =
-    selectedOrder?.priceRange ||
-    selectedOrder?.price ||
-    "-"
-
-  const totalPrice =
-    selectedOrder?.totalPrice ||
-    price
-
+  const price = selectedOrder?.priceRange || selectedOrder?.price || "-"
+  const totalPrice = selectedOrder?.totalPrice || price
   const quantity = selectedOrder?.quantity || 1
   const description = selectedOrder?.description || "-"
   const status = selectedOrder?.status || ORDER_STATUS.WAITING
 
-  const createdAt = selectedOrder?.createdAt || "-"
-  const cancelledAt = selectedOrder?.cancelledAt || "-"
-  const acceptedAt = selectedOrder?.acceptedAt || "-"
-  const paymentConfirmedAt = selectedOrder?.paymentConfirmedAt || "-"
-  const processedAt = selectedOrder?.processedAt || "-"
-  const resultUploadedAt = selectedOrder?.resultUploadedAt || "-"
+ 
+  
 
-  const revisionRequestedAt =
-  selectedOrder?.revisionRequestedAt || "-"
+  const createdAt = formatDateTime(selectedOrder?.createdAt)
+  const cancelledAt = formatDateTime(selectedOrder?.cancelledAt)
+  const acceptedAt = formatDateTime(selectedOrder?.acceptedAt)
+  const paymentConfirmedAt = formatDateTime(selectedOrder?.paymentConfirmedAt)
+  const processedAt = formatDateTime(selectedOrder?.processedAt)
+  const resultUploadedAt = formatDateTime(selectedOrder?.resultUploadedAt)
+  const revisionRequestedAt = formatDateTime(selectedOrder?.revisionRequestedAt)
+  const revisionUploadedAt = formatDateTime(selectedOrder?.revisionUploadedAt)  
+  const completedAt = formatDateTime(selectedOrder?.completedAt || selectedOrder?.approvedAt)
+  
 
-  const revisionUploadedAt =
-  selectedOrder?.revisionUploadedAt || "-"
-
-  const completedAt =
-  selectedOrder?.completedAt ||
-  selectedOrder?.approvedAt ||
-  "-"
+ 
 
   const isCancelled =
     status === ORDER_STATUS.CANCELLED_BY_BUYER ||
@@ -196,9 +194,8 @@ function OrderDetailPage({
   }
 
   const handleAcceptOrder = () => {
-    if (priceNumber <= 0) return
-
-    acceptOrderByArtist(id, formatRupiah(priceNumber))
+  if (priceNumber <= 0) return
+    acceptOrderByArtist(id, priceNumber)
     setShowPricePopup(false)
     setFinalPriceInput("0")
     setCurrentPage("profile")
@@ -410,6 +407,8 @@ function OrderDetailPage({
     })
   }
 
+
+
   const addPaymentConfirmedStep = () => {
   const paymentProofHref = getValidExternalLink(selectedOrder?.paymentProofLink)
 
@@ -418,16 +417,12 @@ function OrderDetailPage({
     title: "Menunggu pembayaran",
     subtitles:
       role === "artist"
-        ? ["Buyer akan melakukan pembayaran"]
+        ? ["Buyer telah melakukan pembayaran"]
         : ["Menunggu verifikasi pembayaran oleh admin"],
-    linkText:
-      role === "buyer" && paymentProofHref
+    linkText: paymentProofHref
         ? "Lihat Bukti Pembayaran"
         : null,
-    linkHref:
-      role === "buyer" && paymentProofHref
-        ? paymentProofHref
-        : "",
+    linkHref: paymentProofHref || "",
     active: false,
     icon: <FiDollarSign />,
   })
@@ -726,7 +721,10 @@ function OrderDetailPage({
   const paymentProofHref = getValidExternalLink(selectedOrder?.paymentProofLink)
 
   timelineSteps.push({
-    date: paymentConfirmedAt,
+    date: 
+      role === "artist" 
+        ? acceptedAt 
+        : paymentConfirmedAt,
     title: "Menunggu pembayaran",
     subtitles:
       role === "artist"
@@ -759,7 +757,9 @@ function OrderDetailPage({
     actions: null,
   })
 
-  addBuyerWillPayStep()
+  if (role === "buyer") {
+    addBuyerWillPayStep() 
+  }
   addCreatedStep(false)
   } else if (isAccepted) {
     timelineSteps.push({
@@ -1020,7 +1020,7 @@ function OrderDetailPage({
             </button>
 
             <p className="text-[16px]">
-              NO. PESANAN. {id || "000002BLABLA"}
+             #{id ? id.slice(-6).toUpperCase() : '------'}
             </p>
           </div>
 

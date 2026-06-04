@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   try {
     const { all } = req.query;
     const filter = all ? {} : { isPublished: true };
-    const artists = await Artist.find(filter);
+    const artists = await Artist.find(filter).sort({ updatedAt: -1 });
     
     const mapped = artists.map(a => ({
       ...a.toObject(),

@@ -9,15 +9,15 @@ const artistLevels = [
 const levelDescriptions = [
   {
     title: "Beginner",
-    text: "Pernah menyelesaikan 0–2 project/commission, memiliki 1–2 karya portfolio, belum banyak memiliki testimoni atau review buyer, masih membangun pengalaman menerima brief dari client",
+    text: "Pernah menyelesaikan 0–5 project/commission, memiliki 1–2 karya portfolio, belum banyak memiliki testimoni atau review buyer, masih membangun pengalaman menerima brief dari client",
   },
   {
     title: "Intermediate",
-    text: "Pernah menyelesaikan 3–10 project/commission, memiliki 3-5 karya portfolio, sudah pernah berkomunikasi dengan buyer/client, memiliki beberapa bukti pengalaman/testimoni",
+    text: "Pernah menyelesaikan 5–20 project/commission, memiliki 3-5 karya portfolio, sudah pernah berkomunikasi dengan buyer/client, memiliki beberapa bukti pengalaman/testimoni",
   },
   {
     title: "Professional",
-    text: "Pernah menyelesaikan lebih dari 10 project/commission, memiliki lebih dari 5 karya portfolio, memiliki review/dokumentasi pengalaman yang cukup kuat, dan mampu menjaga kualitas karya secara konsisten",
+    text: "Pernah menyelesaikan lebih dari 20 project/commission, memiliki lebih dari 5 karya portfolio, memiliki review/dokumentasi pengalaman yang cukup kuat, dan mampu menjaga kualitas karya secara konsisten",
   },
 ];
 

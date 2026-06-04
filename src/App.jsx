@@ -390,6 +390,13 @@ useEffect(() => {
     }
   }
 }, [isLoggedIn, currentUser?.id, role, currentPage])
+
+
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}, [currentPage])
+
+
   const showToast = (msg, duration = 3000) => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(""), duration)

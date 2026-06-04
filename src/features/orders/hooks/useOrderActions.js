@@ -138,6 +138,14 @@ export function useOrderActions({
   setSelectedOrder((prevOrder) => updateSelectedOrderById(prevOrder, id, changes))
   showToast("Link hasil revisi berhasil diganti", 5000)
 }
+const formatDateTime = (dateStr) => {
+  if (!dateStr || dateStr === '-') return '-'
+  const date = new Date(dateStr)
+  if (isNaN(date)) return '-'
+  const tanggal = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+  return `${tanggal} ${jam}`
+}
 
   return {
     cancelOrder,

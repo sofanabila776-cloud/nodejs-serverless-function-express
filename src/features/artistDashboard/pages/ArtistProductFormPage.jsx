@@ -73,6 +73,7 @@ function ArtistProductFormPage({
       tag: selectedTag,
       priceMin,
       priceMax,
+      price: `Rp${Number(priceMin).toLocaleString("id-ID")} - Rp${Number(priceMax).toLocaleString("id-ID")}`,
       coverPortfolioPageId: selectedPage.id,
       coverPortfolioPageNumber: selectedPage.pageNumber,
       coverImageUrl: selectedPage.imageUrl,
