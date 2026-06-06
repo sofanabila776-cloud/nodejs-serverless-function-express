@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const authMiddleware = require('../Middleware/authmiddleware');
+const authmiddleware = require('../Middleware/authmiddleware');
 const Artist = require('../models/Artist');
 
 const generateToken = (user) => {
@@ -109,7 +109,7 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/auth/me
-router.get('/me', authMiddleware, async (req, res) => {
+router.get('/me', authmiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
@@ -126,7 +126,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 });
 
 // PUT /api/auth/me
-router.put('/me', authMiddleware, async (req, res) => {
+router.put('/me', authmiddleware, async (req, res) => {
   try {
     const { phone, gender, username } = req.body;
 
@@ -148,7 +148,7 @@ router.put('/me', authMiddleware, async (req, res) => {
 });
 
 // DELETE /api/auth/me
-router.delete('/me', authMiddleware, async (req, res) => {
+router.delete('/me', authmiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (user && user.role === 'artist') {

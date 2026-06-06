@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT upload/update portfolio
-router.put('/:id/portfolio', authMiddleware, async (req, res) => {
+router.put('/:id/portfolio', authmiddleware, async (req, res) => {
   try {
     const { title, durationMin, durationMax, pages, products } = req.body;
 
@@ -80,7 +80,7 @@ router.put('/:id/portfolio', authMiddleware, async (req, res) => {
 });
 
 // PATCH publish portfolio
-router.patch('/:id/publish', authMiddleware, async (req, res) => {
+router.patch('/:id/publish', authmiddleware, async (req, res) => {
   try {
     const artist = await Artist.findByIdAndUpdate(
       req.params.id,
@@ -94,7 +94,7 @@ router.patch('/:id/publish', authMiddleware, async (req, res) => {
 });
 
 // PATCH unpublish portfolio
-router.patch('/:id/unpublish', authMiddleware, async (req, res) => {
+router.patch('/:id/unpublish', authmiddleware, async (req, res) => {
   try {
     const artist = await Artist.findByIdAndUpdate(
       req.params.id,
@@ -107,7 +107,7 @@ router.patch('/:id/unpublish', authMiddleware, async (req, res) => {
   }
 });
 // PATCH clear/reset portfolio (hapus konten tapi tidak hapus dokumen Artist)
-router.patch('/:id/clear', authMiddleware, async (req, res) => {
+router.patch('/:id/clear', authmiddleware, async (req, res) => {
   try {
     const artist = await Artist.findByIdAndUpdate(
       req.params.id,
@@ -128,7 +128,7 @@ router.patch('/:id/clear', authMiddleware, async (req, res) => {
 });
 // Tambahkan di backend-pickarya/routes/artists.js
 // PATCH update profile (phone, bank)
-router.patch('/:id/profile', authMiddleware, async (req, res) => {
+router.patch('/:id/profile', authmiddleware, async (req, res) => {
   try {
     const { phone, bankName, bankAccount, bankHolder } = req.body;
 
