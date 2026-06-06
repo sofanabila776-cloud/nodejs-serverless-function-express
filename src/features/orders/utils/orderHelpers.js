@@ -53,21 +53,15 @@ export function createOrder({
 
 export function updateOrderById(orders, id, changes) {
   return orders.map((order) =>
-    order.id === id
-      ? {
-          ...order,
-          ...changes,
-        }
+    String(order._id || order.id) === String(id)
+      ? { ...order, ...changes }
       : order
   )
 }
 
 export function updateSelectedOrderById(prevOrder, id, changes) {
-  return prevOrder?.id === id
-    ? {
-        ...prevOrder,
-        ...changes,
-      }
+  return String(prevOrder?._id || prevOrder?.id) === String(id)
+    ? { ...prevOrder, ...changes }
     : prevOrder
 }
 
