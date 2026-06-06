@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Artist = require('../models/Artist');
-const authMiddleware = require('../Middleware/authMiddleware');
+const authMiddleware = require('../Middleware/authmiddleware');
 
 
 // GET semua artist yang sudah published
