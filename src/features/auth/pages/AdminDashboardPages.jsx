@@ -135,9 +135,10 @@ export default function AdminDashboardPage() {
               </div>
 
               <div style={styles.cardBody}>
-                <div style={{padding: '10px', background: 'yellow', wordBreak: 'break-all'}}>
-                {JSON.stringify(order)}
-                </div>
+                <div style={styles.infoItem}>
+                     <span style={styles.infoLabel}>No. Telepon Buyer</span>
+                     <span style={styles.infoValue}>{order.buyerPhone || '-'}</span>
+                   </div>
                 <div style={styles.infoGrid}>
                   <div style={styles.infoItem}>
                     <span style={styles.infoLabel}>Buyer</span>
