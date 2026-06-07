@@ -877,6 +877,7 @@ useEffect(() => {
           updateResultLink={updateResultLink}
           updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
+           key={selectedOrder?._id + '-' + selectedOrder?.status}
         />
       )
       break
@@ -923,6 +924,7 @@ useEffect(() => {
           updateResultLink={updateResultLink}
           updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
+          key={selectedOrder?._id + '-' + selectedOrder?.status}
         />
       )
       break
