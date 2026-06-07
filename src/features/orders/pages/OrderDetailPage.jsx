@@ -88,15 +88,15 @@ function OrderDetailPage({
 
   const isCancelled =
     status === ORDER_STATUS.CANCELLED_BY_BUYER ||
-    status === ORDER_STATUS.REJECTED_BY_ARTIST ||
-    status === "cancelled"
+    status === ORDER_STATUS.REJECTED_BY_ARTIST 
+    
 
   const isRejectedByArtist =
     status === ORDER_STATUS.REJECTED_BY_ARTIST
 
   const isCancelledByBuyer =
-    status === ORDER_STATUS.CANCELLED_BY_BUYER ||
-    status === "cancelled"
+    status === ORDER_STATUS.CANCELLED_BY_BUYER 
+   
 
   const isAccepted =
     status === ORDER_STATUS.ACCEPTED

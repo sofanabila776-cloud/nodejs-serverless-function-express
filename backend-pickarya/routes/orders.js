@@ -74,7 +74,7 @@ router.patch('/:id/cancel', async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status: 'cancelled', cancelledAt: new Date() },
+      { status: 'cancelled_by_buyer', cancelledAt: new Date() },
       { new: true }
     );
     res.json(order);
