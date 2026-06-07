@@ -9,9 +9,16 @@ export const DEFAULT_ARTIST = {
 
 export const MARKETPLACE_CATEGORIES = [
   "Poster",
-  "Ppt",
+  "Presentation",
   "Animation",
-  "Ilustrasi",
+  "Illustration",
+  "Brushes & Tool Presets",
+  "Texture & Pattern Packs",
+  "Fonts & Typography",
+  "Pixel Art",
+  "3D Design/Product",
+  "Stickers",
+  "Emote Sticker",
 ]
 
 export const ARTIST_LEVELS = [

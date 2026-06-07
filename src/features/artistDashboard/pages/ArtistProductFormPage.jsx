@@ -2,7 +2,20 @@ import { useState } from "react"
 import { FiArrowLeft } from "react-icons/fi"
 import ArtistPortfolioSlider from "../components/ArtistPortfolioSlider"
 
-const PRODUCT_TAGS = ["Poster", "Ppt", "Ilustrasi", "Animation"]
+const PRODUCT_TAGS = [
+  "Poster",
+  "Presentation",
+  "Animation",
+  "Illustration",
+  "Brushes & Tool Presets",
+  "Texture & Pattern Packs",
+  "Fonts & Typography",
+  "Pixel Art",
+  "3D Design/Product",
+  "Stickers",
+  "Emote Sticker",
+]
+
 
 function ArtistProductFormPage({
   portfolio = null,
