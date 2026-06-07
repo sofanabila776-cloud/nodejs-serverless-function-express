@@ -103,7 +103,10 @@ router.patch('/:id/reject', async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status: 'rejected_by_artist', rejectedAt: new Date() },
+      { status: 'rejected_by_artist', 
+        rejectedAt: new Date(),
+        cancelledAt: new Date()
+      },
       { new: true }
     );
     res.json(order);
