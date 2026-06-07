@@ -135,6 +135,9 @@ export default function AdminDashboardPage() {
               </div>
 
               <div style={styles.cardBody}>
+                <div style={{padding: '10px', background: 'yellow'}}>
+                  DEBUG phone: {JSON.stringify(order.buyerPhone)}
+                 </div>
                 <div style={styles.infoGrid}>
                   <div style={styles.infoItem}>
                     <span style={styles.infoLabel}>Buyer</span>
