@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/orders', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/orders`, {
         headers: { 'x-admin-token': token },
       });
       if (res.status === 403) {
@@ -60,7 +60,7 @@ export default function AdminDashboardPage() {
     if (!window.confirm('Konfirmasi pembayaran order ini?')) return;
     setConfirmingId(orderId);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/confirm-payment`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/orders/${orderId}/confirm-payment`, {
         method: 'PATCH',
         headers: { 'x-admin-token': token },
       });
