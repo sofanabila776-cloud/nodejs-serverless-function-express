@@ -12,7 +12,7 @@ import AdminDashboardPage from "./features/auth/pages/AdminDashboardPages"
 
 import ArtistPortfolioUploadPage from "./features/artistDashboard/pages/ArtistPortfolioUploadPage"
 import ArtistProductFormPage from "./features/artistDashboard/pages/ArtistProductFormPage"
-import { getArtists, getArtistByUserId, uploadPortfolio, publishPortfolio, unpublishPortfolio, clearPortfolio } from "./features/auth/services/artistService"
+import { getArtists, getArtistByUserId, uploadPortfolio, publishPortfolio, unpublishPortfolio, clearPortfolio, updateProfilePhoto } from "./features/auth/services/artistService"
 
 import { createOrderAPI, getOrdersByBuyer, getOrdersByArtist } from "./features/auth/services/orderService"
 import RevisionBriefPage from "./features/orders/pages/RevisionBriefPage"
@@ -303,10 +303,19 @@ function App() {
     )
   }
 
-  const setProfilePhotoUrl = (value) => {
-    updateAccountProfile("profilePhotoUrl", value)
-    syncPublishedArtistProfile({ profilePhotoUrl: value })
+  const setProfilePhotoUrl = async (value) => {
+  updateAccountProfile("profilePhotoUrl", value)
+  syncPublishedArtistProfile({ profilePhotoUrl: value })
+
+  // ✅ simpan ke database kalau artist
+  if (role === 'artist' && artistId) {
+    try {
+      await updateProfilePhoto(artistId, value)
+    } catch {
+      console.error("Gagal simpan foto profil ke database")
+    }
   }
+}
 
   const setProfilePhotoPosition = (value) => {
     updateAccountProfile("profilePhotoPosition", value)
@@ -338,7 +347,9 @@ function App() {
     getArtistByUserId(currentUser.id).then((data) => {
       if (data && data._id) {
         setArtistId(data._id)
-        // Restore artist portfolio dari backend
+        if (data.profilePhotoUrl) {
+             updateAccountProfile("profilePhotoUrl", data.profilePhotoUrl)
+             }
         if (data.portfolioPages && data.portfolioPages.length > 0) {
           setArtistPortfolio({
             id: data._id,

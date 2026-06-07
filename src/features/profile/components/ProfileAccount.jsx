@@ -21,9 +21,8 @@ function ProfileAccount({
 
   const fileInputRef = useRef(null)
 
-const handleProfilePhotoChange = (event) => {
+const handleProfilePhotoChange = async (event) => {
   const file = event.target.files?.[0]
-
   if (!file) return
 
   if (!file.type.startsWith("image/")) {
@@ -31,15 +30,32 @@ const handleProfilePhotoChange = (event) => {
     return
   }
 
-  const reader = new FileReader()
+  showToast("Mengupload foto profil...")
 
-  reader.onload = () => {
-    setProfilePhotoUrl(reader.result)
+  try {
+    const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+    const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", UPLOAD_PRESET)
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: "POST",
+      body: formData,
+    })
+
+    const data = await res.json()
+
+    if (data.error) throw new Error("Gagal upload")
+
+    setProfilePhotoUrl(data.secure_url)
     setProfilePhotoPosition({ x: 0, y: 0 })
     showToast("Foto profil berhasil dipasang")
+  } catch {
+    showToast("Gagal mengupload foto profil")
   }
 
-  reader.readAsDataURL(file)
   event.target.value = ""
 }
 

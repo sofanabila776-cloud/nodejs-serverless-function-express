@@ -11,6 +11,7 @@ const artistSchema = new mongoose.Schema({
   tags: [{ type: String }],
   coverImageUrl: { type: String, default: '' },
   portfolio: [{ type: String }],
+  profilePhotoUrl: { type: String, default: '' },
   portfolioPages: [
     {
       id: { type: String },

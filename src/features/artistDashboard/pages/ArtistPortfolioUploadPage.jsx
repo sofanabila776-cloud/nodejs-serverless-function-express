@@ -5,8 +5,8 @@ import { FiImage, FiArrowLeft } from "react-icons/fi"
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
  
 const uploadImageToCloudinary = async (file) => {
-  const CLOUD_NAME = "dbno33age"
-  const UPLOAD_PRESET = "pickarya_portofolio"
+ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
  
   const formData = new FormData()
   formData.append("file", file)

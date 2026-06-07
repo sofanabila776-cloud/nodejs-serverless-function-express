@@ -145,4 +145,32 @@ router.patch('/:id/profile', authMiddleware, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// PATCH update profile photo URL
+router.patch('/:id/photo', authMiddleware, async (req, res) => {
+  try {
+    const { profilePhotoUrl } = req.body;
+    const artist = await Artist.findByIdAndUpdate(
+      req.params.id,
+      { profilePhotoUrl },
+      { new: true }
+    );
+    res.json(artist);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+// PATCH update profile photo
+router.patch('/:id/photo', authMiddleware, async (req, res) => {
+  try {
+    const { profilePhotoUrl } = req.body;
+    const artist = await Artist.findByIdAndUpdate(
+      req.params.id,
+      { profilePhotoUrl },
+      { new: true }
+    );
+    res.json(artist);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
