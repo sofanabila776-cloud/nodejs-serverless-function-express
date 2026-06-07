@@ -156,6 +156,10 @@ export default function AdminDashboardPage() {
                        : '-'}
                     </span>
                   </div>
+                  <div style={styles.infoItem}>
+                   <span style={styles.infoLabel}>No. Telepon Buyer</span>
+                   <span style={styles.infoValue}>{order.buyerPhone || '-'}</span>
+                  </div>
                 </div>
 
                 {order.paymentProofLink && (

@@ -17,13 +17,24 @@ router.post('/login', (req, res) => {
 // GET /api/admin/orders — semua order
 router.get('/orders', adminGuard, async (req, res) => {
   try {
+    const User = require('../models/User');
     const orders = await Order.find().sort({ createdAt: -1 });
-    res.json(orders);
+    
+    // ambil nomor telepon buyer dari User collection
+    const ordersWithPhone = await Promise.all(orders.map(async (order) => {
+      const orderObj = order.toObject();
+      if (order.buyerId) {
+        const buyer = await User.findById(order.buyerId).select('phone');
+        orderObj.buyerPhone = buyer?.phone || '-';
+      }
+      return orderObj;
+    }));
+
+    res.json(ordersWithPhone);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 // PATCH /api/admin/orders/:id/confirm-payment
 router.patch('/orders/:id/confirm-payment', adminGuard, async (req, res) => {
   try {
