@@ -189,5 +189,48 @@ router.patch('/:id/complete', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// PATCH update-payment-proof
+router.patch('/:id/update-payment-proof', async (req, res) => {
+  try {
+    const { paymentProofLink } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { paymentProofLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// PATCH update-result-link
+router.patch('/:id/update-result-link', async (req, res) => {
+  try {
+    const { resultLink } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { resultLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH update-revision-link
+router.patch('/:id/update-revision-link', async (req, res) => {
+  try {
+    const { revisionLink } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { revisionLink },
+      { new: true }
+    );
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
