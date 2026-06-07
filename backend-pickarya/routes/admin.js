@@ -23,8 +23,10 @@ router.get('/orders', adminGuard, async (req, res) => {
     // ambil nomor telepon buyer dari User collection
     const ordersWithPhone = await Promise.all(orders.map(async (order) => {
       const orderObj = order.toObject();
+       console.log('buyerId:', order.buyerId)
       if (order.buyerId) {
         const buyer = await User.findById(order.buyerId).select('phone');
+        console.log('buyer found:', buyer)
         orderObj.buyerPhone = buyer?.phone || '-';
       }
       return orderObj;
