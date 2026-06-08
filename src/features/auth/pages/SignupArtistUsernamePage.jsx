@@ -28,7 +28,7 @@ function SignupArtistUsernamePage({ setCurrentPage, signupData, setSignupData, o
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
 
       <section aria-labelledby="signup-title" className="absolute top-[238px] left-[374px] w-[533px]">
         <h1 id="signup-title" className="w-full text-center font-normal text-black text-6xl tracking-[0] leading-[normal] whitespace-nowrap">

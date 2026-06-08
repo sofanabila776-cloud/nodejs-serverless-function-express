@@ -2,191 +2,110 @@ import { useRef, useState } from "react"
 import { FiMoreVertical, FiEdit2 } from "react-icons/fi"
 import ProfileAvatar from "../../../shared/components/ProfileAvatar"
 
+const LEVEL_LABELS = { beginner: "Beginner", intermediate: "Intermediate", professional: "Professional" }
+const LEVEL_CLASS  = { beginner: "pk-badge pk-badge-beginner", intermediate: "pk-badge pk-badge-intermediate", professional: "pk-badge pk-badge-professional" }
+
 function ProfileAccount({
   role = "buyer",
   currentUser = null,
-  phone = "",
-  setPhone = () => {},
-  gender = "",
-  setGender = () => {},
   profilePhotoUrl = "",
-  profilePhotoPosition = { x: 0, y: 0 },
   setProfilePhotoUrl = () => {},
   setProfilePhotoPosition = () => {},
   showToast = () => {},
   setShowDeletePopup = () => {},
   setShowLogoutPopup = () => {},
 }) {
-  const [showAccountMenu, setShowAccountMenu] = useState(false)
-
+  const [showMenu, setShowMenu] = useState(false)
   const fileInputRef = useRef(null)
 
-const handleProfilePhotoChange = async (event) => {
-  const file = event.target.files?.[0]
-  if (!file) return
-
-  if (!file.type.startsWith("image/")) {
-    showToast("File harus berupa gambar")
-    return
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith("image/")) { showToast("File harus berupa gambar"); return }
+    const reader = new FileReader()
+    reader.onload = () => { setProfilePhotoUrl(reader.result); setProfilePhotoPosition({ x: 0, y: 0 }); showToast("Foto profil berhasil dipasang") }
+    reader.readAsDataURL(file)
+    e.target.value = ""
   }
 
-  showToast("Mengupload foto profil...")
+  const username    = currentUser?.username || currentUser?.name || "-"
+  const email       = currentUser?.email || "-"
+  const phone       = currentUser?.phone || "-"
+  const bank        = currentUser?.bankName && currentUser?.bankAccount ? `${currentUser.bankName} — ${currentUser.bankAccount}` : "-"
+  const level       = currentUser?.artistLevel
+  const levelLabel  = LEVEL_LABELS[level]
+  const levelClass  = LEVEL_CLASS[level]
 
-  try {
-    const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-    const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  const InfoRow = ({ label, value }) => (
+    <div style={{ marginBottom: 16 }}>
+      <label className="pk-label">{label}</label>
+      <div className="pk-input" style={{ height: 48, display: "flex", alignItems: "center", background: "rgba(255,255,255,0.72)", cursor: "default", color: "var(--text-dark)", fontSize: 15 }}>
+        {value}
+      </div>
+    </div>
+  )
 
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", UPLOAD_PRESET)
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-      method: "POST",
-      body: formData,
-    })
-
-    const data = await res.json()
-
-    if (data.error) throw new Error("Gagal upload")
-
-    setProfilePhotoUrl(data.secure_url)
-    setProfilePhotoPosition({ x: 0, y: 0 })
-    showToast("Foto profil berhasil dipasang")
-  } catch {
-    showToast("Gagal mengupload foto profil")
-  }
-
-  event.target.value = ""
-}
-
-  const profileUsername =
-    currentUser?.username || currentUser?.name || "unainaina"
-
-  const profileEmail = currentUser?.email || "Email"
-  const profilePhone = currentUser?.phone || "-"
-  const profileBank =
-   currentUser?.bankName && currentUser?.bankAccount
-    ? `${currentUser.bankName} - ${currentUser.bankAccount}`
-    : "-"
-
-  const artistLevelLabel =
-    {
-      beginner: "Beginner",
-      intermediate: "Intermediate",
-      professional: "Professional",
-    }[currentUser?.artistLevel] || currentUser?.artistLevel
+console.log(currentUser)
 
   return (
-    <>
-      <div className="flex justify-between items-center">
-        <p className="text-[28px]">Profil Akun</p>
-
-        <div className="relative">
+    <div>
+      {/* HEADER */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+        <span className="pk-section-title" style={{ marginBottom: 0 }}>Profil Akun</span>
+        <div style={{ position: "relative" }}>
           <button
-            onClick={() => setShowAccountMenu((prev) => !prev)}
-            className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-black/5"
+            onClick={() => setShowMenu((p) => !p)}
+            className="pk-icon-btn"
             aria-label="Menu akun"
           >
-            <FiMoreVertical className="text-[24px]" />
+            <FiMoreVertical style={{ fontSize: 20 }} />
           </button>
-
-          {showAccountMenu && (
-            <div className="absolute right-0 top-[42px] w-[170px] bg-white border border-[#D9D9D9] rounded-[12px] shadow-md overflow-hidden z-20">
-              <button
-                onClick={() => {
-                  setShowAccountMenu(false)
-                  setShowLogoutPopup(true)
-                }}
-                className="w-full px-4 py-3 text-left text-[18px] hover:bg-[#F5F5F5]"
-              >
-                Log out
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowAccountMenu(false)
-                  setShowDeletePopup(true)
-                }}
-                className="w-full px-4 py-3 text-left text-[18px] text-red-600 hover:bg-[#F5F5F5]"
-              >
-                Hapus Akun
-              </button>
-            </div>
+          {showMenu && (
+            <>
+              <div onClick={() => setShowMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 10 }} />
+              <div className="pk-dropdown" style={{ position: "absolute", right: 0, top: 52, zIndex: 20, minWidth: 160 }}>
+                <button className="pk-dropdown-item" onClick={() => { setShowMenu(false); setShowLogoutPopup(true) }}>
+                  Log out
+                </button>
+                <button className="pk-dropdown-item" onClick={() => { setShowMenu(false); setShowDeletePopup(true) }} style={{ color: "var(--red-salmon)" }}>
+                  Hapus Akun
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      <div className="flex gap-[40px] mt-10">
-        <div className="flex flex-col items-center">
-          <div className="relative w-[140px] h-[140px]">
-  <div>
-  <ProfileAvatar
-    imageUrl={profilePhotoUrl}
-    sizeClass="w-[140px] h-[140px]"
-    iconClass="text-[70px]"
-  />
-</div>
+      <div className="pk-profile-account-grid">
+        {/* AVATAR */}
+        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          <div style={{ position: "relative" }}>
+            <ProfileAvatar imageUrl={profilePhotoUrl} sizeClass="w-[120px] h-[120px]" iconClass="text-[60px]" />
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoChange} style={{ display: "none" }} />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              style={{ position: "absolute", bottom: 0, right: 0, width: 32, height: 32, borderRadius: "50%", background: "var(--blue-primary)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "var(--shadow-sm)" }}
+              aria-label="Edit foto profil"
+            >
+              <FiEdit2 style={{ color: "white", fontSize: 14 }} />
+            </button>
+          </div>
 
-  <input
-    ref={fileInputRef}
-    type="file"
-    accept="image/*"
-    onChange={handleProfilePhotoChange}
-    className="hidden"
-  />
+          <p style={{ fontSize: 16, fontWeight: 700, color: "var(--text-dark)", textAlign: "center" }}>{username}</p>
 
-  <button
-    type="button"
-    onClick={() => fileInputRef.current?.click()}
-    className="absolute bottom-0 right-0 w-[38px] h-[38px] rounded-full bg-black flex items-center justify-center"
-    aria-label="Edit foto profil"
-  >
-    <FiEdit2 className="text-white text-[18px]" />
-  </button>
-</div>
-
-          <p className="text-[24px] mt-4">{profileUsername}</p>
-
-          {role === "artist" && artistLevelLabel && (
-            <p className="text-[18px] mt-1 text-[#666666]">
-              Level: {artistLevelLabel}
-            </p>
+          {role === "artist" && levelLabel && (
+            <span className={levelClass}>{levelLabel}</span>
           )}
         </div>
 
-        <div className="flex-1">
-          <p className="text-[20px]">Email</p>
-
-          <input
-            value={profileEmail}
-            readOnly
-            className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2"
-          />
-
-          <div className="mt-7">
-  <p className="text-[20px]">
-    Nomor Telepon
-  </p>
-
-  <div className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] mt-2 flex items-center bg-transparent">
-    {profilePhone}
-  </div>
-</div>
-
-       {role === "artist" && (
-  <div className="mt-5">
-    <p className="text-[20px]">
-      Rekening pembayaran
-    </p>
-
-    <div className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] mt-2 flex items-center bg-transparent">
-      {profileBank}
+        {/* FORM */}
+        <div style={{ flex: 1 }}>
+          <InfoRow label="Email" value={email} />
+          <InfoRow label="Nomor Telepon" value={phone} />
+          {role === "artist" && <InfoRow label="Rekening Pembayaran" value={bank} />}
+        </div>
+      </div>
     </div>
-  </div>
-)}
-        </div>
-      </div>
-    </>
   )
 }
 

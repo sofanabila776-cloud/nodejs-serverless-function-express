@@ -5,8 +5,8 @@ import { FiImage, FiArrowLeft } from "react-icons/fi"
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
  
 const uploadImageToCloudinary = async (file) => {
- const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  const CLOUD_NAME = "dbno33age"
+  const UPLOAD_PRESET = "pickarya_portofolio"
  
   const formData = new FormData()
   formData.append("file", file)
@@ -150,21 +150,21 @@ function ArtistPortfolioUploadPage({
   } // ✅ kurung tutup handleSubmit
  
   return (
-    <div className="px-[60px] pt-[120px] pb-[140px]">
+    <div className="pk-page">
       <button
         onClick={handleBack}
-        className="flex items-center gap-2 text-[20px]"
+        className="pk-btn pk-btn-ghost"
       >
         <FiArrowLeft />
         Kembali
       </button>
  
-      <p className="text-[32px] text-center mt-4">
+      <h1 className="pk-page-title text-center mt-4">
         {isEditMode ? "Edit Portofolio" : "Upload Portofolio"}
-      </p>
+      </h1>
  
-      <div className="flex gap-[64px] mt-[48px]">
-        <label className="w-[414px] min-h-[343px] bg-[#D9D9D9] rounded-[20px] border-[3px] border-black flex flex-col items-center justify-center cursor-pointer px-6 py-8">
+      <div className="pk-upload-layout">
+        <label className="pk-upload-zone">
           <FiImage className="text-[90px]" />
  
           <p className="text-[22px] mt-6">
@@ -189,7 +189,7 @@ function ArtistPortfolioUploadPage({
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Masukkan judul"
-            className="w-full h-[56px] border-[3px] border-black rounded-[14px] px-4 text-[20px] outline-none mt-2 placeholder:text-[#888181]"
+            className="pk-input mt-2"
           />
  
           <p className="text-[20px] mt-7">Estimasi durasi pembuatan</p>
@@ -201,7 +201,7 @@ function ArtistPortfolioUploadPage({
                 handleDurationChange(event.target.value, setDurationMin)
               }
               inputMode="numeric"
-              className="w-[85px] h-[56px] border-[3px] border-black rounded-[14px] text-center text-[20px] outline-none"
+              className="pk-input text-center" style={{ width: 96 }}
             />
  
             <span className="text-[20px]">-</span>
@@ -212,7 +212,7 @@ function ArtistPortfolioUploadPage({
                 handleDurationChange(event.target.value, setDurationMax)
               }
               inputMode="numeric"
-              className="w-[85px] h-[56px] border-[3px] border-black rounded-[14px] text-center text-[20px] outline-none"
+              className="pk-input text-center" style={{ width: 96 }}
             />
  
             <span className="text-[20px]">hari</span>
@@ -256,8 +256,8 @@ function ArtistPortfolioUploadPage({
               </p>
               <div className="w-full h-[8px] bg-gray-200 rounded-full mt-2">
                 <div
-                  className="h-full bg-black rounded-full transition-all"
-                  style={{ width: `${uploadProgress}%` }}
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${uploadProgress}%`, background: "var(--yellow-mustard)" }}
                 />
               </div>
             </div>
@@ -279,9 +279,7 @@ function ArtistPortfolioUploadPage({
         <button
           onClick={handleSubmit}
           disabled={isUploading}
-          className={`w-[140px] h-[50px] rounded-[12px] text-[20px] text-white ${
-            isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-black"
-          }`}
+          className={`pk-btn ${isUploading ? "pk-btn-ghost" : "pk-btn-primary"}`} style={{ minWidth: 140 }}
         >
           {isUploading ? `${uploadProgress}%` : isEditMode ? "Simpan" : "Upload"}
         </button>

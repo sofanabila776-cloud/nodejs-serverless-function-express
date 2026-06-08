@@ -135,10 +135,6 @@ export default function AdminDashboardPage() {
               </div>
 
               <div style={styles.cardBody}>
-                <div style={styles.infoItem}>
-                     <span style={styles.infoLabel}>No. Telepon Buyer</span>
-                     <span style={styles.infoValue}>{order.buyerPhone || '-'}</span>
-                   </div>
                 <div style={styles.infoGrid}>
                   <div style={styles.infoItem}>
                     <span style={styles.infoLabel}>Buyer</span>
@@ -159,10 +155,6 @@ export default function AdminDashboardPage() {
                        ? `Rp ${Number(String(order.totalPrice).replace(/[^0-9]/g, '')).toLocaleString('id-ID')}`
                        : '-'}
                     </span>
-                  </div>
-                  <div style={styles.infoItem}>
-                   <span style={styles.infoLabel}>No. Telepon Buyer</span>
-                   <span style={styles.infoValue}>{order.buyerPhone || '-'}</span>
                   </div>
                 </div>
 

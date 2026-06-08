@@ -22,9 +22,7 @@ function ArtistPortfolioSlider({
   }
 
   return (
-    <div
-      className={`relative w-[534px] h-[243px] border-[3px] border-black rounded-[20px] overflow-hidden bg-white ${className}`}
-    >
+    <div className={`pk-portfolio-slider ${className}`}>
       {currentPage?.imageUrl && (
         <img
           src={currentPage.imageUrl}
@@ -37,9 +35,10 @@ function ArtistPortfolioSlider({
         <button
           type="button"
           onClick={goPrev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full bg-black/10 flex items-center justify-center"
+          className="pk-carousel-btn"
+          style={{ left: 12 }}
         >
-          <FiChevronLeft className="text-[26px]" />
+          <FiChevronLeft />
         </button>
       )}
 
@@ -47,14 +46,15 @@ function ArtistPortfolioSlider({
         <button
           type="button"
           onClick={goNext}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full bg-black/10 flex items-center justify-center"
+          className="pk-carousel-btn"
+          style={{ right: 12 }}
         >
-          <FiChevronRight className="text-[26px]" />
+          <FiChevronRight />
         </button>
       )}
 
       {hasPages && (
-        <div className="absolute right-4 bottom-3 bg-white/80 px-3 py-1 rounded-full text-[16px]">
+        <div className="absolute right-4 bottom-3 bg-white/90 px-3 py-1 rounded-full text-[14px] font-bold text-[#333333] shadow-sm">
           {currentIndex + 1} / {pages.length}
         </div>
       )}

@@ -21,9 +21,12 @@ function ArtistPortfolioPage({
   if (!hasPortfolio) {
     return (
       <>
-        <p className="text-[28px]">Portofolio Artist</p>
+        <div className="pk-dashboard-heading">
+          <span className="pk-section-title">Portofolio Artist</span>
+        </div>
 
-        <div className="min-h-[260px] flex items-center justify-center text-center text-[20px]">
+        <div className="pk-empty-mini" style={{ minHeight: 260, flexDirection: "column", gap: 8 }}>
+          <div style={{ fontSize: 42 }}>🎨</div>
           <p>
             Yah, belum ada Portofolio nih.. 😔🥀
             <br />
@@ -32,10 +35,7 @@ function ArtistPortfolioPage({
         </div>
 
         <div className="flex justify-end mt-8">
-          <button
-            onClick={onUploadClick}
-            className="w-[140px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
-          >
+          <button onClick={onUploadClick} className="pk-btn pk-btn-primary" style={{ minWidth: 140 }}>
             Upload
           </button>
         </div>
@@ -54,16 +54,16 @@ function ArtistPortfolioPage({
         <>
           <div className="fixed inset-0 bg-black/40 z-40" />
 
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F5F5F5] rounded-[18px] p-8 z-50 shadow-lg">
-            <p className="text-[20px] text-center">
-              Apakah Anda yakin ingin menghapus portofolio ini beserta
-              produknya?
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-[24px] p-8 z-50 shadow-lg border border-black/10 max-w-[420px] w-[90%]">
+            <p className="text-[18px] text-center font-semibold text-[#333333]">
+              Apakah Anda yakin ingin menghapus portofolio ini beserta produknya?
             </p>
 
             <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={() => setShowDeletePopup(false)}
-                className="w-[100px] h-[42px] border border-black rounded-[10px] text-[20px]"
+                className="pk-btn pk-btn-ghost"
+                style={{ minWidth: 100 }}
               >
                 Cancel
               </button>
@@ -73,7 +73,8 @@ function ArtistPortfolioPage({
                   setShowDeletePopup(false)
                   onDeleteClick()
                 }}
-                className="w-[100px] h-[42px] bg-black text-white rounded-[10px] text-[20px]"
+                className="pk-btn pk-btn-danger"
+                style={{ minWidth: 100 }}
               >
                 Hapus
               </button>
@@ -82,36 +83,36 @@ function ArtistPortfolioPage({
         </>
       )}
 
-      <div className="flex justify-between items-center">
-        <p className="text-[28px]">Portofolio Artist</p>
+      <div className="pk-dashboard-heading">
+        <span className="pk-section-title">Portofolio Artist</span>
 
         <button
           onClick={() => setShowDeletePopup(true)}
-          className="w-[42px] h-[42px] flex items-center justify-center rounded-full hover:bg-black/5"
+          className="pk-icon-btn"
           aria-label="Hapus portofolio"
           title="Hapus portofolio"
         >
-          <FiTrash2 className="text-[24px]" />
+          <FiTrash2 className="text-[20px]" />
         </button>
       </div>
 
-      <div className="flex gap-[24px] mt-8">
+      <div className="flex gap-[24px] mt-8 flex-wrap">
         <ArtistPortfolioSlider
           pages={pages}
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
         />
 
-        <div className="pt-1">
-          <p className="text-[24px]">{portfolio.title || "Portoku 1"}</p>
+        <div className="pt-1 min-w-[220px]">
+          <p className="text-[24px] font-black tracking-[-0.04em] text-[#333333]">{portfolio.title || "Portoku 1"}</p>
 
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-2 text-[#777777]">
             <FiClock className="text-[18px]" />
-            <span className="text-[20px]">{durationText}</span>
+            <span className="text-[17px] font-semibold">{durationText}</span>
           </div>
 
           {portfolio?.isPublished && (
-            <p className="text-[16px] text-green-600 mt-3">
+            <p className="text-[14px] text-green-700 font-bold mt-3 bg-green-50 border border-green-100 rounded-full px-3 py-1 inline-flex">
               Sudah dipublikasikan
             </p>
           )}
@@ -120,11 +121,12 @@ function ArtistPortfolioPage({
 
       <div className="mt-8">
         <div className="flex items-center gap-3">
-          <p className="text-[20px]">Produk</p>
+          <p className="text-[20px] font-black tracking-[-0.03em]">Produk</p>
 
           <button
             onClick={onAddProductClick}
-            className="w-[34px] h-[34px] bg-black text-white rounded-full text-[26px] leading-none flex items-center justify-center"
+            className="pk-icon-btn"
+            style={{ width: 34, height: 34, fontSize: 24, fontWeight: 900 }}
             aria-label="Tambah produk"
             title="Tambah produk"
           >
@@ -132,9 +134,9 @@ function ArtistPortfolioPage({
           </button>
         </div>
 
-        <div className="w-[534px] min-h-[59px] border-[3px] border-black rounded-[14px] px-4 py-3 mt-2">
+        <div className="pk-product-list-box">
           {products.length === 0 ? (
-            <p className="text-[#A4A1A1] text-[20px]">-</p>
+            <p className="text-[#A4A1A1] text-[18px]">-</p>
           ) : (
             <div className="space-y-3">
               {products.map((product) => (
@@ -142,7 +144,7 @@ function ArtistPortfolioPage({
                   key={product.id}
                   className="relative flex items-center gap-5 pr-10"
                 >
-                  <div className="w-[120px] h-[58px] rounded-[14px] border-[3px] border-black overflow-hidden bg-white">
+                  <div className="w-[96px] h-[56px] rounded-[16px] border border-black/10 overflow-hidden bg-white shrink-0">
                     {product.coverImageUrl && (
                       <img
                         src={product.coverImageUrl}
@@ -152,14 +154,14 @@ function ArtistPortfolioPage({
                     )}
                   </div>
 
-                  <div className="text-[20px] leading-tight">
-                    <p>
+                  <div className="text-[17px] leading-tight text-[#333333]">
+                    <p className="font-bold">
                       #
                       {String(product.tag)
                         .replace("#", "")
                         .toLowerCase()}
                     </p>
-                    <p>
+                    <p className="text-[#3476B2] font-semibold mt-1">
                       Rp{Number(product.priceMin).toLocaleString("id-ID")} - Rp
                       {Number(product.priceMax).toLocaleString("id-ID")}
                     </p>
@@ -167,11 +169,12 @@ function ArtistPortfolioPage({
 
                   <button
                     onClick={() => onDeleteProduct(product.id)}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-[28px] h-[28px] flex items-center justify-center rounded-full hover:bg-black/5"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 pk-icon-btn"
+                    style={{ width: 30, height: 30 }}
                     aria-label="Hapus produk"
                     title="Hapus produk"
                   >
-                    <FiX className="text-[22px]" />
+                    <FiX className="text-[18px]" />
                   </button>
                 </div>
               ))}
@@ -180,7 +183,7 @@ function ArtistPortfolioPage({
         </div>
 
         {products.length === 0 && (
-          <p className="text-[#FD0707] text-[16px] mt-2">
+          <p className="text-[#D85D5D] text-[14px] font-semibold mt-2">
             Belum ada produk
           </p>
         )}
@@ -190,11 +193,8 @@ function ArtistPortfolioPage({
         <button
           onClick={onPublishClick}
           disabled={!canPublish}
-          className={
-            canPublish
-              ? "w-[180px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
-              : "w-[180px] h-[50px] bg-[#D9D9D9] text-[#777777] rounded-[12px] text-[20px] cursor-not-allowed"
-          }
+          className={canPublish ? "pk-btn pk-btn-primary" : "pk-btn pk-btn-ghost"}
+          style={{ minWidth: 180 }}
         >
           {portfolio?.isPublished ? "Update Publikasi" : "Publikasikan"}
         </button>

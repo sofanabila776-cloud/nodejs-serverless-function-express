@@ -16,7 +16,6 @@ const PRODUCT_TAGS = [
   "Emote Sticker",
 ]
 
-
 function ArtistProductFormPage({
   portfolio = null,
   onAddProduct = () => {},
@@ -97,10 +96,10 @@ function ArtistProductFormPage({
 
   if (!portfolio || pages.length === 0) {
     return (
-      <div className="px-[60px] pt-[120px] pb-[140px]">
+      <div className="pk-page">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 text-[20px]"
+          className="pk-btn pk-btn-ghost"
         >
           <FiArrowLeft />
           Kembali
@@ -114,18 +113,18 @@ function ArtistProductFormPage({
   }
 
   return (
-    <div className="px-[60px] pt-[120px] pb-[140px]">
+    <div className="pk-page">
       <button
         onClick={handleBack}
-        className="flex items-center gap-2 text-[20px]"
+        className="pk-btn pk-btn-ghost"
       >
         <FiArrowLeft />
         Kembali
       </button>
 
-      <p className="text-[32px] text-center mt-4">Produk</p>
+      <h1 className="pk-page-title text-center mt-4">Produk</h1>
 
-      <div className="grid grid-cols-[534px_1fr] gap-[46px] mt-[48px]">
+      <div className="pk-product-form-grid">
         <div>
           <div className="flex items-center justify-between mb-3">
             <p className="text-[20px]">Halaman produk</p>
@@ -146,7 +145,7 @@ function ArtistProductFormPage({
           <div className="flex justify-center mt-4">
             <button
               onClick={handleSetPage}
-              className="w-[190px] h-[36px] bg-black text-white rounded-[10px] text-[16px]"
+              className="pk-btn pk-btn-primary"
             >
               Set Halaman ini
             </button>
@@ -157,7 +156,7 @@ function ArtistProductFormPage({
           <p className="text-[20px] mb-3">Tag produk</p>
 
           {!selectedTag ? (
-            <div className="w-full max-w-[580px] min-h-[190px] bg-white shadow-[0_0_4px_4px_rgba(0,0,0,0.12)] rounded-[20px] px-12 py-6">
+            <div className="pk-choice-card">
               <p className="text-[20px] text-center mb-5">Pilih satu</p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -165,7 +164,7 @@ function ArtistProductFormPage({
                   <button
                     key={tag}
                     onClick={() => setSelectedTag(tag)}
-                    className="h-[48px] border-[3px] border-black rounded-full text-[20px]"
+                    className="pk-choice-btn"
                   >
                     {tag}
                   </button>
@@ -175,7 +174,7 @@ function ArtistProductFormPage({
           ) : (
             <div className="flex items-center gap-4">
               <button
-                className="min-w-[160px] h-[48px] border-[3px] border-black rounded-full text-[20px]"
+                className="pk-choice-btn px-6"
               >
                 {selectedTag}
               </button>
@@ -202,7 +201,7 @@ function ArtistProductFormPage({
                 }
                 inputMode="numeric"
                 placeholder="0"
-                className="w-[85px] h-[56px] border-[3px] border-black rounded-[14px] text-center text-[20px] outline-none placeholder:text-black"
+                className="pk-input text-center" style={{ width: 96 }}
               />
 
               <span className="text-[20px]">-</span>
@@ -214,7 +213,7 @@ function ArtistProductFormPage({
                 }
                 inputMode="numeric"
                 placeholder="0"
-                className="w-[85px] h-[56px] border-[3px] border-black rounded-[14px] text-center text-[20px] outline-none placeholder:text-black"
+                className="pk-input text-center" style={{ width: 96 }}
               />
             </div>
           </div>
@@ -230,7 +229,7 @@ function ArtistProductFormPage({
       <div className="flex justify-end mt-[45px]">
         <button
           onClick={handleSubmit}
-          className="w-[180px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
+          className="pk-btn pk-btn-primary" style={{ minWidth: 180 }}
         >
           Tambahkan
         </button>

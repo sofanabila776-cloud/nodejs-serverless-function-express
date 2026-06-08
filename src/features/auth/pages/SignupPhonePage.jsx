@@ -26,7 +26,7 @@ function SignupPhonePage({ setCurrentPage, signupData, setSignupData }) {
   }
 
   return (
-    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
       <section
         aria-labelledby="signup-phone-title"
         className="absolute top-[238px] left-[374px] w-[533px]"

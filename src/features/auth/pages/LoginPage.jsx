@@ -1,100 +1,77 @@
-import { useId, useState } from "react";
-import { loginUser } from "../services/authService";
+import { useId, useState } from "react"
+import { loginUser } from "../services/authService"
 
 function LoginPage({ setCurrentPage, onLoginSuccess }) {
-  const emailId = useId();
-  const passwordId = useId();
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const emailId = useId()
+  const passwordId = useId()
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  const handleChange = (event) => {
-    setFormData((prev) => ({ ...prev, [event.target.name]: event.target.value }));
-    setError("");
-  };
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    setError("")
+  }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!formData.email || !formData.password) {
-      setError("Email dan password wajib diisi");
-      return;
-    }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!formData.email || !formData.password) { setError("Email dan password wajib diisi"); return }
+    setLoading(true)
     try {
-      const session = await loginUser(formData);
-      onLoginSuccess(session.user);
+      const session = await loginUser(formData)
+      onLoginSuccess(session.user)
     } catch (err) {
-      setError(err.message || "Password/email salah");
+      setError(err.message || "Email atau password salah")
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-top)", paddingTop: 72 }}>
+      <div className="pk-card" style={{ width: "100%", maxWidth: 440, padding: "48px 40px", borderRadius: "var(--radius-xl)" }}>
+        {/* HEADER */}
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <p style={{ fontSize: 28, fontWeight: 800, color: "var(--blue-primary)", letterSpacing: "0.06em", marginBottom: 6 }}>PICKARYA</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-dark)", margin: 0 }}>Masuk ke Akun</h1>
+          <p style={{ fontSize: 14, color: "var(--gray-text)", marginTop: 6 }}>
+            Belum punya akun?{" "}
+            <button onClick={() => setCurrentPage("signupAccount")} style={{ color: "var(--blue-primary)", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+              Daftar di sini
+            </button>
+          </p>
+        </div>
 
-      <section aria-labelledby="login-title" className="absolute top-[199px] left-[374px] w-[535px]">
-        <h1 id="login-title" className="absolute top-0 left-[166px] font-normal text-black text-6xl text-center tracking-[0] leading-[normal]">
-          LOG IN
-        </h1>
-
-        <p className="absolute top-[83px] left-[107px] font-normal text-black text-2xl tracking-[0] leading-[normal]">
-          Belum memiliki akun?{" "}
-          <button
-            type="button"
-            onClick={() => setCurrentPage("signupAccount")}
-            className="font-normal text-black text-2xl text-right tracking-[0] leading-[normal] underline"
-          >
-            Sign Up
-          </button>
-        </p>
-
-        <form onSubmit={handleSubmit} className="absolute top-[139px] left-0 w-[535px] h-[293px]">
-          <div className="absolute top-0 left-0 w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <label htmlFor={emailId} className="sr-only">Email</label>
-            <input
-              id={emailId}
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="w-full h-full px-[16px] rounded-[20px] font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <label htmlFor={emailId} className="pk-label">Email</label>
+            <input id={emailId} name="email" type="email" autoComplete="email"
+              value={formData.email} onChange={handleChange} placeholder="nama@email.com" className="pk-input" />
           </div>
 
-          <div className="absolute top-[95px] left-0 w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <label htmlFor={passwordId} className="sr-only">Password</label>
-            <input
-              id={passwordId}
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="w-full h-full px-[16px] rounded-[20px] font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
+          <div>
+            <label htmlFor={passwordId} className="pk-label">Password</label>
+            <input id={passwordId} name="password" type="password" autoComplete="current-password"
+              value={formData.password} onChange={handleChange} placeholder="••••••••" className="pk-input" />
           </div>
 
           {error && (
-            <p className="absolute top-[162px] left-[18px] text-red-600 text-[18px]">
+            <div style={{ background: "rgba(230,138,138,0.15)", border: "1px solid var(--red-salmon)", borderRadius: "var(--radius-sm)", padding: "10px 14px", fontSize: 13, color: "#b03030" }}>
               {error}
-            </p>
+            </div>
           )}
 
-          <button type="button" className="absolute top-[180px] left-[164px] font-normal text-black text-2xl text-center tracking-[0] leading-[normal] underline">
+          <button type="button" style={{ alignSelf: "flex-end", fontSize: 13, color: "var(--blue-primary)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
             Lupa password?
           </button>
 
-          <button type="submit" className="absolute top-[227px] left-0 w-[533px] h-[66px] rounded-[20px] bg-black flex items-center justify-center font-normal" aria-label="Log in">
-            <span className="absolute top-3.5 left-[164px] w-[205px] font-normal text-white text-[32px] text-center tracking-[0] leading-[normal]">
-              LOG IN
-            </span>
+          <button type="submit" className="pk-btn pk-btn-primary" style={{ width: "100%", height: 52, fontSize: 15, marginTop: 4 }} disabled={loading}>
+            {loading ? "Memuat…" : "LOG IN"}
           </button>
         </form>
-      </section>
-    </main>
-  );
+      </div>
+    </div>
+  )
 }
 
-export default LoginPage;
+export default LoginPage

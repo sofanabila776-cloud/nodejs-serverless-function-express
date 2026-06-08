@@ -1,15 +1,6 @@
-// Halaman membuat brief / pesanan ke artist
-
 import { useState } from "react"
-
-import {
-  IoChevronDown,
-  IoChevronUp,
-} from "react-icons/io5"
-
-import {
-  FiAlertCircle,
-} from "react-icons/fi"
+import { IoChevronDown, IoChevronUp } from "react-icons/io5"
+import { FiAlertCircle } from "react-icons/fi"
 import ProfileAvatar from "../../../shared/components/ProfileAvatar"
 
 function BriefPage({
@@ -24,228 +15,126 @@ function BriefPage({
   showError,
   setCurrentPage,
 }) {
-
   const [showDropdown, setShowDropdown] = useState(false)
 
-  const handleQuantityChange = (event) => {
-  const numbersOnly = event.target.value.replace(/\D/g, "")
-  setQuantity(numbersOnly)
-}
-
-if (!selectedArtist) {
-  return (
-    <div className="pt-[140px] text-center text-red-500">
-      Artist belum dipilih
-    </div>
-  )
-}
-
-  return (
-    <div className="px-[70px] pt-[140px]">
-
-      <p className="text-[32px] text-center">
-        Brief Pesanan
-      </p>
-
-      <div className="flex items-center gap-4 mt-4">
-  <ProfileAvatar
-  imageUrl={
-    selectedArtist.profilePhotoUrl ||
-    selectedArtist.profileImageUrl ||
-    selectedArtist.profileImage ||
-    ""
+  const handleQuantityChange = (e) => {
+    setQuantity(e.target.value.replace(/\D/g, ""))
   }
-  sizeClass="w-[56px] h-[56px]"
-  iconClass="text-[28px]"
-/>
 
-  <div>
-    <p className="text-[16px] text-[#8A8A8A] leading-[20px]">
-      Artist
-    </p>
+  if (!selectedArtist) {
+    return <div className="pk-page pk-empty"><p className="pk-empty-text">Artist belum dipilih</p></div>
+  }
 
-    <p className="text-[24px] font-semibold leading-[28px]">
-      {selectedArtist.name}
-    </p>
-  </div>
-</div>
+  return (
+    <div className="pk-page pk-brief-shell">
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <span className="pk-eyebrow">Order Brief</span>
+        <h1 className="pk-page-title" style={{ marginTop: 12 }}>Brief Pesanan</h1>
+        <p className="pk-page-subtitle">Lengkapi detail request agar artist bisa memahami kebutuhanmu.</p>
+      </div>
 
-      {/* PRODUCT */}
+      {/* ARTIST INFO */}
+      <div className="pk-card pk-brief-artist">
+        <ProfileAvatar
+          imageUrl={selectedArtist.profilePhotoUrl || selectedArtist.profileImageUrl || ""}
+          sizeClass="w-[48px] h-[48px]"
+          iconClass="text-[24px]"
+        />
+        <div>
+          <p style={{ fontSize: 12, color: "var(--gray-text)", marginBottom: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>Artist</p>
+          <p style={{ fontSize: 17, fontWeight: 700, color: "var(--text-dark)" }}>{selectedArtist.name}</p>
+        </div>
+      </div>
 
-      <div className="flex gap-4 mt-6">
+      <div className="pk-card pk-brief-card" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        {/* PRODUK */}
+        <div>
+          <label className="pk-label">Produk</label>
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="pk-input"
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", height: 52, textAlign: "left" }}
+            >
+              <span style={{ color: selectedProduct ? "var(--text-dark)" : "var(--gray-placeholder)", fontSize: 15 }}>
+                {selectedProduct ? `${selectedProduct.tag} — ${selectedProduct.price}` : "Pilih produk"}
+              </span>
+              {showDropdown ? <IoChevronUp style={{ fontSize: 18 }} /> : <IoChevronDown style={{ fontSize: 18 }} />}
+            </button>
 
-        <div className="flex-1 relative">
-
-          <p className="text-[20px] mb-2">
-            Produk
-          </p>
-
-          <button
-            onClick={() =>
-              setShowDropdown(!showDropdown)
-            }
-            className="w-full h-[60px] border-[3px] border-black rounded-[18px] px-5 flex items-center justify-between text-[20px]"
-          >
-
-            {
-              selectedProduct
-                ? `${selectedProduct.tag} ${selectedProduct.price}`
-                : "Pilih produk"
-            }
-
-            {
-              showDropdown ? (
-                <IoChevronUp className="text-[24px]" />
-              ) : (
-                <IoChevronDown className="text-[24px]" />
-              )
-            }
-
-          </button>
-
-          {
-            showDropdown && (
-              <div className="absolute top-[90px] left-0 w-full bg-[#F5F5F5] border shadow-lg rounded-[18px] p-5 max-h-[300px] overflow-y-auto z-30">
-
-                <div className="flex flex-col gap-4">
-
-                  {
-                    selectedArtist.products.map((product) => (
-                      <button
-                        key={product.tag}
-                        onClick={() => {
-                          setSelectedProduct(product)
-                          setShowDropdown(false)
-                        }}
-                        className="flex gap-4 items-center text-left"
-                      >
-
-                        <div className="w-[85px] h-[55px] border-[3px] border-black rounded-[14px] overflow-hidden bg-white shrink-0">
-  {product.coverImageUrl && (
-    <img
-      src={product.coverImageUrl}
-      alt={product.tag}
-      className="w-full h-full object-contain"
-    />
-  )}
-</div>
-
-                        <div>
-
-                          <p className="text-[20px]">
-                            {product.tag}
-                          </p>
-
-                          <p className="text-[20px]">
-                            {product.price}
-                          </p>
-
-                        </div>
-
-                      </button>
-                    ))
-                  }
-
-                </div>
-
+            {showDropdown && (
+              <div className="pk-dropdown" style={{ position: "absolute", top: 58, left: 0, right: 0, zIndex: 30, maxHeight: 280, overflowY: "auto" }}>
+                {selectedArtist.products.map((product) => (
+                  <button
+                    key={product.tag}
+                    className="pk-dropdown-item"
+                    onClick={() => { setSelectedProduct(product); setShowDropdown(false) }}
+                  >
+                    {product.coverImageUrl && (
+                      <div className="pk-product-thumb">
+                        <img src={product.coverImageUrl} alt={product.tag} />
+                      </div>
+                    )}
+                    <div>
+                      <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>{product.tag}</p>
+                      <p style={{ fontSize: 13, color: "var(--gray-text)", margin: 0 }}>{product.price}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
-            )
-          }
+            )}
+          </div>
 
           {selectedProduct?.coverImageUrl && (
-  <div className="mt-4 w-[180px] h-[100px] border-[3px] border-black rounded-[14px] overflow-hidden bg-white">
-    <img
-      src={selectedProduct.coverImageUrl}
-      alt={selectedProduct.tag}
-      className="w-full h-full object-contain"
-    />
-  </div>
-)}
-
+            <div style={{ marginTop: 12, width: 140, height: 88, borderRadius: "var(--radius-sm)", overflow: "hidden", border: "2px solid var(--gray-mid)" }}>
+              <img src={selectedProduct.coverImageUrl} alt={selectedProduct.tag} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
+          )}
         </div>
 
         {/* JUMLAH */}
-
-        <div className="w-[120px]">
-
-          <p className="text-[20px] mb-2">
-            Jumlah
-          </p>
-
+        <div style={{ maxWidth: 160 }}>
+          <label className="pk-label">Jumlah</label>
           <input
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  value={quantity}
-  onChange={handleQuantityChange}
-  className="w-[140px] h-[56px] border-[2px] border-black rounded-[14px] px-4 text-[20px] outline-none"
-/>
-
-          {
-            Number(quantity) < 1 && (
-              <p className="text-red-500 text-[16px] mt-2">
-                Minimal 1
-              </p>
-            )
-          }
-
+            type="text" inputMode="numeric" pattern="[0-9]*"
+            value={quantity} onChange={handleQuantityChange}
+            className="pk-input"
+            placeholder="0"
+          />
+          {quantity && Number(quantity) < 1 && (
+            <p style={{ color: "var(--red-salmon)", fontSize: 12, marginTop: 4 }}>Minimal 1</p>
+          )}
         </div>
 
-      </div>
+        {/* DESKRIPSI */}
+        <div>
+          <label className="pk-label">Deskripsi Request</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Jelaskan detail karya yang kamu inginkan…"
+            className="pk-textarea"
+            style={{ height: 160 }}
+          />
+        </div>
 
-      {/* DESKRIPSI */}
-
-      <div className="mt-8">
-
-        <p className="text-[20px] mb-2">
-          Deskripsi Request
-        </p>
-
-        <textarea
-          value={description}
-          onChange={(e) =>
-            setDescription(e.target.value)
-          }
-          placeholder="Masukkan deskripsi request"
-          className="w-full h-[180px] border-[3px] border-black rounded-[18px] p-5 text-[20px] outline-none resize-none placeholder:text-[#8E8E8E]"
-        />
-
-      </div>
-
-      {
-        showError && (
-          <div className="flex items-center gap-2 mt-3 text-red-500">
-
-            <FiAlertCircle className="text-[22px]" />
-
-            <p className="text-[20px]">
-              Lengkapi brief pesananmu
-            </p>
-
+        {showError && (
+          <div className="pk-alert">
+            <FiAlertCircle style={{ fontSize: 18, flexShrink: 0 }} />
+            Lengkapi semua kolom brief pesananmu
           </div>
-        )
-      }
+        )}
 
-      {/* BUTTON */}
-
-      <div className="flex justify-center gap-5 mt-10 pb-[50px]">
-
-        <button
-          onClick={() => setCurrentPage("home")}
-          className="w-[150px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={handleSubmitBrief}
-          className="w-[150px] h-[50px] bg-black text-white rounded-[12px] text-[20px]"
-        >
-          Kirim
-        </button>
-
+        {/* ACTIONS */}
+        <div style={{ display: "flex", gap: 12, paddingTop: 8, paddingBottom: 16 }}>
+          <button onClick={() => setCurrentPage("home")} className="pk-btn pk-btn-ghost" style={{ flex: 1, height: 48 }}>
+            Batal
+          </button>
+          <button onClick={handleSubmitBrief} className="pk-btn pk-btn-primary" style={{ flex: 2, height: 48 }}>
+            Kirim Pesanan
+          </button>
+        </div>
       </div>
-
     </div>
   )
 }

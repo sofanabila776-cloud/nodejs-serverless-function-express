@@ -350,6 +350,8 @@ function App() {
         if (data.profilePhotoUrl) {
              updateAccountProfile("profilePhotoUrl", data.profilePhotoUrl)
              }
+
+        // Restore artist portfolio dari backend
         if (data.portfolioPages && data.portfolioPages.length > 0) {
           setArtistPortfolio({
             id: data._id,
@@ -888,7 +890,6 @@ useEffect(() => {
           updateResultLink={updateResultLink}
           updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
-           key={selectedOrder?._id + '-' + selectedOrder?.status}
         />
       )
       break
@@ -935,7 +936,6 @@ useEffect(() => {
           updateResultLink={updateResultLink}
           updateRevisionLink={updateRevisionLink}
           currentUser={currentUser}
-          key={selectedOrder?._id + '-' + selectedOrder?.status}
         />
       )
       break

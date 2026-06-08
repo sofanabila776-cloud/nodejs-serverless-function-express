@@ -40,7 +40,7 @@ function SignupArtistLevelPage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
       {showLevelInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-8">
           <div className="relative w-[900px] max-h-[620px] overflow-y-auto rounded-[24px] border-[3px] border-black bg-white px-8 py-7">

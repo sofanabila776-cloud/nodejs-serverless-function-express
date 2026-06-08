@@ -52,32 +52,36 @@ function ProfilePage({
 }) {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false)
 
+  const ComingSoon = ({ label }) => (
+    <div style={{ padding: "40px 20px", textAlign: "center", color: "var(--gray-placeholder)" }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>🚧</div>
+      <p style={{ fontSize: 16 }}>Fitur <strong>{label}</strong> sedang dalam pengembangan.</p>
+    </div>
+  )
+
   return (
     <>
       {showDeletePopup && (
         <ProfileConfirmPopup
-          message="Apakah anda yakin ingin menghapus akun ini?"
+          message="Apakah kamu yakin ingin menghapus akun ini?"
           confirmText="Hapus"
-          cancelText="Cancel"
+          cancelText="Batal"
           onCancel={() => setShowDeletePopup(false)}
           onConfirm={onDeleteAccount}
         />
       )}
-
       {showLogoutPopup && (
         <ProfileConfirmPopup
-          message="Apakah Anda yakin ingin Log out dari akun ini?"
+          message="Apakah kamu yakin ingin Log out?"
           confirmText="Log out"
-          cancelText="Cancel"
+          cancelText="Batal"
           onCancel={() => setShowLogoutPopup(false)}
-          onConfirm={() => {
-            setShowLogoutPopup(false)
-            onLogout()
-          }}
+          onConfirm={() => { setShowLogoutPopup(false); onLogout() }}
         />
       )}
 
-      <div className="flex w-full max-w-full overflow-x-hidden px-[40px] pt-[140px] pb-[140px] gap-[40px]">
+      <div className="pk-page pk-profile-layout">
+        {/* SIDEBAR */}
         {role === "artist" ? (
           <ArtistDashboardSidebar
             activeSidebar={activeSidebar}
@@ -97,13 +101,8 @@ function ProfilePage({
           />
         )}
 
-        <div
-  className={
-    currentPage === "orderDetail"
-      ? "flex-1 min-w-0"
-      : "flex-1 min-w-0 border-[3px] border-[#D9D9D9] p-8"
-  }
->
+        {/* CONTENT */}
+        <div className={`pk-profile-content ${currentPage === "orderDetail" ? "order-detail-open" : ""}`}>
           {activeSidebar === "account" && (
             <ProfileAccount
               role={role}
@@ -124,13 +123,13 @@ function ProfilePage({
 
           {role === "artist" && activeSidebar === "portfolio" && (
             <ArtistPortfolioPage
-  portfolio={artistPortfolio}
-  onUploadClick={() => setCurrentPage("artistPortfolioUpload")}
-  onDeleteClick={onDeletePortfolio}
-  onDeleteProduct={onDeleteProduct}
-  onPublishClick={onPublishPortfolio}
-  onAddProductClick={() => setCurrentPage("artistProductForm")}
-/>
+              portfolio={artistPortfolio}
+              onUploadClick={() => setCurrentPage("artistPortfolioUpload")}
+              onDeleteClick={onDeletePortfolio}
+              onDeleteProduct={onDeleteProduct}
+              onPublishClick={onPublishPortfolio}
+              onAddProductClick={() => setCurrentPage("artistProductForm")}
+            />
           )}
 
           {activeSidebar === "orders" && (
@@ -157,23 +156,9 @@ function ProfilePage({
             />
           )}
 
-          {role === "artist" && activeSidebar === "bank" && (
-            <div className="text-[24px]">
-              Fitur Bank akan dibuat setelah Portofolio selesai.
-            </div>
-          )}
-
-          {role === "artist" && activeSidebar === "rating" && (
-            <div className="text-[24px]">
-              Fitur Rating akan dibuat setelah Portofolio selesai.
-            </div>
-          )}
-
-          {role === "artist" && activeSidebar === "reviews" && (
-            <div className="text-[24px]">
-              Fitur Riwayat Ulasan akan dibuat setelah Portofolio selesai.
-            </div>
-          )}
+          {role === "artist" && activeSidebar === "bank"    && <ComingSoon label="Bank" />}
+          {role === "artist" && activeSidebar === "rating"  && <ComingSoon label="Rating" />}
+          {role === "artist" && activeSidebar === "reviews" && <ComingSoon label="Riwayat Ulasan" />}
         </div>
       </div>
     </>

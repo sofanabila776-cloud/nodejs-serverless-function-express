@@ -11,26 +11,35 @@ function LikedPortfolioPage({
   toggleLikedArtist = () => {},
 }) {
   return (
-    <div className="px-[60px] pt-[140px] pb-[80px]">
+    <div className="pk-page">
       <button
-        type="button"
         onClick={() => setCurrentPage("home")}
-        className="flex items-center gap-4 text-[28px] mb-10"
+        className="pk-btn pk-btn-ghost"
+        style={{ marginBottom: 28, height: 40, fontSize: 14, gap: 8 }}
       >
-        <IoArrowBack className="text-[28px]" />
-        <span>Favorite</span>
+        <IoArrowBack style={{ fontSize: 18 }} />
+        Kembali
       </button>
 
+      <div style={{ marginBottom: 8 }}>
+        <span className="pk-eyebrow">Saved Portfolio</span>
+        <div style={{ marginTop: 12 }}>
+          <span className="pk-section-title">Favorit Saya</span>
+        </div>
+      </div>
+
       {!isLoggedIn ? (
-        <p className="text-[22px] text-[#666666]">
-          Login terlebih dahulu untuk melihat portofolio yang disukai.
-        </p>
+        <div className="pk-empty">
+          <div className="pk-empty-icon">🔒</div>
+          <p className="pk-empty-text">Login terlebih dahulu untuk melihat portofolio yang disukai.</p>
+        </div>
       ) : likedArtists.length === 0 ? (
-        <p className="text-[22px] text-[#666666]">
-          Tidak ada portofolio yang disukai
-        </p>
+        <div className="pk-empty">
+          <div className="pk-empty-icon">🤍</div>
+          <p className="pk-empty-text">Belum ada portofolio yang kamu sukai</p>
+        </div>
       ) : (
-        <div className="flex gap-[32px] flex-wrap">
+        <div className="pk-artist-grid">
           {likedArtists.map((artist) => (
             <ArtistCard
               key={artist.id}

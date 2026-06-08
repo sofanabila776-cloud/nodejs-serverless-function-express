@@ -1,16 +1,8 @@
-import {
-  FiSearch,
-  FiHeart,
-  FiUser,
-} from "react-icons/fi"
+import { FiSearch, FiHeart, FiUser } from "react-icons/fi"
 
 const AUTH_PAGES = [
-  "login",
-  "signupAccount",
-  "signupRole",
-  "signupBuyerUsername",
-  "signupArtistLevel",
-  "signupArtistUsername",
+  "login", "signupAccount", "signupRole",
+  "signupBuyerUsername", "signupArtistLevel", "signupArtistUsername",
 ]
 
 function Header({
@@ -24,9 +16,7 @@ function Header({
   setSearchQuery = () => {},
 }) {
   const isAuthPage = AUTH_PAGES.includes(currentPage)
-
-  const roleLabel =
-    role === "artist" ? "Artist" : "Buyer"
+  const roleLabel = role === "artist" ? "Artist" : "Buyer"
 
   const handleLogoClick = () => {
     if (isLoggedIn && role === "artist") {
@@ -35,61 +25,45 @@ function Header({
       setActiveOrderStatus("artist_incoming")
       return
     }
-
     setCurrentPage("home")
   }
 
   const openProfile = () => {
     setCurrentPage("profile")
     setActiveSidebar("account")
-
-    if (role === "artist") {
-      setActiveOrderStatus("artist_incoming")
-    }
+    if (role === "artist") setActiveOrderStatus("artist_incoming")
   }
 
   return (
-    <header className="fixed top-0 left-0 w-full h-[100px] bg-white z-30 flex items-center justify-between px-[40px] shadow-md">
-      <button
-        onClick={handleLogoClick}
-        className="flex items-center gap-3"
-      >
-        <span className="text-[36px] text-black leading-none">
-          PICKARYA
-        </span>
-
+    <header className="pk-header">
+      {/* LOGO */}
+      <button onClick={handleLogoClick} style={{ display: "flex", alignItems: "center", gap: "10px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+        <span className="pk-logo">PICKARYA</span>
         {isLoggedIn && (
-          <>
-            <span className="text-[24px] text-[#8A8A8A] leading-none">
-              ·
-            </span>
-
-            <span className="text-[20px] text-[#8A8A8A] leading-none mt-[2px]">
-              {roleLabel}
-            </span>
-          </>
+          <span className="pk-logo-role">{roleLabel}</span>
         )}
       </button>
 
+      {/* SEARCH */}
       {currentPage === "home" && role === "buyer" && (
-        <div className="w-[420px] h-[45px] border-[3px] border-black rounded-full flex items-center px-4">
-          <FiSearch className="text-[22px]" />
-
+        <div className="pk-search">
+          <FiSearch />
           <input
-  type="text"
-  placeholder="Cari username Artist"
-  value={searchQuery}
-  onChange={(event) => setSearchQuery(event.target.value)}
-  className="ml-3 flex-1 outline-none text-[18px]"
-/>
+            type="text"
+            placeholder="Cari username Artist…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       )}
 
-      <div className="flex items-center gap-5">
+      {/* ACTIONS */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         {!isLoggedIn && !isAuthPage && (
           <button
             onClick={() => setCurrentPage("login")}
-            className="text-[20px] whitespace-nowrap"
+            className="pk-btn pk-btn-primary"
+            style={{ height: 40, padding: "0 20px", fontSize: 14 }}
           >
             LOG IN
           </button>
@@ -99,15 +73,15 @@ function Header({
           <>
             {role === "buyer" && (
               <button
-  type="button"
-  onClick={() => setCurrentPage("likedPortfolio")}
->
-  <FiHeart className="text-[28px]" />
-</button>
+                onClick={() => setCurrentPage("likedPortfolio")}
+                className="pk-icon-btn"
+                aria-label="Koleksi favorit"
+              >
+                <FiHeart style={{ fontSize: 20 }} />
+              </button>
             )}
-
-            <button onClick={openProfile}>
-              <FiUser className="text-[28px]" />
+            <button onClick={openProfile} className="pk-icon-btn" aria-label="Profil">
+              <FiUser style={{ fontSize: 20 }} />
             </button>
           </>
         )}

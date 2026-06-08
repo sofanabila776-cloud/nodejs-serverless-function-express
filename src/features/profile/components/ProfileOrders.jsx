@@ -91,7 +91,7 @@ function ProfileOrders({
   return (
     <div className="space-y-5">
       {filteredOrders.length === 0 ? (
-        <div className="border-[3px] border-[#D9D9D9] h-[160px] flex items-center justify-center text-[20px]">
+        <div className="pk-empty-mini">
           {currentEmptyOrderText}
         </div>
       ) : (

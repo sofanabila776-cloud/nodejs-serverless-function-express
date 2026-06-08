@@ -88,15 +88,15 @@ function OrderDetailPage({
 
   const isCancelled =
     status === ORDER_STATUS.CANCELLED_BY_BUYER ||
-    status === ORDER_STATUS.REJECTED_BY_ARTIST 
-    
+    status === ORDER_STATUS.REJECTED_BY_ARTIST ||
+    status === "cancelled"
 
   const isRejectedByArtist =
     status === ORDER_STATUS.REJECTED_BY_ARTIST
 
   const isCancelledByBuyer =
-    status === ORDER_STATUS.CANCELLED_BY_BUYER 
-   
+    status === ORDER_STATUS.CANCELLED_BY_BUYER ||
+    status === "cancelled"
 
   const isAccepted =
     status === ORDER_STATUS.ACCEPTED
@@ -277,6 +277,18 @@ function OrderDetailPage({
             ? "Belum Dibayar"
             : "Menunggu persetujuan"
 
+  const headerStatusType = isCancelled
+    ? "cancelled"
+    : isCompleted
+      ? "completed"
+      : isRevisionRequested || isRevisionUploaded
+        ? "revision"
+        : isProcessed || isResultUploaded
+          ? "process"
+          : isUnpaid
+            ? "payment"
+            : "waiting"
+
   const hasAcceptedAt = Boolean(selectedOrder?.acceptedAt)
   const hasPaymentConfirmedAt = Boolean(selectedOrder?.paymentConfirmedAt)
   const hasProcessedAt = Boolean(selectedOrder?.processedAt)
@@ -287,89 +299,59 @@ function OrderDetailPage({
     active = false,
     icon,
   }) => {
-    if (type === "dot") {
-      return (
-        <div className="w-[42px] flex justify-center flex-shrink-0">
-          <div
-            className={
-              active
-                ? "w-[16px] h-[16px] rounded-full bg-yellow-500 mt-3"
-                : "w-[16px] h-[16px] rounded-full bg-[#9E9E9E] mt-3"
-            }
-          />
-        </div>
-      )
-    }
-
     return (
-      <div
-        className={
-          active
-            ? "w-[42px] h-[42px] rounded-full border-[3px] border-yellow-500 text-yellow-500 flex items-center justify-center flex-shrink-0 bg-[#F5F5F5]"
-            : "w-[42px] h-[42px] rounded-full border-[3px] border-[#9E9E9E] text-[#9E9E9E] flex items-center justify-center flex-shrink-0 bg-[#F5F5F5]"
-        }
-      >
-        {icon}
+      <div className={`pk-timeline-marker ${active ? "is-active" : ""} ${type === "dot" ? "is-dot" : ""}`}>
+        {type === "dot" ? <span /> : icon}
       </div>
     )
   }
 
   const TimelineStep = ({ step }) => {
-    const textColor = step.active
-      ? "text-yellow-500"
-      : "text-[#9E9E9E]"
-
     return (
-      <div className="relative z-10 flex gap-6">
+      <div className={`pk-timeline-step ${step.active ? "is-active" : ""}`}>
         <TimelineMarker
           type={step.type}
           active={step.active}
           icon={step.icon}
         />
 
-        <p className="w-[215px] text-[20px] whitespace-nowrap mt-2 text-black">
+        <p className="pk-timeline-date">
           {step.date}
         </p>
 
-        <div className="flex-1 mt-2 min-w-0">
-          <p
-            className={
-              step.bold === false
-                ? `text-[20px] leading-[24px] ${textColor}`
-                : `text-[20px] font-semibold leading-[24px] ${textColor}`
-            }
-          >
+        <div className="pk-timeline-content">
+          <p className={step.bold === false ? "pk-timeline-title is-normal" : "pk-timeline-title"}>
             {step.title}
           </p>
 
           {step.subtitles?.map((subtitle) => (
             <p
               key={subtitle}
-              className={`text-[20px] leading-[24px] mt-[2px] ${textColor}`}
+              className="pk-timeline-subtitle"
             >
               {subtitle}
             </p>
           ))}
 
           {step.linkText && (
-  <a
-    href={step.linkHref || "#"}
-    target={step.linkHref ? "_blank" : undefined}
-    rel={step.linkHref ? "noreferrer" : undefined}
-    onClick={(e) => {
-      if (step.linkOnClick) {
-        e.preventDefault()
-        step.linkOnClick()
-        return
-      }
+            <a
+              href={step.linkHref || "#"}
+              target={step.linkHref ? "_blank" : undefined}
+              rel={step.linkHref ? "noreferrer" : undefined}
+              onClick={(e) => {
+                if (step.linkOnClick) {
+                  e.preventDefault()
+                  step.linkOnClick()
+                  return
+                }
 
-      if (!step.linkHref) e.preventDefault()
-    }}
-    className="inline-block text-[20px] text-[#09027C] underline mt-[2px]"
-  >
-    {step.linkText}
-  </a>
-)}
+                if (!step.linkHref) e.preventDefault()
+              }}
+              className="pk-order-link"
+            >
+              {step.linkText}
+            </a>
+          )}
 
           {step.extra}
 
@@ -774,15 +756,15 @@ function OrderDetailPage({
       extra:
         role === "buyer" ? (
           <>
-            <div className="mt-4 w-[370px] max-w-full border-[1px] border-black bg-white flex flex-col items-center py-5">
-              <p className="text-[20px] font-semibold mb-4">
+            <div className="pk-payment-box">
+              <p className="pk-payment-total">
                 {totalPrice}
               </p>
 
               <DummyQR />
             </div>
 
-            <p className="text-[20px] text-yellow-500 mt-4">
+            <p className="pk-payment-note">
               Lakukan konfirmasi dengan mengirim bukti pembayaran berupa link google drive
             </p>
           </>
@@ -1009,75 +991,93 @@ function OrderDetailPage({
   </>
 )}
 
-      <div className="w-full max-w-full border-[3px] border-[#D9D9D9] bg-[#F5F5F5] shadow-md overflow-hidden">
-        <div className="flex justify-between items-center px-7 py-4 border-b-[2px] border-[#D9D9D9]">
-          <div className="flex items-center gap-5">
-            <button
-              onClick={() => setCurrentPage("profile")}
-              className="flex items-center justify-center"
-            >
-              <IoArrowBack className="text-[22px]" />
-            </button>
+      <div className="pk-order-detail-shell">
+        <div className="pk-order-detail-card">
+          <div className="pk-order-detail-topbar">
+            <div className="pk-order-top-left">
+              <button
+                onClick={() => setCurrentPage("profile")}
+                className="pk-back-btn"
+                aria-label="Kembali ke profil"
+              >
+                <IoArrowBack />
+              </button>
 
-            <p className="text-[16px]">
-             #{id ? id.slice(-6).toUpperCase() : '------'}
+              <div>
+                <p className="pk-order-label">Detail Pesanan</p>
+                <p className="pk-order-number">
+                  #{id ? id.slice(-6).toUpperCase() : "------"}
+                </p>
+              </div>
+            </div>
+
+            <p className={`pk-order-status-pill is-${headerStatusType}`}>
+              {headerStatus}
             </p>
           </div>
 
-          <p className="text-[16px] text-yellow-500">
-            {headerStatus}
-          </p>
-        </div>
-
-        <div className="px-7 py-7 border-b-[2px] border-[#D9D9D9]">
-          <div className="relative">
-            {timelineSteps.length > 1 && (
-              <div className="absolute left-[20px] top-[42px] bottom-[21px] w-[2px] bg-[#D9D9D9]" />
-            )}
-
-            <div className="flex flex-col gap-[28px]">
-              {timelineSteps.map((step, index) => (
-                <TimelineStep
-                  key={`${step.title}-${index}`}
-                  step={step}
-                />
-              ))}
+          <div className="pk-order-timeline-wrap">
+            <div className="pk-order-section-heading">
+              <p>Status Pesanan</p>
+              <span>Ikuti perkembangan pesanan dari pengajuan sampai selesai.</span>
             </div>
-          </div>
-        </div>
 
-        <div className="px-7 py-8">
-          <div className="flex gap-7">
-            <div className="w-[250px] h-[115px] border-[3px] border-black rounded-[18px] flex-shrink-0 overflow-hidden bg-white">
-  {productCoverImageUrl && (
-    <img
-      src={productCoverImageUrl}
-      alt={product}
-      className="w-full h-full object-contain"
-    />
-  )}
-</div>
+            <div className="pk-timeline-list">
+              {timelineSteps.length > 1 && (
+                <div className="pk-timeline-line" />
+              )}
 
-            <div className="flex flex-col justify-center">
-              <p className="text-[20px]">
-                {displayName}
-              </p>
-
-              <p className="text-[20px] mt-2">
-                {product} x{quantity}
-              </p>
-
-              <p className="text-[20px] mt-2">
-                {price}
-              </p>
+              <div className="pk-timeline-items">
+                {timelineSteps.map((step, index) => (
+                  <TimelineStep
+                    key={`${step.title}-${index}`}
+                    step={step}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
-          <p className="text-[16px] text-[#333333] leading-[28px] mt-4 break-words">
-            {description}
-          </p>
+          <div className="pk-order-summary-card">
+            <div className="pk-order-section-heading">
+              <p>Ringkasan Brief</p>
+              <span>Informasi produk dan catatan pesanan.</span>
+            </div>
+
+            <div className="pk-order-product-row">
+              <div className="pk-order-product-image">
+                {productCoverImageUrl ? (
+                  <img
+                    src={productCoverImageUrl}
+                    alt={product}
+                  />
+                ) : (
+                  <span>Tidak ada gambar</span>
+                )}
+              </div>
+
+              <div className="pk-order-product-info">
+                <p className="pk-order-person-name">
+                  {displayName}
+                </p>
+
+                <p className="pk-order-product-name">
+                  {product} <span>x{quantity}</span>
+                </p>
+
+                <p className="pk-order-price">
+                  {price}
+                </p>
+              </div>
+            </div>
+
+            <div className="pk-order-description">
+              <p>{description}</p>
+            </div>
+          </div>
         </div>
       </div>
+
     </>
   )
 }

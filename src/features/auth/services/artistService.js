@@ -69,8 +69,10 @@ export const clearPortfolio = async (artistId) => {
   });
   return res.json();
 };
+
 export const updateProfilePhoto = async (artistId, profilePhotoUrl) => {
   if (!API_BASE_URL) return null;
+
   const res = await fetch(`${API_BASE_URL}/artists/${artistId}/photo`, {
     method: 'PATCH',
     headers: {
@@ -79,5 +81,6 @@ export const updateProfilePhoto = async (artistId, profilePhotoUrl) => {
     },
     body: JSON.stringify({ profilePhotoUrl })
   });
+
   return res.json();
 };

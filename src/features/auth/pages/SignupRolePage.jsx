@@ -24,7 +24,7 @@ function SignupRolePage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
 
       <section aria-labelledby="signup-title" className="absolute inset-0">
         <h1 id="signup-title" className="absolute top-[239px] left-[529px] font-normal text-black text-6xl tracking-[0] leading-[normal]">

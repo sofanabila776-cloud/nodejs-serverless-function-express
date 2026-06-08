@@ -7,6 +7,12 @@ const LEVEL_LABELS = {
   professional: "Professional",
 }
 
+const LEVEL_CLASS = {
+  beginner: "pk-badge pk-badge-beginner",
+  intermediate: "pk-badge pk-badge-intermediate",
+  professional: "pk-badge pk-badge-professional",
+}
+
 function ArtistCard({
   artist,
   openDetail,
@@ -22,67 +28,57 @@ function ArtistCard({
 
   return (
     <div
+      className="pk-card pk-artist-card"
       onClick={() => openDetail(artist)}
-      className="cursor-pointer"
     >
+      {/* IMAGE */}
+      <div className="pk-artist-card-media">
+        {showLikeButton && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onToggleLike(artist) }}
+            className={`pk-icon-btn ${isLiked ? "liked" : ""}`}
+            style={{ position: "absolute", top: 10, right: 10, zIndex: 5, width: 36, height: 36 }}
+            aria-label="Sukai portofolio"
+          >
+            {isLiked
+              ? <FaHeart style={{ fontSize: 16 }} />
+              : <FiHeart style={{ fontSize: 16 }} />}
+          </button>
+        )}
 
-      <div className="relative w-[570px] h-[280px] border-[3px] border-black rounded-[28px] overflow-hidden bg-white">
-  {showLikeButton && (
-    <button
-      type="button"
-      onClick={(event) => {
-        event.stopPropagation()
-        onToggleLike(artist)
-      }}
-      className="absolute top-5 right-5 z-10"
-      aria-label="Sukai portofolio"
-    >
-      {isLiked ? (
-        <FaHeart className="text-[28px] text-black" />
-      ) : (
-        <FiHeart className="text-[30px] text-black" />
-      )}
-    </button>
-  )}
-
-  {artistCoverImage && (
-    <img
-      src={artistCoverImage}
-      alt={`Portofolio ${artist.name}`}
-      className="w-full h-full object-contain"
-    />
-  )}
-</div>
-
-      <div className="mt-2 px-5 w-full">
-  <div className="flex items-start justify-between w-full">
-    <div className="min-w-0">
-      <p className="text-[20px] font-semibold leading-[28px]">
-        {artist.name}
-      </p>
-
-      <div className="flex gap-3 mt-0 flex-wrap">
-        {(artist.tags || []).map((tag) => {
-          const highlighted = selectedCategories.includes(tag)
-
-          return (
-            <span
-              key={tag}
-              className={highlighted ? "bg-yellow-500" : ""}
-            >
-              #{String(tag).replace("#", "").toLowerCase()}
-            </span>
-          )
-        })}
+        {artistCoverImage
+          ? <img src={artistCoverImage} alt={`Portofolio ${artist.name}`} className="pk-portfolio-img" />
+          : (
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gray-placeholder)", fontSize: 13, fontWeight: 700 }}>
+              Belum ada portofolio
+            </div>
+          )}
       </div>
-    </div>
 
-    <p className="text-[18px] text-[#777777] shrink-0 text-right ml-6">
-      {LEVEL_LABELS[artist.level] || artist.level}    
-    </p>
-  </div>
-</div>
-
+      {/* INFO */}
+      <div className="pk-artist-card-body">
+        <div className="pk-artist-meta">
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p className="pk-artist-name">
+              {artist.name}
+            </p>
+            <div className="pk-artist-tags">
+              {(artist.tags || []).slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className={`pk-tag ${selectedCategories.includes(tag) ? "highlighted" : ""}`}
+                >
+                  #{String(tag).replace("#", "").toLowerCase()}
+                </span>
+              ))}
+            </div>
+          </div>
+          <span className={LEVEL_CLASS[artist.level] || "pk-badge"} style={{ flexShrink: 0, marginTop: 1 }}>
+            {LEVEL_LABELS[artist.level] || artist.level}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }
