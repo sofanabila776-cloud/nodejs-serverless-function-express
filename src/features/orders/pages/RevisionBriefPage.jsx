@@ -66,6 +66,11 @@ function RevisionBriefPage({
     setCurrentPage("orderDetail")
   }
 
+
+  <h1 style={{color:'red',fontSize:'60px'}}>
+  HALAMAN REVISION BARU
+</h1>
+
   return (
   <div className="pk-page pk-brief-shell">
     <div style={{ textAlign: "center", marginBottom: 24 }}>
