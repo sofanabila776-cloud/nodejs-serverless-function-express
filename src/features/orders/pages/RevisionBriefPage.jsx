@@ -67,94 +67,159 @@ function RevisionBriefPage({
   }
 
   return (
-    <div className="px-[60px] pt-[110px] pb-[80px]">
-      <div className="text-center mb-8">
-        <h1 className="text-[30px]">Brief Revisi</h1>
-        <p className="text-[20px] mt-1">
-          NO. PESANAN. {selectedOrder._id || selectedOrder.id}
+  <div className="pk-page pk-brief-shell">
+    <div style={{ textAlign: "center", marginBottom: 24 }}>
+      <span className="pk-eyebrow">Revision Brief</span>
+
+      <h1
+        className="pk-page-title"
+        style={{ marginTop: 12 }}
+      >
+        Brief Revisi
+      </h1>
+
+      <p className="pk-page-subtitle">
+        Lengkapi detail revisi agar artist memahami perubahan yang kamu inginkan.
+      </p>
+    </div>
+
+    <div
+      className="pk-card"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+      }}
+    >
+      {/* ORDER INFO */}
+      <div>
+        <label className="pk-label">
+          Nomor Pesanan
+        </label>
+
+        <div className="pk-input">
+          {selectedOrder._id || selectedOrder.id}
+        </div>
+      </div>
+
+      {/* HASIL KARYA */}
+      <div>
+        <label className="pk-label">
+          Hasil Karya
+        </label>
+
+        {resultHref ? (
+          <a
+            href={resultHref}
+            target="_blank"
+            rel="noreferrer"
+            className="pk-btn pk-btn-ghost"
+            style={{
+              width: "fit-content",
+              minWidth: 140,
+              height: 48,
+              textDecoration: "none",
+            }}
+          >
+            Lihat Hasil
+          </a>
+        ) : (
+          <p
+            style={{
+              color: "var(--gray-text)",
+              fontSize: 14,
+            }}
+          >
+            Link hasil belum tersedia.
+          </p>
+        )}
+      </div>
+
+      {/* DESKRIPSI */}
+      <div>
+        <label className="pk-label">
+          Deskripsi Request Revisi
+        </label>
+
+        <textarea
+          value={revisionDescription}
+          onChange={(event) =>
+            setRevisionDescription(event.target.value)
+          }
+          placeholder="Jelaskan perubahan yang kamu inginkan..."
+          className="pk-textarea"
+          style={{ height: 160 }}
+        />
+      </div>
+
+      {/* LINK PENDUKUNG */}
+      <div>
+        <label className="pk-label">
+          Link GDrive Gambar Pendukung
+        </label>
+
+        <input
+          type="text"
+          value={supportLink}
+          onChange={(event) =>
+            setSupportLink(event.target.value)
+          }
+          placeholder="https://drive.google.com/..."
+          className="pk-input"
+        />
+
+        <p
+          style={{
+            marginTop: 8,
+            fontSize: 13,
+            color: "var(--gray-text)",
+          }}
+        >
+          Pastikan link dapat diakses oleh artist.
         </p>
       </div>
 
-      <div className="max-w-[1160px] mx-auto">
-        <div className="mb-8">
-          <p className="text-[20px] mb-3">
-            Hasil karya yang ingin direvisi
-          </p>
-
-          {resultHref ? (
-            <a
-              href={resultHref}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center min-w-[130px] h-[42px] border-[3px] border-black rounded-[14px] text-[19px] text-[#09027C] underline"
-            >
-              Lihat hasil
-            </a>
-          ) : (
-            <p className="text-[18px] text-[#8A8A8A]">
-              Link hasil belum tersedia.
-            </p>
-          )}
+      {error && (
+        <div className="pk-alert">
+          {error}
         </div>
+      )}
 
-        <div className="mb-4">
-          <p className="text-[20px] mb-3">
-            Deskripsi Request revisi
-          </p>
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          paddingTop: 8,
+          paddingBottom: 16,
+        }}
+      >
+        <button
+          onClick={() =>
+            setCurrentPage("orderDetail")
+          }
+          className="pk-btn pk-btn-ghost"
+          style={{
+            flex: 1,
+            height: 48,
+          }}
+        >
+          Batal
+        </button>
 
-          <textarea
-            value={revisionDescription}
-            onChange={(event) => setRevisionDescription(event.target.value)}
-            placeholder="Masukkan deskripsi request revisi"
-            className="w-full h-[150px] border-[3px] border-black rounded-[18px] bg-transparent px-5 py-4 text-[19px] outline-none resize-none placeholder:text-[#8A8A8A]"
-          />
-        </div>
-
-        <div className="mb-4">
-  <p className="text-[20px] mb-2">
-    Tambahkan link G-drive gambar pendukung
-  </p>
-
-  <input
-    type="text"
-    value={supportLink}
-    onChange={(event) => setSupportLink(event.target.value)}
-    placeholder="Masukkan link"
-    className="w-full h-[52px] border-[3px] border-black rounded-[16px] bg-transparent px-5 text-[19px] outline-none placeholder:text-[#8A8A8A]"
-  />
-
-  <p className="text-[17px] text-[#8A8A8A] mt-2">
-  Pastikan link benar dan akses file sudah dibuka.
-</p>
-
-</div>
-
-        {error && (
-          <p className="text-[17px] text-red-500 mt-3">
-            {error}
-          </p>
-        )}
-
-        <div className="flex justify-center gap-6 mt-14">
-          <button
-            type="button"
-            onClick={() => setCurrentPage("orderDetail")}
-            className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            onClick={handleSubmitRevision}
-            className="w-[150px] h-[46px] bg-black text-white rounded-[10px] text-[20px]"
-          >
-            Kirim
-          </button>
-        </div>
+        <button
+          onClick={handleSubmitRevision}
+          className="pk-btn pk-btn-primary"
+          style={{
+            flex: 2,
+            height: 48,
+          }}
+        >
+          Kirim Revisi
+        </button>
       </div>
     </div>
-  )
+  </div>
+)
 }
 
 export default RevisionBriefPage
