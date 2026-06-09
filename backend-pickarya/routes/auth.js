@@ -74,6 +74,7 @@ router.post('/register', async (req, res) => {
         phone: phone || '',
         bankName: bankName || '',
         bankAccount: bankAccountNumber || '',
+        level: artistLevel || 'beginner',
       });
     }
 
