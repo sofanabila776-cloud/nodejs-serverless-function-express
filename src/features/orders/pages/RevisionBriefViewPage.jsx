@@ -32,71 +32,135 @@ function RevisionBriefViewPage({
   const supportHref = getValidExternalLink(selectedOrder?.revisionSupportLink)
 
   return (
-    <div className="min-h-screen overflow-y-auto px-[60px] pt-[145px] pb-[120px] relative">
-      <button
-        type="button"
-        onClick={() => setCurrentPage("orderDetail")}
-        className="absolute top-[150px] right-[60px] text-[30px]"
-        aria-label="Tutup brief revisi"
+  <div className="pk-page pk-brief-shell">
+    <div style={{ textAlign: "center", marginBottom: 24 }}>
+      <h1
+        className="pk-page-title"
+        style={{ marginBottom: 10 }}
       >
-        <FiX />
-      </button>
+        Brief Revisi
+      </h1>
 
-      <div className="text-center mb-10">
-        <h1 className="text-[30px]">
-          Brief Revisi
-        </h1>
+      <span
+        className="pk-eyebrow"
+        style={{
+          letterSpacing: "0",
+          textTransform: "uppercase",
+        }}
+      >
+        {selectedOrder._id || selectedOrder.id}
+      </span>
 
-        <p className="text-[20px] mt-1">
-          NO. PESANAN. {selectedOrder.id}
-        </p>
+      <p className="pk-page-subtitle">
+        Detail revisi yang telah dikirim kepada artist.
+      </p>
+    </div>
+
+    <div
+      className="pk-card pk-brief-card"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+      }}
+    >
+      {/* HASIL KARYA */}
+      <div>
+        <label className="pk-label">
+          Hasil Karya
+        </label>
+
+        {resultHref ? (
+          <a
+            href={resultHref}
+            target="_blank"
+            rel="noreferrer"
+            className="pk-btn pk-btn-ghost"
+            style={{
+              width: 180,
+              height: 48,
+            }}
+          >
+            Lihat Hasil
+          </a>
+        ) : (
+          <p
+            style={{
+              color: "var(--gray-text)",
+              fontSize: 14,
+            }}
+          >
+            Link hasil belum tersedia.
+          </p>
+        )}
       </div>
 
-      <div className="max-w-[1160px] mx-auto">
-        <div className="mb-8">
-          <p className="text-[20px] mb-3">
-            Hasil karya yang ingin direvisi
-          </p>
+      {/* DESKRIPSI */}
+      <div>
+        <label className="pk-label">
+          Deskripsi Request Revisi
+        </label>
 
-          {resultHref ? (
-            <a
-              href={resultHref}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center min-w-[130px] h-[42px] border-[3px] border-black rounded-[14px] text-[19px] text-[#09027C] underline"
-            >
-              Lihat hasil
-            </a>
-          ) : (
-            <p className="text-[18px] text-[#8A8A8A]">
-              Link hasil belum tersedia.
-            </p>
-          )}
+        <div
+          className="pk-input"
+          style={{
+            minHeight: 160,
+            whiteSpace: "pre-wrap",
+            alignItems: "flex-start",
+            paddingTop: 14,
+          }}
+        >
+          {selectedOrder?.revisionDescription ||
+            "Tidak ada deskripsi revisi."}
         </div>
+      </div>
 
-        <div className="mb-4">
-          <p className="text-[20px] mb-3">
-            Deskripsi Request revisi
-          </p>
+      {/* GAMBAR PENDUKUNG */}
+      {supportHref && (
+        <div>
+          <label className="pk-label">
+            Link Gambar Pendukung
+          </label>
 
-          <div className="w-full min-h-[70px] border-[3px] border-black rounded-[18px] bg-transparent px-5 py-4 text-[19px]">
-            {selectedOrder?.revisionDescription || "Tidak ada deskripsi revisi."}
-          </div>
-        </div>
-
-        {supportHref && (
           <a
             href={supportHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center min-w-[260px] h-[48px] border-[3px] border-black rounded-[14px] text-[19px] text-[#09027C] underline"
+            className="pk-btn pk-btn-ghost"
+            style={{
+              width: 220,
+              height: 48,
+            }}
           >
-            Gambar pendukung
+            Lihat Gambar
           </a>
-        )}
+        </div>
+      )}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          paddingTop: 8,
+          paddingBottom: 16,
+        }}
+      >
+        <button
+          onClick={() =>
+            setCurrentPage("orderDetail")
+          }
+          className="pk-btn pk-btn-primary"
+          style={{
+            width: 180,
+            height: 48,
+          }}
+        >
+          Kembali
+        </button>
       </div>
     </div>
-  )
+  </div>
+)
 }
 
 export default RevisionBriefViewPage

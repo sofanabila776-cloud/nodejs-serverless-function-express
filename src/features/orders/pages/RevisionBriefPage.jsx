@@ -66,46 +66,36 @@ function RevisionBriefPage({
     setCurrentPage("orderDetail")
   }
 
-
-  <h1 style={{color:'red',fontSize:'60px'}}>
-  HALAMAN REVISION BARU
-</h1>
-
   return (
   <div className="pk-page pk-brief-shell">
     <div style={{ textAlign: "center", marginBottom: 24 }}>
-      <span className="pk-eyebrow">Revision Brief</span>
+  <h1 className="pk-page-title" style={{ marginBottom: 10 }}>
+    Brief Revisi
+  </h1>
 
-      <h1
-        className="pk-page-title"
-        style={{ marginTop: 12 }}
-      >
-        Brief Revisi
-      </h1>
+ <span
+  className="pk-eyebrow"
+  style={{
+    letterSpacing: "0",
+    textTransform: "uppercase",
+  }}
+>
+  {selectedOrder._id || selectedOrder.id}
+</span>
 
-      <p className="pk-page-subtitle">
-        Lengkapi detail revisi agar artist memahami perubahan yang kamu inginkan.
-      </p>
-    </div>
+  <p className="pk-page-subtitle">
+    Lengkapi detail revisi agar artist memahami perubahan yang kamu inginkan.
+  </p>
+</div>
 
     <div
-      className="pk-card"
+      className="pk-card pk-brief-card"
       style={{
         display: "flex",
         flexDirection: "column",
         gap: 20,
       }}
     >
-      {/* ORDER INFO */}
-      <div>
-        <label className="pk-label">
-          Nomor Pesanan
-        </label>
-
-        <div className="pk-input">
-          {selectedOrder._id || selectedOrder.id}
-        </div>
-      </div>
 
       {/* HASIL KARYA */}
       <div>
@@ -120,10 +110,8 @@ function RevisionBriefPage({
             rel="noreferrer"
             className="pk-btn pk-btn-ghost"
             style={{
-              width: "fit-content",
-              minWidth: 140,
-              height: 48,
-              textDecoration: "none",
+                width: 180,
+  height: 48,
             }}
           >
             Lihat Hasil
@@ -185,10 +173,16 @@ function RevisionBriefPage({
       </div>
 
       {error && (
-        <div className="pk-alert">
-          {error}
-        </div>
-      )}
+  <div className="pk-alert">
+    <FiAlertCircle
+      style={{
+        fontSize: 18,
+        flexShrink: 0,
+      }}
+    />
+    {error}
+  </div>
+)}
 
       <div
         style={{
