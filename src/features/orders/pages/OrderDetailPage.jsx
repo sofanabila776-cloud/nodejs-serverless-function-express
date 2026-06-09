@@ -530,7 +530,7 @@ function OrderDetailPage({
   extra:
     role === "artist" ? (
       <div className="mt-[2px]">
-        <p className="text-[20px] leading-[24px] text-yellow-500">
+        <p className="pk-timeline-subtitle">
           Admin akan melakukan pembayaran pada pukul 10.00 WIB melalui rekening yang Anda daftarkan
         </p>
 
@@ -538,7 +538,7 @@ function OrderDetailPage({
           href={ADMIN_WHATSAPP_LINK}
           target="_blank"
           rel="noreferrer"
-          className="inline-block text-[20px] leading-[24px] text-[#09027C] underline mt-[2px]"
+          className="pk-order-link"
         >
           Hubungi Admin
         </a>
@@ -840,7 +840,16 @@ function OrderDetailPage({
     <>
       {showPricePopup && (
         <>
-          <div className="fixed inset-0 bg-black/30 z-[80]" />
+          <div
+  className="fixed inset-0 bg-black/30 z-[80]"
+  onClick={() => {
+    setShowUploadPopup(false)
+    setUploadMode("result")
+    setGdriveLink("")
+    setUploadLinkError("")
+    setIsEditingUploadLink(false)
+  }}
+/>
 
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] bg-white rounded-[28px] shadow-lg z-[90] px-10 py-10">
             <p className="text-[24px] text-center">
@@ -889,7 +898,16 @@ function OrderDetailPage({
 
       {showUploadPopup && (
         <>
-          <div className="fixed inset-0 bg-black/30 z-[80]" />
+          <div
+            className="fixed inset-0 bg-black/30 z-[80]"
+            onClick={() => {
+              setShowUploadPopup(false)
+              setUploadMode("result")
+              setGdriveLink("")
+              setUploadLinkError("")
+              setIsEditingUploadLink(false)
+            }}
+          />
 
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[430px] bg-white rounded-[24px] shadow-lg z-[90] px-8 py-8">
             <p className="text-[24px] text-center">
