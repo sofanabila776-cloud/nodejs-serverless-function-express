@@ -28,54 +28,128 @@ function SignupBuyerUsernamePage({ setCurrentPage, signupData, setSignupData, on
   };
 
   return (
-    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg-top)",
+      paddingTop: 72,
+    }}
+  >
+    <div
+      className="pk-card"
+      style={{
+        width: "100%",
+        maxWidth: 440,
+        padding: "48px 40px",
+        borderRadius: "var(--radius-xl)",
+      }}
+    >
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
+        <p
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            color: "var(--blue-primary)",
+            letterSpacing: "0.06em",
+            marginBottom: 6,
+          }}
+        >
+          PICKARYA
+        </p>
 
-      <section aria-labelledby="signup-title" className="absolute top-[238px] left-[374px] w-[533px]">
-        <h1 id="signup-title" className="w-full text-center font-normal text-black text-6xl tracking-[0] leading-[normal] whitespace-nowrap">
+        <h1
+          style={{
+            fontSize: 22,
+            fontWeight: 700,
+            color: "var(--text-dark)",
+            margin: 0,
+          }}
+        >
           SIGN UP
         </h1>
+      </div>
 
-        <form className="mt-[34px] w-[533px]" onSubmit={handleSubmit}>
-          <label htmlFor="buyer-username" className="sr-only">Buat username</label>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <div>
+          <label htmlFor="buyer-username" className="pk-label">
+            USERNAME
+          </label>
 
-          <div className="relative w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <input
-              id="buyer-username"
-              name="username"
-              type="text"
-              value={username}
-              onChange={(event) => {
-                setUsername(event.target.value);
-                setError("");
+          <input
+            id="buyer-username"
+            name="username"
+            type="text"
+            value={username}
+            onChange={(event) => {
+              setUsername(event.target.value)
+              setError("")
+            }}
+            placeholder="Masukkan username"
+            className="pk-input"
+            autoComplete="username"
+          />
+
+          {error && (
+            <p
+              style={{
+                color: "#d64545",
+                fontSize: 13,
+                marginTop: 6,
               }}
-              placeholder="Buat username"
-              className="absolute top-0 left-0 w-full h-full rounded-[20px] px-[18px] font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-              autoComplete="username"
-            />
-          </div>
+            >
+              {error}
+            </p>
+          )}
+        </div>
 
-          {error && <p className="mt-2 ml-[18px] text-red-600 text-[18px]">{error}</p>}
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            marginTop: 8,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setCurrentPage("signupPhone")}
+            className="pk-btn"
+            style={{
+              flex: 1,
+              height: 52,
+              border: "1.5px solid var(--blue-primary)",
+              background: "white",
+              color: "var(--blue-primary)",
+              fontWeight: 700,
+            }}
+          >
+            ← BACK
+          </button>
 
-          <div className="mt-[40px] w-[533px] h-[66px] flex gap-[25px]">
-  <button
-    type="button"
-    onClick={() => setCurrentPage("signupPhone")}
-    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
-  >
-    BACK
-  </button>
-
-  <button
-    type="submit"
-    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
-  >
-    SIGN UP
-  </button>
-</div>
-        </form>
-      </section>
-    </main>
-  );
+          <button
+            type="submit"
+            className="pk-btn pk-btn-primary"
+            style={{
+              flex: 1,
+              height: 52,
+            }}
+          >
+            SIGN UP
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+);
 }
 
 export default SignupBuyerUsernamePage;

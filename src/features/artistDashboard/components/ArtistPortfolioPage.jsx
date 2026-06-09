@@ -130,7 +130,9 @@ function ArtistPortfolioPage({
             aria-label="Tambah produk"
             title="Tambah produk"
           >
-            +
+            <span style={{ lineHeight: 1, marginTop: -5 }}>
+             +
+            </span>
           </button>
         </div>
 
@@ -141,7 +143,7 @@ function ArtistPortfolioPage({
             <div className="space-y-3">
               {products.map((product) => (
                 <div
-                  key={product.id}
+                  key={product._id || product.id}
                   className="relative flex items-center gap-5 pr-10"
                 >
                   <div className="w-[96px] h-[56px] rounded-[16px] border border-black/10 overflow-hidden bg-white shrink-0">
@@ -162,13 +164,14 @@ function ArtistPortfolioPage({
                         .toLowerCase()}
                     </p>
                     <p className="text-[#3476B2] font-semibold mt-1">
-                      Rp{Number(product.priceMin).toLocaleString("id-ID")} - Rp
-                      {Number(product.priceMax).toLocaleString("id-ID")}
+                     {product.price
+                        ? product.price
+                        : `Rp${Number(product.priceMin).toLocaleString("id-ID")} - Rp${Number(product.priceMax).toLocaleString("id-ID")}`}
                     </p>
                   </div>
 
                   <button
-                    onClick={() => onDeleteProduct(product.id)}
+                    onClick={() => onDeleteProduct(product._id || product.id)}
                     className="absolute right-0 top-1/2 -translate-y-1/2 pk-icon-btn"
                     style={{ width: 30, height: 30 }}
                     aria-label="Hapus produk"

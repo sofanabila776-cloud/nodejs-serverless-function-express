@@ -153,11 +153,14 @@ function ArtistProductFormPage({
         </div>
 
         <div>
-          <p className="text-[20px] mb-3">Tag produk</p>
+          <p className="text-[20px]">Tag produk</p>
 
           {!selectedTag ? (
-            <div className="pk-choice-card">
-              <p className="text-[20px] text-center mb-5">Pilih satu</p>
+            <div className="pk-choice-card"
+              style={{ marginTop: "16px" }} >
+              <p className="text-[20px] text-center"
+                  style={{ marginBottom: "28px" }} >
+                Pilih satu</p>
 
               <div className="grid grid-cols-2 gap-4">
                 {PRODUCT_TAGS.map((tag) => (

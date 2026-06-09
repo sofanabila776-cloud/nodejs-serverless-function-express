@@ -24,72 +24,165 @@ function SignupRolePage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg-top)",
+      paddingTop: 72,
+    }}
+  >
+    <div
+      className="pk-card"
+      style={{
+        width: "100%",
+        maxWidth: 440,
+        padding: "48px 40px",
+        borderRadius: "var(--radius-xl)",
+      }}
+    >
+      {/* HEADER */}
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
+        <p
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            color: "var(--blue-primary)",
+            letterSpacing: "0.06em",
+            marginBottom: 6,
+          }}
+        >
+          PICKARYA
+        </p>
 
-      <section aria-labelledby="signup-title" className="absolute inset-0">
-        <h1 id="signup-title" className="absolute top-[239px] left-[529px] font-normal text-black text-6xl tracking-[0] leading-[normal]">
+        <h1
+          style={{
+            fontSize: 22,
+            fontWeight: 700,
+            color: "var(--text-dark)",
+            margin: 0,
+          }}
+        >
           SIGN UP
         </h1>
+      </div>
 
-        <form onSubmit={handleSubmit} className="contents">
-          <fieldset className="absolute top-[325px] left-[376px] w-[533px] h-[165px] rounded-[20px] border-[3px] border-solid border-black">
-            <legend className="sr-only">Daftar sebagai</legend>
-            <div className="absolute top-[30px] left-[41px] font-normal text-black text-2xl tracking-[0] leading-[normal]">
-              Daftar sebagai:
-            </div>
+      <form onSubmit={handleSubmit}>
+        <fieldset
+  style={{
+    border: "1.5px solid rgba(51,51,51,0.13)",
+    borderRadius: 16,
+    padding: "18px 16px",
+    margin: 0,
+    background: "white",
+  }}
+>
+          <legend className="sr-only">
+            Daftar sebagai
+          </legend>
 
-            <div className="absolute top-[68px] left-[41px] flex flex-col gap-[9px]">
-              {roleOptions.map((option) => (
-                <label key={option.id} className="flex items-start gap-[11px] cursor-pointer">
-                  <span className="relative mt-1 block w-5 h-5">
-                    <input
-                      type="radio"
-                      name={radioName}
-                      value={option.id}
-                      checked={selectedRole === option.id}
-                      onChange={() => {
-                        setSelectedRole(option.id);
-                        setError("");
-                      }}
-                      className="peer sr-only"
-                    />
-                    <span className="block w-5 h-5 rounded-[10px] border-2 border-solid border-black" />
-                    <span className="pointer-events-none absolute top-1/2 left-1/2 block h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black opacity-0 peer-checked:opacity-100" />
-                  </span>
-                  <span className="font-normal text-black text-2xl tracking-[0] leading-[normal]">
-                    {option.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <label className="pk-label">
+            PILIH ROLE
+          </label>
 
-          {error && (
-            <p className="absolute top-[498px] left-[394px] text-red-600 text-[18px]">
-              {error}
-            </p>
-          )}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 14,
+              marginTop: 12,
+            }}
+          >
+            {roleOptions.map((option) => (
+              <label
+                key={option.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="radio"
+                  name={radioName}
+                  value={option.id}
+                  checked={selectedRole === option.id}
+                  onChange={() => {
+                    setSelectedRole(option.id);
+                    setError("");
+                  }}
+                />
 
-          <div className="absolute top-[540px] left-[374px] w-[533px] h-[66px] flex gap-[25px]">
-  <button
-    type="button"
-    onClick={() => setCurrentPage("signupAccount")}
-    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
-  >
-    BACK
-  </button>
+                <span
+                  style={{
+                    fontSize: 16,
+                    color: "var(--text-dark)",
+                  }}
+                >
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
-  <button
-    type="submit"
-    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
-  >
-    NEXT
-  </button>
-</div>
-        </form>
-      </section>
-    </main>
-  );
+        {error && (
+          <div
+            style={{
+              background: "rgba(230,138,138,0.15)",
+              border: "1px solid var(--red-salmon)",
+              borderRadius: "var(--radius-sm)",
+              padding: "10px 14px",
+              fontSize: 13,
+              color: "#b03030",
+              marginTop: 16,
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            marginTop: 24,
+          }}
+        >
+          <button
+  type="button"
+  onClick={() => setCurrentPage("signupAccount")}
+  className="pk-btn"
+  style={{
+    flex: 1,
+    height: 52,
+    border: "1.5px solid var(--blue-primary)",
+    background: "white",
+    color: "var(--blue-primary)",
+    fontWeight: 700,
+  }}
+>
+  ← BACK
+</button>
+
+          <button
+            type="submit"
+            className="pk-btn pk-btn-primary"
+            style={{
+              flex: 1,
+              height: 52,
+            }}
+          >
+            NEXT
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+);
 }
 
 export default SignupRolePage;

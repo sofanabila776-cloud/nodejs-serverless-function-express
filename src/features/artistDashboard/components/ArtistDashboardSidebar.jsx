@@ -25,6 +25,8 @@ function ArtistDashboardSidebar({
         <FiUser style={{ fontSize: 18 }} /> Akun
       </button>
 
+      <hr className="pk-divider" />
+
       <button
         onClick={() => { setActiveSidebar("portfolio"); setCurrentPage("profile") }}
         className={`pk-sidebar-btn ${activeSidebar === "portfolio" ? "active" : ""}`}

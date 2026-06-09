@@ -30,81 +30,149 @@ function SignupArtistBankPage({ setCurrentPage, signupData, setSignupData }) {
   }
 
   return (
-    <main className="pk-auth-page w-full min-w-[1280px] min-h-[980px] relative pb-[140px]">
-      <section
-        aria-labelledby="signup-bank-title"
-        className="absolute top-[210px] left-[374px] w-[533px]"
-      >
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg-top)",
+      paddingTop: 72,
+    }}
+  >
+    <div
+      className="pk-card"
+      style={{
+        width: "100%",
+        maxWidth: 440,
+        padding: "48px 40px",
+        borderRadius: "var(--radius-xl)",
+      }}
+    >
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
+        <p
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            color: "var(--blue-primary)",
+            letterSpacing: "0.06em",
+            marginBottom: 6,
+          }}
+        >
+          PICKARYA
+        </p>
+
         <h1
-          id="signup-bank-title"
-          className="w-full text-center font-normal text-black text-6xl tracking-[0] leading-[normal] whitespace-nowrap"
+          style={{
+            fontSize: 22,
+            fontWeight: 700,
+            color: "var(--text-dark)",
+            margin: 0,
+          }}
         >
           SIGN UP
         </h1>
+      </div>
 
-        <form className="mt-[34px] w-[533px]" onSubmit={handleSubmit}>
-          <label htmlFor="signup-bank-name" className="sr-only">
-            Nama bank
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <div>
+          <label htmlFor="signup-bank-name" className="pk-label">
+            NAMA BANK
           </label>
 
-          <div className="relative w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <input
-              id="signup-bank-name"
-              name="bankName"
-              type="text"
-              value={bankName}
-              onChange={(event) => {
-                setBankName(event.target.value)
-                setError("")
-              }}
-              placeholder="Nama bank"
-              className="absolute top-0 left-0 w-full h-full rounded-[20px] px-[18px] font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
-          </div>
+          <input
+            id="signup-bank-name"
+            name="bankName"
+            type="text"
+            value={bankName}
+            onChange={(event) => {
+              setBankName(event.target.value)
+              setError("")
+            }}
+            placeholder="Contoh: BCA"
+            className="pk-input"
+          />
+        </div>
 
-          <label htmlFor="signup-bank-number" className="sr-only">
-            Nomor rekening
+        <div>
+          <label htmlFor="signup-bank-number" className="pk-label">
+            NOMOR REKENING
           </label>
 
-          <div className="relative w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black mt-[24px]">
-            <input
-              id="signup-bank-number"
-              name="bankAccountNumber"
-              type="text"
-              value={bankAccountNumber}
-              onChange={(event) => {
-                setBankAccountNumber(event.target.value)
-                setError("")
-              }}
-              placeholder="Nomor rekening"
-              className="absolute top-0 left-0 w-full h-full rounded-[20px] px-[18px] font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
+          <input
+            id="signup-bank-number"
+            name="bankAccountNumber"
+            type="text"
+            value={bankAccountNumber}
+            onChange={(event) => {
+              setBankAccountNumber(event.target.value)
+              setError("")
+            }}
+            placeholder="Masukkan nomor rekening"
+            className="pk-input"
+          />
+        </div>
+
+        {error && (
+          <div
+            style={{
+              background: "rgba(230,138,138,0.15)",
+              border: "1px solid var(--red-salmon)",
+              borderRadius: "var(--radius-sm)",
+              padding: "10px 14px",
+              fontSize: 13,
+              color: "#b03030",
+            }}
+          >
+            {error}
           </div>
+        )}
 
-          <p className="mt-2 ml-[18px] text-red-600 text-[18px]">
-            {error || "Pastikan nomor rekening tidak salah"}
-          </p>
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            marginTop: 8,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setCurrentPage("signupPhone")}
+            className="pk-btn"
+            style={{
+              flex: 1,
+              height: 52,
+              border: "1.5px solid var(--blue-primary)",
+              background: "white",
+              color: "var(--blue-primary)",
+              fontWeight: 700,
+            }}
+          >
+            ← BACK
+          </button>
 
-          <div className="mt-[20px] w-[533px] h-[66px] flex gap-[25px]">
-  <button
-    type="button"
-    onClick={() => setCurrentPage("signupPhone")}
-    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
-  >
-    BACK
-  </button>
-
-  <button
-    type="submit"
-    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
-  >
-    NEXT
-  </button>
-</div>
-        </form>
-      </section>
-    </main>
-  )
+          <button
+            type="submit"
+            className="pk-btn pk-btn-primary"
+            style={{
+              flex: 1,
+              height: 52,
+            }}
+          >
+            NEXT
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)
 }
 
 export default SignupArtistBankPage

@@ -214,8 +214,8 @@ function App() {
       return {
         ...prevPortfolio,
         products: (prevPortfolio.products || []).filter(
-          (product) => product.id !== productId
-        ),
+  (product) => (product._id || product.id) !== productId
+),
       }
     })
 

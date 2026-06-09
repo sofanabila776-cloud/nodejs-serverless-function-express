@@ -40,92 +40,219 @@ function SignupArtistLevelPage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
-      {showLevelInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-8">
-          <div className="relative w-[900px] max-h-[620px] overflow-y-auto rounded-[24px] border-[3px] border-black bg-white px-8 py-7">
+  <main>
+    {showLevelInfo && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
+        <div
+  className="pk-card"
+  style={{
+    width: "100%",
+    maxWidth: 820,
+    maxHeight: "70vh",
+    overflowY: "auto",
+    padding: 24,
+    position: "relative",
+  }}
+>
+          <button
+            type="button"
+            onClick={() => setShowLevelInfo(false)}
+            style={{
+              position: "absolute",
+              right: 20,
+              top: 16,
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              fontSize: 28,
+              color: "#666",
+            }}
+          >
+            ×
+          </button>
+
+          <h2
+            style={{
+              textAlign: "center",
+              fontSize: 28,
+              fontWeight: 700,
+              color: "var(--text-dark)",
+              marginBottom: 28,
+            }}
+          >
+            Penjelasan Level Artist
+          </h2>
+
+          <div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gap: 16,
+  }}
+>
+            {levelDescriptions.map((level) => (
+              <div
+                key={level.title}
+                style={{
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  borderRadius: 18,
+                  padding: 16,
+                  background: "#fff",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: "var(--blue-primary)",
+                    marginBottom: 12,
+                  }}
+                >
+                  {level.title}
+                </h3>
+
+                <p
+                  style={{
+                    fontSize: 15,
+                    lineHeight: 1.7,
+                    color: "#444",
+                  }}
+                >
+                  {level.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 28,
+            }}
+          >
             <button
               type="button"
               onClick={() => setShowLevelInfo(false)}
-              className="absolute top-5 right-6 text-[28px] leading-none"
-              aria-label="Tutup penjelasan level"
-            >
-              ×
-            </button>
-
-            <h3 className="text-[30px] font-normal mb-6 text-center">
-              Penjelasan Level Artist
-            </h3>
-
-            <div className="grid grid-cols-3 gap-5">
-              {levelDescriptions.map((level) => (
-                <article key={level.title} className="rounded-[18px] border-[2px] border-black p-5">
-                  <h4 className="text-[24px] font-normal mb-3">{level.title}</h4>
-                  <p className="text-[17px] leading-relaxed">{level.text}</p>
-                </article>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowLevelInfo(false)}
-              className="mt-7 mx-auto block w-[240px] h-[52px] rounded-[18px] border-[3px] border-black text-[22px]"
+              className="pk-btn pk-btn-primary"
+              style={{
+                minWidth: 180,
+                height: 52,
+              }}
             >
               Tutup
             </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      <section aria-labelledby="signup-title" className="absolute inset-0">
-        <h2 id="signup-title" className="absolute top-[215px] left-[529px] font-normal text-black text-6xl tracking-[0] leading-[normal]">
-          SIGN UP
-        </h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "var(--bg-top)",
+        paddingTop: 72,
+      }}
+    >
+      <div
+        className="pk-card"
+        style={{
+          width: "100%",
+          maxWidth: 440,
+          padding: "48px 40px",
+          borderRadius: "var(--radius-xl)",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <p
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              color: "var(--blue-primary)",
+              letterSpacing: "0.06em",
+              marginBottom: 6,
+            }}
+          >
+            PICKARYA
+          </p>
+
+          <h1
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "var(--text-dark)",
+              margin: 0,
+            }}
+          >
+            SIGN UP
+          </h1>
+        </div>
 
         <form onSubmit={handleSubmit}>
-          <fieldset className="top-[301px] left-[375px] h-52 absolute w-[533px] rounded-[20px] border-[3px] border-solid border-black m-0 p-0">
-            <legend className="sr-only">Artist level selection</legend>
-            <div className="absolute top-[30px] left-[41px] font-normal text-black text-2xl tracking-[0] leading-[normal]">
-              Pilih level artist:
-            </div>
+          <fieldset
+            style={{
+              border: "1.5px solid rgba(51,51,51,0.13)",
+              borderRadius: 16,
+              padding: "18px 16px",
+              background: "white",
+            }}
+          >
+            <legend className="sr-only">
+              Pilih level artist
+            </legend>
 
-            <div className="absolute top-[68px] left-[41px]">
-              {artistLevels.map((level, index) => {
-                const inputId = `${groupId}-${level.id}`;
+            <label className="pk-label">
+              PILIH LEVEL ARTIST
+            </label>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                marginTop: 12,
+              }}
+            >
+              {artistLevels.map((level) => {
+                const inputId = `${groupId}-${level.id}`
 
                 return (
                   <label
                     key={level.id}
                     htmlFor={inputId}
-                    className={`absolute left-0 flex items-start gap-[11px] cursor-pointer ${
-                      index === 0
-                        ? "top-0 w-[134px] h-[29px]"
-                        : index === 1
-                          ? "top-[38px] w-[177px] h-[29px]"
-                          : "top-[76px] w-[172px] h-[29px]"
-                    }`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      cursor: "pointer",
+                    }}
                   >
-                    <span className="relative mt-1 block w-5 h-5">
-                      <input
-                        id={inputId}
-                        name="artistLevel"
-                        type="radio"
-                        value={level.id}
-                        checked={selectedLevel === level.id}
-                        onChange={(event) => {
-                          setSelectedLevel(event.target.value);
-                          setError("");
-                        }}
-                        className="peer sr-only"
-                      />
-                      <span className="block w-5 h-5 rounded-[10px] border-2 border-solid border-black" />
-                      <span className="pointer-events-none absolute top-1/2 left-1/2 block h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black opacity-0 peer-checked:opacity-100" />
-                    </span>
-                    <span className={`${level.widthClass} h-[29px] font-normal text-black text-2xl tracking-[0] leading-[normal]`}>
-                      {level.label}
-                    </span>
+                    <input
+                      id={inputId}
+                      name="artistLevel"
+                      type="radio"
+                      value={level.id}
+                      checked={selectedLevel === level.id}
+                      onChange={(event) => {
+                        setSelectedLevel(event.target.value)
+                        setError("")
+                      }}
+                    />
+
+                    <span
+  style={{
+    fontSize: 16,
+    color: "var(--text-dark)",
+  }}
+>
+  {level.label}
+</span>
                   </label>
-                );
+                )
               })}
             </div>
           </fieldset>
@@ -133,37 +260,75 @@ function SignupArtistLevelPage({ setCurrentPage, signupData, setSignupData }) {
           <button
             type="button"
             onClick={() => setShowLevelInfo(true)}
-            className="absolute top-[515px] left-[385px] text-[22px] text-black underline"
+            style={{
+              marginTop: 12,
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              color: "var(--blue-primary)",
+              fontWeight: 600,
+              textDecoration: "underline",
+            }}
           >
-            Lihat penjelasan level &gt;
+            Lihat penjelasan level →
           </button>
 
           {error && (
-            <p className="absolute top-[540px] left-[385px] text-red-600 text-[18px]">
+            <div
+              style={{
+                background: "rgba(230,138,138,0.15)",
+                border: "1px solid var(--red-salmon)",
+                borderRadius: "var(--radius-sm)",
+                padding: "10px 14px",
+                fontSize: 13,
+                color: "#b03030",
+                marginTop: 16,
+              }}
+            >
               {error}
-            </p>
+            </div>
           )}
 
-          <div className="absolute top-[570px] left-[374px] w-[533px] h-[66px] flex gap-[25px]">
-  <button
-    type="button"
-    onClick={() => setCurrentPage("signupArtistBank")}
-    className="w-[254px] h-[66px] rounded-[20px] border-[3px] border-solid border-black flex items-center justify-center font-normal text-black text-[32px]"
-  >
-    BACK
-  </button>
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              marginTop: 24,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setCurrentPage("signupArtistBank")}
+              className="pk-btn"
+              style={{
+                flex: 1,
+                height: 52,
+                border: "1.5px solid var(--blue-primary)",
+                background: "white",
+                color: "var(--blue-primary)",
+                fontWeight: 700,
+              }}
+            >
+              ← BACK
+            </button>
 
-  <button
-    type="submit"
-    className="w-[254px] h-[66px] rounded-[20px] bg-black text-white flex items-center justify-center font-normal text-[32px]"
-  >
-    NEXT
-  </button>
-</div>
+            <button
+              type="submit"
+              className="pk-btn pk-btn-primary"
+              style={{
+                flex: 1,
+                height: 52,
+              }}
+            >
+              NEXT
+            </button>
+          </div>
         </form>
-      </section>
-    </main>
-  );
+      </div>
+    </div>
+  </main>
+);
 }
 
 export default SignupArtistLevelPage;

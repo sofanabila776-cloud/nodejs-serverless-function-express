@@ -34,79 +34,163 @@ function SignupAccountPage({ setCurrentPage, signupData, setSignupData }) {
   };
 
   return (
-    <main className="pk-auth-page w-full min-w-[1280px] min-h-[900px] relative pb-[140px]">
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg-top)",
+      paddingTop: 72,
+    }}
+  >
+    <div
+      className="pk-card"
+      style={{
+        width: "100%",
+        maxWidth: 440,
+        padding: "48px 40px",
+        borderRadius: "var(--radius-xl)",
+      }}
+    >
+      <div style={{ textAlign: "center", marginBottom: 36 }}>
+  <p
+    style={{
+      fontSize: 28,
+      fontWeight: 800,
+      color: "var(--blue-primary)",
+      letterSpacing: "0.06em",
+      marginBottom: 6
+    }}
+  >
+    PICKARYA
+  </p>
 
-      <section aria-labelledby="signup-heading" className="absolute inset-0">
-        <h1 id="signup-heading" className="absolute top-[201px] left-[529px] font-normal text-black text-6xl text-center tracking-[0] leading-[normal]">
-          SIGN UP
-        </h1>
+  <h1
+    style={{
+      fontSize: 22,
+      fontWeight: 700,
+      color: "var(--text-dark)",
+      margin: 0
+    }}
+  >
+    SIGN UP
+  </h1>
 
-        <p className="absolute top-[282px] left-[481px] font-normal text-black text-2xl tracking-[0] leading-[normal]">
-          Sudah memiliki akun?
-        </p>
+  <p
+    style={{
+      fontSize: 14,
+      color: "var(--gray-text)",
+      marginTop: 6
+    }}
+  >
+    Sudah memiliki akun?
+    {" "}
+    <button
+      type="button"
+      onClick={() => setCurrentPage("login")}
+      style={{
+        color: "var(--blue-primary)",
+        fontWeight: 700,
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        textDecoration: "underline"
+      }}
+    >
+      Log In
+    </button>
+  </p>
+</div>
 
-        <button
-          type="button"
-          onClick={() => setCurrentPage("login")}
-          className="absolute top-[282px] left-[737px] z-10 font-normal text-black text-2xl text-right tracking-[0] leading-[normal] underline"
-        >
-          Log In
-        </button>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <div>
+          <label htmlFor={emailId} className="pk-label">
+            EMAIL
+          </label>
 
-        <form onSubmit={handleSubmit} className="contents" aria-label="Sign up form">
-          <div className="absolute top-[338px] left-[374px] w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <label htmlFor={emailId} className="sr-only">Email</label>
-            <input
-              id={emailId}
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                setErrors((prev) => ({ ...prev, email: "" }));
-              }}
-              placeholder="Email"
-              className="w-full h-full rounded-[20px] px-[16px] py-0 font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
-          </div>
+          <input
+            id={emailId}
+            name="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              setErrors((prev) => ({ ...prev, email: "" }));
+            }}
+            placeholder="nama@email.com"
+            className="pk-input"
+          />
 
           {errors.email && (
-            <p className="absolute top-[407px] left-[392px] text-red-600 text-[18px]">
+            <p
+              style={{
+                color: "#d64545",
+                fontSize: 13,
+                marginTop: 6,
+              }}
+            >
               {errors.email}
             </p>
           )}
+        </div>
 
-          <div className="absolute top-[433px] left-[374px] w-[533px] h-[66px] rounded-[20px] border-[3px] border-solid border-black">
-            <label htmlFor={passwordId} className="sr-only">Buat password</label>
-            <input
-              id={passwordId}
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setErrors((prev) => ({ ...prev, password: "" }));
-              }}
-              placeholder="Buat password"
-              className="w-full h-full rounded-[20px] px-[16px] py-0 font-normal text-black text-2xl tracking-[0] leading-[normal] placeholder:text-[#888181] outline-none"
-            />
-          </div>
+        <div>
+          <label htmlFor={passwordId} className="pk-label">
+            BUAT PASSWORD
+          </label>
+
+          <input
+            id={passwordId}
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setErrors((prev) => ({ ...prev, password: "" }));
+            }}
+            placeholder="••••••••"
+            className="pk-input"
+          />
 
           {errors.password && (
-            <p className="absolute top-[502px] left-[392px] text-red-600 text-[18px]">
+            <p
+              style={{
+                color: "#d64545",
+                fontSize: 13,
+                marginTop: 6,
+              }}
+            >
               {errors.password}
             </p>
           )}
+        </div>
 
-          <button type="submit" className="absolute top-[550px] left-[374px] w-[533px] h-[66px] rounded-[20px] border-[3px] bg-black text-white flex items-center justify-center font-normal text-[32px]">
-            NEXT
-          </button>
-        </form>
-      </section>
-    </main>
-  );
+        <button
+          type="submit"
+          className="pk-btn pk-btn-primary"
+          style={{
+            width: "100%",
+            height: 52,
+            fontSize: 15,
+            marginTop: 4,
+          }}
+        >
+          NEXT
+        </button>
+      </form>
+    </div>
+  </div>
+);
 }
 
 export default SignupAccountPage;

@@ -33,11 +33,11 @@ function LoginPage({ setCurrentPage, onLoginSuccess }) {
         {/* HEADER */}
         <div style={{ textAlign: "center", marginBottom: 36 }}>
           <p style={{ fontSize: 28, fontWeight: 800, color: "var(--blue-primary)", letterSpacing: "0.06em", marginBottom: 6 }}>PICKARYA</p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-dark)", margin: 0 }}>Masuk ke Akun</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-dark)", margin: 0 }}>LOG IN</h1>
           <p style={{ fontSize: 14, color: "var(--gray-text)", marginTop: 6 }}>
             Belum punya akun?{" "}
             <button onClick={() => setCurrentPage("signupAccount")} style={{ color: "var(--blue-primary)", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
-              Daftar di sini
+              Sign Up
             </button>
           </p>
         </div>
